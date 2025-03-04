@@ -15,7 +15,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.dashboard);
         }
         
-        return $http.get('api/dashboard')
+        return $http.get('api/dashboard/index.json')
             .then(function(response) {
                 cache.dashboard = response.data;
                 return cache.dashboard;
@@ -88,7 +88,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.customers);
         }
         
-        return $http.get('api/customers')
+        return $http.get('api/customers/index.json')
             .then(function(response) {
                 cache.customers = response.data;
                 return cache.customers;
