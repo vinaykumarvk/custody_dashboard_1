@@ -89,14 +89,24 @@ app.controller('MainController', function($scope, $location, DataService) {
         
         // Format based on magnitude
         if (number >= 1000000000) {
-            return (number / 1000000000).toFixed(2) + 'B';
+            return (number / 1000000000).toFixed(2).replace('.', ',') + 'B';
         } else if (number >= 1000000) {
-            return (number / 1000000).toFixed(2) + 'M';
+            return (number / 1000000).toFixed(2).replace('.', ',') + 'M';
         } else if (number >= 1000) {
-            return (number / 1000).toFixed(2) + 'K';
+            return (number / 1000).toFixed(2).replace('.', ',') + 'K';
         } else {
             return number.toString();
         }
+    };
+    
+    // Format regular numbers with thousand separators
+    $scope.formatNumberWithCommas = function(number) {
+        if (number === undefined || number === null || isNaN(number)) {
+            return '0';
+        }
+        
+        // Convert to string with commas as thousand separators
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     };
     
     // Format percentages for display
