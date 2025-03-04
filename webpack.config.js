@@ -38,15 +38,9 @@ module.exports = {
     })
   ],
   devServer: {
-    static: [
-      {
-        directory: path.join(__dirname, 'dist'),
-      },
-      {
-        directory: path.join(__dirname, 'public'),
-        publicPath: '/api'
-      }
-    ],
+    static: {
+      directory: path.join(__dirname, 'public'),
+    },
     port: 5000,
     historyApiFallback: true,
     hot: true,
