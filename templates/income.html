@@ -1,165 +1,571 @@
-<div class="container-fluid">
-    <div class="section-title">Income Overview</div>
-    
-    <!-- Summary Stats -->
+<!-- Income Template -->
+<div class="container-fluid" ng-controller="IncomeController">
     <div class="row">
-        <div class="col-md-3">
-            <div class="metric-container">
-                <div class="metric-title">Total Income</div>
-                <div class="metric-value">₹{{totalIncome | number}}</div>
-                <div class="metric-subtitle">Period</div>
-                <div class="metric-subvalue">All time</div>
+        <div class="col-12">
+            <div class="page-header">
+                <h1>Income Management</h1>
+                <p class="text-muted">Revenue tracking and analysis</p>
             </div>
         </div>
-        
+    </div>
+    
+    <!-- Income Metrics -->
+    <div class="row metrics-row">
         <div class="col-md-3">
-            <div class="metric-container">
-                <div class="metric-title">New Income</div>
-                <div class="metric-value">₹{{newIncome | number}}</div>
-                <div class="metric-subtitle">Period</div>
-                <div class="metric-subvalue">Last 3 months</div>
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon">
+                        <i class="fa fa-money-bill-wave"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h5 class="metric-title">Total Income (YTD)</h5>
+                        <h2 class="metric-value">{{ formatNumber(totalIncome) }}</h2>
+                        <div class="metric-trend trend-up">
+                            <i class="fa fa-arrow-up"></i>
+                            <span>{{ formatPercentage(incomeGrowth) }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
         <div class="col-md-3">
-            <div class="metric-container">
-                <div class="metric-title">Average Monthly</div>
-                <div class="metric-value">₹{{avgMonthlyIncome | number}}</div>
-                <div class="metric-subtitle">Change</div>
-                <div class="metric-subvalue">{{monthlyIncomeChange}}%</div>
-                <div class="metric-subtext">From previous period</div>
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon">
+                        <i class="fa fa-chart-line"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h5 class="metric-title">New Income</h5>
+                        <h2 class="metric-value">{{ formatNumber(newIncome) }}</h2>
+                        <div class="metric-trend trend-up">
+                            <i class="fa fa-arrow-up"></i>
+                            <span>{{ formatPercentage(monthlyIncomeChange) }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
         <div class="col-md-3">
-            <div class="metric-container">
-                <div class="metric-title">Growth Rate</div>
-                <div class="metric-value">{{incomeGrowth}}%</div>
-                <div class="metric-subtitle">Period</div>
-                <div class="metric-subvalue">Year-on-year</div>
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon">
+                        <i class="fa fa-calendar-check"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h5 class="metric-title">Monthly Average</h5>
+                        <h2 class="metric-value">{{ formatNumber(avgMonthlyIncome) }}</h2>
+                        <div class="metric-trend trend-up">
+                            <i class="fa fa-arrow-up"></i>
+                            <span>3.2%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon">
+                        <i class="fa fa-percentage"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h5 class="metric-title">Growth Rate</h5>
+                        <h2 class="metric-value">{{ formatPercentage(incomeGrowth) }}</h2>
+                        <div class="metric-trend trend-up">
+                            <i class="fa fa-arrow-up"></i>
+                            <span>0.3%</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
     <!-- Charts Section -->
     <div class="row">
+        <!-- Monthly Income Trend -->
         <div class="col-md-8">
-            <div class="chart-container">
-                <div class="chart-title">Monthly Income Trend</div>
-                <div class="chart-subtitle">Last 12 months</div>
-                <canvas id="monthly-income-chart" class="chart" chart-data="monthlyIncomeData" chart-labels="monthLabels" 
-                        chart-series="['Monthly Income']" chart-options="lineChartOptions" chart-type="line"></canvas>
+            <div class="card">
+                <div class="card-header">
+                    <h5>Monthly Income Trend (in millions)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="monthlyIncomeChart" class="chart-container"
+                            chart-data="monthlyIncomeData"
+                            chart-labels="monthLabels"
+                            chart-series="['Income (millions)']"
+                            chart-options="lineChartOptions"
+                            chart-type="line"></canvas>
+                </div>
             </div>
         </div>
         
+        <!-- Income by Product -->
         <div class="col-md-4">
-            <div class="chart-container">
-                <div class="chart-title">Income by Product</div>
-                <div class="chart-subtitle">Distribution</div>
-                <canvas id="income-by-product-chart" class="chart" chart-data="incomeByProductData" chart-labels="productLabels" 
-                        chart-options="pieChartOptions" chart-type="pie"></canvas>
+            <div class="card">
+                <div class="card-header">
+                    <h5>Income by Product</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="incomeByProductChart" class="chart-container"
+                            chart-data="incomeByProductData"
+                            chart-labels="productLabels"
+                            chart-options="pieChartOptions"
+                            chart-type="pie"></canvas>
+                </div>
             </div>
         </div>
     </div>
     
     <div class="row">
+        <!-- Quarterly Income Comparison -->
         <div class="col-md-6">
-            <div class="chart-container">
-                <div class="chart-title">Quarterly Income</div>
-                <div class="chart-subtitle">Last 4 quarters</div>
-                <canvas id="quarterly-income-chart" class="chart" chart-data="quarterlyIncomeData" chart-labels="quarterLabels" 
-                        chart-options="barChartOptions" chart-type="bar"></canvas>
+            <div class="card">
+                <div class="card-header">
+                    <h5>Quarterly Income (in millions)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="quarterlyIncomeChart" class="chart-container"
+                            chart-data="quarterlyIncomeData"
+                            chart-labels="quarterLabels"
+                            chart-options="barChartOptions"
+                            chart-type="bar"></canvas>
+                </div>
             </div>
         </div>
         
+        <!-- Income vs Trade Volume Correlation -->
         <div class="col-md-6">
-            <div class="chart-container">
-                <div class="chart-title">Income vs Trade Volume</div>
-                <div class="chart-subtitle">Correlation analysis</div>
-                <canvas id="income-correlation-chart" class="chart" chart-data="incomeCorrelationData" chart-labels="monthLabels" 
-                        chart-series="['Income', 'Trade Volume']" chart-options="mixedChartOptions" chart-type="line"></canvas>
+            <div class="card">
+                <div class="card-header">
+                    <h5>Income vs Trade Volume Correlation</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="incomeCorrelationChart" class="chart-container"
+                            chart-data="incomeCorrelationData"
+                            chart-labels="monthLabels"
+                            chart-series="['Income (millions)', 'Trade Volume (thousands)']"
+                            chart-options="mixedChartOptions"
+                            chart-type="line"></canvas>
+                </div>
             </div>
         </div>
     </div>
     
-    <!-- Income by Customer Category -->
-    <div class="section-title">Income by Customer Category</div>
     <div class="row">
-        <div class="col-md-6">
-            <div class="chart-container">
-                <div class="chart-title">Customer Category Distribution</div>
-                <div class="chart-subtitle">Income percentage</div>
-                <canvas id="category-distribution-chart" class="chart" chart-data="categoryDistributionData" chart-labels="categoryLabels" 
-                        chart-options="donutOptions" chart-type="doughnut"></canvas>
+        <!-- Income by Category -->
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Income by Category</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="incomeCategoryChart" class="chart-container"
+                            chart-data="categoryDistributionData"
+                            chart-labels="categoryLabels"
+                            chart-options="donutOptions"
+                            chart-type="doughnut"></canvas>
+                </div>
             </div>
         </div>
         
-        <div class="col-md-6">
-            <div class="chart-container">
-                <div class="chart-title">Top Customer Income</div>
-                <div class="chart-subtitle">Top 5 customers by income</div>
-                <canvas id="top-customer-chart" class="chart" chart-data="topCustomerData" chart-labels="topCustomerLabels" 
-                        chart-options="horizontalBarOptions" chart-type="horizontalBar"></canvas>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Income Prediction -->
-    <div class="section-title">Income Predictions</div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="chart-container">
-                <div class="chart-title">Predicted Income</div>
-                <div class="chart-subtitle">Next 3 months</div>
-                <canvas id="predicted-income-chart" class="chart" chart-data="predictedIncomeData" chart-labels="predictionMonths" 
-                        chart-series="predictionYears" chart-options="groupedBarOptions" chart-type="bar"></canvas>
-            </div>
-        </div>
-        
-        <div class="col-md-6">
-            <div class="chart-container">
-                <div class="chart-title">Growth Projection</div>
-                <div class="chart-subtitle">Next 12 months</div>
-                <canvas id="growth-projection-chart" class="chart" chart-data="growthProjectionData" chart-labels="projectionMonths" 
-                        chart-options="areaChartOptions" chart-type="line"></canvas>
+        <!-- Top Customers by Income -->
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Top 5 Customers by Income</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="topCustomersChart" class="chart-container"
+                            chart-data="topCustomerData"
+                            chart-labels="topCustomerLabels"
+                            chart-options="horizontalBarOptions"
+                            chart-type="horizontalBar"></canvas>
+                </div>
             </div>
         </div>
     </div>
     
     <!-- Income Breakdown Table -->
-    <div class="section-title">Income Breakdown</div>
     <div class="row">
         <div class="col-12">
-            <div class="table-container">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Source</th>
-                            <th>Current Month</th>
-                            <th>Last Month</th>
-                            <th>3 Month Avg</th>
-                            <th>YTD</th>
-                            <th>Growth</th>
-                            <th>Trend</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="item in incomeBreakdown">
-                            <td>{{item.source}}</td>
-                            <td>₹{{item.currentMonth | number}}</td>
-                            <td>₹{{item.lastMonth | number}}</td>
-                            <td>₹{{item.threeMonthAvg | number}}</td>
-                            <td>₹{{item.ytd | number}}</td>
-                            <td>{{item.growth}}%</td>
-                            <td>
-                                <span class="trend-indicator" ng-class="item.trend.toLowerCase()">
-                                    {{item.trend === 'UP' ? '↑' : item.trend === 'DOWN' ? '↓' : '→'}}
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Income Breakdown</h5>
+                    <div class="header-actions">
+                        <div class="dropdown me-2 d-inline-block">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="incomePeriodFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                                Current Month
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="incomePeriodFilter">
+                                <li><a class="dropdown-item" href="#">Current Month</a></li>
+                                <li><a class="dropdown-item" href="#">Last Month</a></li>
+                                <li><a class="dropdown-item" href="#">Last Quarter</a></li>
+                                <li><a class="dropdown-item" href="#">Year to Date</a></li>
+                            </ul>
+                        </div>
+                        <div class="input-group d-inline-flex" style="width: 250px;">
+                            <input type="text" class="form-control" placeholder="Search sources..." ng-model="incomeSearch">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Income Source</th>
+                                    <th>Current Month</th>
+                                    <th>Last Month</th>
+                                    <th>3-Month Avg</th>
+                                    <th>YTD</th>
+                                    <th>Growth</th>
+                                    <th>Trend</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in incomeBreakdown">
+                                    <td>{{ item.source }}</td>
+                                    <td>{{ formatNumber(item.currentMonth) }}</td>
+                                    <td>{{ formatNumber(item.lastMonth) }}</td>
+                                    <td>{{ formatNumber(item.threeMonthAvg) }}</td>
+                                    <td>{{ formatNumber(item.ytd) }}</td>
+                                    <td>
+                                        <span ng-class="getTrendClass(item.growth)">
+                                            <i class="fa" ng-class="getTrendIcon(item.growth)"></i>
+                                            {{ formatPercentage(item.growth) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span ng-class="{
+                                            'text-success': item.trend === 'UP',
+                                            'text-danger': item.trend === 'DOWN',
+                                            'text-secondary': item.trend === 'STABLE'
+                                        }">
+                                            {{ item.trend }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <nav>
+                        <ul class="pagination justify-content-end">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Previous</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
+    
+    <!-- Income Forecast and Analysis Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="section-header">
+                <h4>Income Forecast & Analysis</h4>
+            </div>
+        </div>
+        
+        <!-- Income Forecast -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Income Forecast (in 10,000s)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="incomeForecastChart" class="chart-container"
+                            chart-data="predictedIncomeData"
+                            chart-labels="predictionMonths"
+                            chart-series="predictionYears"
+                            chart-options="groupedBarOptions"
+                            chart-type="bar"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Growth Projection -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>12-Month Growth Projection (in 10,000s)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="growthProjectionChart" class="chart-container"
+                            chart-data="growthProjectionData"
+                            chart-labels="projectionMonths"
+                            chart-options="areaChartOptions"
+                            chart-type="line"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Income Analysis -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Profitability Analysis</h5>
+                </div>
+                <div class="card-body">
+                    <div class="profitability-analysis">
+                        <div class="profitability-item">
+                            <div class="profitability-label">Gross Margin</div>
+                            <div class="profitability-value">82.5%</div>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" style="width: 82.5%"></div>
+                            </div>
+                            <div class="profitability-change">
+                                <i class="fa fa-arrow-up text-success"></i>
+                                <span>1.8%</span>
+                            </div>
+                        </div>
+                        <div class="profitability-item mt-4">
+                            <div class="profitability-label">Operating Margin</div>
+                            <div class="profitability-value">38.2%</div>
+                            <div class="progress">
+                                <div class="progress-bar bg-primary" style="width: 38.2%"></div>
+                            </div>
+                            <div class="profitability-change">
+                                <i class="fa fa-arrow-up text-success"></i>
+                                <span>2.4%</span>
+                            </div>
+                        </div>
+                        <div class="profitability-item mt-4">
+                            <div class="profitability-label">Net Margin</div>
+                            <div class="profitability-value">25.3%</div>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" style="width: 25.3%"></div>
+                            </div>
+                            <div class="profitability-change">
+                                <i class="fa fa-arrow-up text-success"></i>
+                                <span>1.2%</span>
+                            </div>
+                        </div>
+                        <div class="profitability-item mt-4">
+                            <div class="profitability-label">Revenue per Customer</div>
+                            <div class="profitability-value">₹5.85M</div>
+                            <div class="profitability-change">
+                                <i class="fa fa-arrow-up text-success"></i>
+                                <span>3.7%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Revenue Optimization</h5>
+                </div>
+                <div class="card-body">
+                    <div class="revenue-optimization">
+                        <div class="optimization-item">
+                            <div class="optimization-icon">
+                                <i class="fa fa-user-tie text-primary"></i>
+                            </div>
+                            <div class="optimization-content">
+                                <div class="optimization-title">Corporate Client Upsell</div>
+                                <div class="optimization-desc">Offer premium advisory services to top corporate clients</div>
+                                <div class="optimization-potential">Est. additional ₹320L</div>
+                            </div>
+                        </div>
+                        <div class="optimization-item mt-4">
+                            <div class="optimization-icon">
+                                <i class="fa fa-exchange-alt text-success"></i>
+                            </div>
+                            <div class="optimization-content">
+                                <div class="optimization-title">Trade Volume Growth</div>
+                                <div class="optimization-desc">Implement volume-based fee discounts to stimulate higher trading activity</div>
+                                <div class="optimization-potential">Est. additional ₹480L</div>
+                            </div>
+                        </div>
+                        <div class="optimization-item mt-4">
+                            <div class="optimization-icon">
+                                <i class="fa fa-layer-group text-info"></i>
+                            </div>
+                            <div class="optimization-content">
+                                <div class="optimization-title">Product Bundling</div>
+                                <div class="optimization-desc">Create customized product bundles for different client segments</div>
+                                <div class="optimization-potential">Est. additional ₹250L</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Revenue Risk Assessment</h5>
+                </div>
+                <div class="card-body">
+                    <div class="revenue-risk">
+                        <div class="risk-heading">
+                            <div class="risk-title">Overall Revenue Risk</div>
+                            <div class="risk-level text-warning">Medium</div>
+                        </div>
+                        <div class="risk-items mt-3">
+                            <div class="risk-item">
+                                <div class="risk-item-title">
+                                    <i class="fa fa-exclamation-triangle text-danger me-2"></i>
+                                    <span>Client Concentration Risk</span>
+                                </div>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar bg-danger" style="width: 75%"></div>
+                                </div>
+                                <div class="risk-item-desc">Top 5 clients represent 42% of total revenue</div>
+                            </div>
+                            <div class="risk-item mt-3">
+                                <div class="risk-item-title">
+                                    <i class="fa fa-exclamation-triangle text-warning me-2"></i>
+                                    <span>Regulatory Risk</span>
+                                </div>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar bg-warning" style="width: 55%"></div>
+                                </div>
+                                <div class="risk-item-desc">Potential impact from upcoming regulatory changes</div>
+                            </div>
+                            <div class="risk-item mt-3">
+                                <div class="risk-item-title">
+                                    <i class="fa fa-exclamation-triangle text-info me-2"></i>
+                                    <span>Market Competition Risk</span>
+                                </div>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar bg-info" style="width: 35%"></div>
+                                </div>
+                                <div class="risk-item-desc">Market share remains stable with 3% growth</div>
+                            </div>
+                            <div class="risk-item mt-3">
+                                <div class="risk-item-title">
+                                    <i class="fa fa-exclamation-triangle text-success me-2"></i>
+                                    <span>Product Diversification Risk</span>
+                                </div>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar bg-success" style="width: 25%"></div>
+                                </div>
+                                <div class="risk-item-desc">Well-diversified product portfolio with balanced revenue streams</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .profitability-analysis {
+            padding: 10px;
+        }
+        
+        .profitability-item {
+            position: relative;
+        }
+        
+        .profitability-label {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+        
+        .profitability-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .profitability-change {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 0.85rem;
+        }
+        
+        .optimization-item, .risk-item {
+            margin-bottom: 15px;
+        }
+        
+        .optimization-item {
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .optimization-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #f8f9fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .optimization-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .optimization-desc {
+            font-size: 0.9rem;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+        
+        .optimization-potential {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--success-color);
+        }
+        
+        .revenue-risk .risk-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .risk-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .risk-level {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .risk-item-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .risk-item-desc {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+            margin-top: 5px;
+        }
+    </style>
 </div>
