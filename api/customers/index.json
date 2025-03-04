@@ -1,0 +1,44 @@
+{
+  "totalCustomers": 139860,
+  "newCustomers": 20800,
+  "growth": 7.5,
+  "monthlyData": [
+    { "month": "Jan", "customers": 115000 },
+    { "month": "Feb", "customers": 119000 },
+    { "month": "Mar", "customers": 122000 },
+    { "month": "Apr", "customers": 125000 },
+    { "month": "May", "customers": 128000 },
+    { "month": "Jun", "customers": 130000 },
+    { "month": "Jul", "customers": 132000 },
+    { "month": "Aug", "customers": 134000 },
+    { "month": "Sep", "customers": 136000 },
+    { "month": "Oct", "customers": 137500 },
+    { "month": "Nov", "customers": 138900 },
+    { "month": "Dec", "customers": 139860 }
+  ],
+  "customersByProduct": [
+    { "product": "MUTUAL FUND", "customers": 48850 },
+    { "product": "FD", "customers": 39920 },
+    { "product": "PORTFOLIO", "customers": 27880 },
+    { "product": "EQUITIES", "customers": 15920 },
+    { "product": "BONDS", "customers": 7290 }
+  ],
+  "customersByCategory": [
+    { "category": "Individual", "customers": 95705 },
+    { "category": "Corporate", "customers": 31820 },
+    { "category": "Institutional", "customers": 12335 }
+  ],
+  "acquisitionChannels": [
+    { "channel": "Direct", "customers": 78921 },
+    { "channel": "Referral", "customers": 33960 },
+    { "channel": "Partnership", "customers": 18776 },
+    { "channel": "Online", "customers": 8203 }
+  ],
+  "topCustomers": [
+    { "name": "Reliance Industries", "assets": 3250000000, "products": 5, "lastActivity": "2 hours ago" },
+    { "name": "HDFC Bank", "assets": 2980000000, "products": 4, "lastActivity": "5 hours ago" },
+    { "name": "TCS Ltd", "assets": 2750000000, "products": 3, "lastActivity": "1 day ago" },
+    { "name": "Infosys", "assets": 2620000000, "products": 4, "lastActivity": "2 days ago" },
+    { "name": "SBI", "assets": 2580000000, "products": 3, "lastActivity": "3 days ago" }
+  ]
+}

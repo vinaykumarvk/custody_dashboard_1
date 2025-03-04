@@ -15,7 +15,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.dashboard);
         }
         
-        return $http.get('api/dashboard.json')
+        return $http.get('api/dashboard')
             .then(function(response) {
                 cache.dashboard = response.data;
                 return cache.dashboard;
@@ -88,7 +88,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.customers);
         }
         
-        return $http.get('api/customers.json')
+        return $http.get('api/customers')
             .then(function(response) {
                 cache.customers = response.data;
                 return cache.customers;
@@ -153,7 +153,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.trades);
         }
         
-        return $http.get('api/trades.json')
+        return $http.get('api/trades')
             .then(function(response) {
                 cache.trades = response.data;
                 return cache.trades;
@@ -216,7 +216,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.income);
         }
         
-        return $http.get('api/income.json')
+        return $http.get('api/income')
             .then(function(response) {
                 cache.income = response.data;
                 return cache.income;
@@ -345,7 +345,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.events);
         }
         
-        return $http.get('api/events.json')
+        return $http.get('api/events')
             .then(function(response) {
                 cache.events = response.data;
                 return cache.events;
@@ -414,7 +414,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.deals);
         }
         
-        return $http.get('api/deals.json')
+        return $http.get('api/deals')
             .then(function(response) {
                 cache.deals = response.data;
                 return cache.deals;
@@ -492,7 +492,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.corporateActions);
         }
         
-        return $http.get('api/corporate-actions.json')
+        return $http.get('api/corporate-actions')
             .then(function(response) {
                 cache.corporateActions = response.data;
                 return cache.corporateActions;

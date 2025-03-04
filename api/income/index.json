@@ -1,0 +1,108 @@
+{
+  "totalIncome": 80518720,
+  "newIncome": 25617360,
+  "incomeGrowth": 5.3,
+  "avgMonthlyIncome": 6709893,
+  "monthlyIncomeChange": 3.8,
+  
+  "monthlyIncomeData": {
+    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "data": [60.2, 62.5, 64.8, 67.3, 69.1, 71.5, 73.2, 75.0, 76.4, 77.8, 79.2, 80.5]
+  },
+  
+  "incomeByProductData": {
+    "labels": ["Custody Services", "Trade Processing", "Corporate Actions", "Advisory Services", "Reporting", "Other"],
+    "data": [42, 25, 15, 10, 5, 3]
+  },
+  
+  "quarterlyIncomeData": {
+    "labels": ["Q1", "Q2", "Q3", "Q4"],
+    "data": [187.5, 207.9, 224.6, 237.5]
+  },
+  
+  "incomeCorrelationData": {
+    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "income": [60.2, 62.5, 64.8, 67.3, 69.1, 71.5, 73.2, 75.0, 76.4, 77.8, 79.2, 80.5],
+    "volume": [852.5, 863.5, 884.5, 895.5, 906.5, 917.5, 928.5, 939.0, 950.0, 961.0, 981.5, 1012.2]
+  },
+  
+  "categoryDistributionData": {
+    "labels": ["Fee Income", "Interest Income", "Service Charges", "Advisory Income", "Other"],
+    "data": [55, 20, 15, 8, 2]
+  },
+  
+  "topCustomerData": {
+    "labels": ["Reliance Industries Ltd", "HDFC Bank", "Tata Consultancy Services", "Bharti Airtel Ltd", "Infosys Ltd"],
+    "data": [12.5, 11.1, 9.6, 8.8, 7.6]
+  },
+  
+  "predictedIncomeData": {
+    "labels": ["Q1", "Q2", "Q3", "Q4"],
+    "currentYear": [187.5, 207.9, 224.6, 237.5],
+    "nextYear": [201.5, 224.3, 255.5, 280.0]
+  },
+  
+  "growthProjectionData": {
+    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "baseline": [80.5, 81.4, 82.5, 83.6, 84.7, 85.8, 86.9, 88.0, 89.1, 90.2, 91.3, 92.4],
+    "optimistic": [80.5, 82.5, 84.6, 86.8, 89.0, 91.2, 93.5, 95.8, 98.1, 100.5, 102.9, 105.4],
+    "conservative": [80.5, 81.0, 81.5, 82.0, 82.5, 83.0, 83.5, 84.0, 84.5, 85.0, 85.5, 86.0]
+  },
+  
+  "incomeBreakdown": [
+    {
+      "source": "Custody Services",
+      "currentMonth": 33817862,
+      "lastMonth": 33257264,
+      "threeMonthAvg": 32750000,
+      "ytd": 338187200,
+      "growth": 2.7,
+      "trend": "UP"
+    },
+    {
+      "source": "Trade Processing",
+      "currentMonth": 20129680,
+      "lastMonth": 19800000,
+      "threeMonthAvg": 19500000,
+      "ytd": 201296800,
+      "growth": 3.3,
+      "trend": "UP"
+    },
+    {
+      "source": "Corporate Actions",
+      "currentMonth": 12077808,
+      "lastMonth": 11880000,
+      "threeMonthAvg": 11650000,
+      "ytd": 120778080,
+      "growth": 3.3,
+      "trend": "UP"
+    },
+    {
+      "source": "Advisory Services",
+      "currentMonth": 8051872,
+      "lastMonth": 7920000,
+      "threeMonthAvg": 7765000,
+      "ytd": 80518720,
+      "growth": 3.3,
+      "trend": "UP"
+    },
+    {
+      "source": "Reporting",
+      "currentMonth": 4025936,
+      "lastMonth": 3960000,
+      "threeMonthAvg": 3882500,
+      "ytd": 40259360,
+      "growth": 3.3,
+      "trend": "UP"
+    },
+    {
+      "source": "Other Services",
+      "currentMonth": 2415562,
+      "lastMonth": 2376000,
+      "threeMonthAvg": 2329500,
+      "ytd": 24155620,
+      "growth": 3.3,
+      "trend": "UP"
+    }
+  ]
+}

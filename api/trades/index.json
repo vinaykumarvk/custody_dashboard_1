@@ -1,0 +1,42 @@
+{
+  "totalTrades": 5247890,
+  "totalVolume": 89756423100,
+  "growth": 5.2,
+  "monthlyData": [
+    { "month": "Jan", "trades": 415000, "volume": 7125000000 },
+    { "month": "Feb", "trades": 423000, "volume": 7258000000 },
+    { "month": "Mar", "trades": 431000, "volume": 7392000000 },
+    { "month": "Apr", "trades": 438000, "volume": 7513000000 },
+    { "month": "May", "trades": 445000, "volume": 7635000000 },
+    { "month": "Jun", "trades": 452000, "volume": 7756000000 },
+    { "month": "Jul", "trades": 459000, "volume": 7878000000 },
+    { "month": "Aug", "trades": 466000, "volume": 8000000000 },
+    { "month": "Sep", "trades": 472000, "volume": 8100000000 },
+    { "month": "Oct", "trades": 479000, "volume": 8222000000 },
+    { "month": "Nov", "trades": 486000, "volume": 8343000000 },
+    { "month": "Dec", "trades": 493000, "volume": 8465000000 }
+  ],
+  "tradesByProduct": [
+    { "product": "MUTUAL FUND", "trades": 1312000 },
+    { "product": "FD", "trades": 1574370 },
+    { "product": "PORTFOLIO", "trades": 1049580 },
+    { "product": "EQUITIES", "trades": 787180 },
+    { "product": "BONDS", "trades": 524760 }
+  ],
+  "tradesByCustomerType": [
+    { "type": "Corporate", "trades": 2676410 },
+    { "type": "Individual", "trades": 1521880 },
+    { "type": "Institutional", "trades": 1049600 }
+  ],
+  "tradePerformance": {
+    "successRate": [98, 97, 99, 98, 96, 95, 97, 98, 99, 97, 96, 98],
+    "avgProcessingTime": [5, 4.5, 4.8, 5.2, 5.5, 6, 5.8, 5.5, 5, 4.8, 4.5, 4.2]
+  },
+  "largestTrades": [
+    { "id": "T-78954", "customer": "Reliance Industries", "product": "EQUITIES", "value": 1200000000, "date": "2023-12-10" },
+    { "id": "T-79012", "customer": "HDFC Bank", "product": "BONDS", "value": 850000000, "date": "2023-12-09" },
+    { "id": "T-79056", "customer": "TCS Ltd", "product": "PORTFOLIO", "value": 750000000, "date": "2023-12-08" },
+    { "id": "T-79089", "customer": "Infosys", "product": "MUTUAL FUND", "value": 600000000, "date": "2023-12-07" },
+    { "id": "T-79102", "customer": "SBI", "product": "EQUITIES", "value": 550000000, "date": "2023-12-06" }
+  ]
+}

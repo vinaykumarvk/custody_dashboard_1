@@ -1,0 +1,53 @@
+{
+  "totalCustomers": 139860,
+  "newCustomers": 20800,
+  "growth": 7.5,
+  "totalTrades": 5247890,
+  "totalTradeValue": 89756423100,
+  "tradeGrowth": 5.2,
+  "openEvents": 16,
+  "criticalEvents": 4,
+  "updated": true,
+  "entitlementValue": 72548900,
+  "totalIncome": 92650000,
+  "newIncome": 8250000,
+  "incomeGrowth": 4.8,
+  "metrics": {
+    "keyMetrics": [
+      { "label": "Total Customers", "value": 139860, "growth": 7.5, "icon": "fa-users" },
+      { "label": "Total Trades", "value": 5247890, "growth": 5.2, "icon": "fa-exchange-alt" },
+      { "label": "Open Events", "value": 16, "growth": -12.5, "icon": "fa-exclamation-circle" },
+      { "label": "Income (YTD)", "value": 92650000, "growth": 4.8, "icon": "fa-money-bill-wave" }
+    ],
+    "secondaryMetrics": [
+      { "label": "New Customers", "value": 20800, "growth": 2.5 },
+      { "label": "Trade Value", "value": 89756423100, "growth": 6.3 },
+      { "label": "Critical Events", "value": 4, "growth": -20.0 },
+      { "label": "New Income", "value": 8250000, "growth": 3.1 }
+    ]
+  },
+  "recentActivity": [
+    { "type": "CUSTOMER", "action": "New customer added", "entity": "Acme Corp", "time": "2 hours ago" },
+    { "type": "TRADE", "action": "Large trade executed", "entity": "HDFC Bank", "time": "3 hours ago" },
+    { "type": "EVENT", "action": "Critical event resolved", "entity": "Payment Failure", "time": "5 hours ago" },
+    { "type": "INCOME", "action": "Advisory fee received", "entity": "TCS Ltd", "time": "6 hours ago" },
+    { "type": "CUSTOMER", "action": "KYC updated", "entity": "Reliance Industries", "time": "8 hours ago" }
+  ],
+  "monthlyTrend": {
+    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "datasets": [
+      {
+        "label": "Customers",
+        "data": [115000, 119000, 122000, 125000, 128000, 130000, 132000, 134000, 136000, 137500, 138900, 139860]
+      },
+      {
+        "label": "Trades (thousands)",
+        "data": [4250, 4350, 4450, 4550, 4650, 4750, 4850, 4900, 5000, 5100, 5150, 5250]
+      },
+      {
+        "label": "Income (millions)",
+        "data": [65, 68, 71, 74, 76, 79, 81, 83, 86, 88, 90, 93]
+      }
+    ]
+  }
+}
