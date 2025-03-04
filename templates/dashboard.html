@@ -10,41 +10,71 @@
         </div>
     </div>
     
-    <!-- Key Metrics -->
+    <!-- Key Metrics - Uniform Size Boxes -->
     <div class="row metrics-row">
-        <div class="col-md-3" ng-repeat="metric in keyMetrics">
-            <div class="card metric-card">
-                <div class="card-body">
-                    <div class="metric-icon">
-                        <i class="fa" ng-class="metric.icon"></i>
-                    </div>
-                    <div class="metric-content">
-                        <h5 class="metric-title">{{ metric.label }}</h5>
-                        <h2 class="metric-value">{{ formatNumber(metric.value) }}</h2>
-                        <div class="metric-trend" ng-class="getTrendClass(metric.growth, metric.label.includes('Events'))">
-                            <i class="fa" ng-class="getTrendIcon(metric.growth, metric.label.includes('Events'))"></i>
-                            <span>{{ formatPercentage(metric.growth) }}</span>
-                        </div>
-                    </div>
-                </div>
+        <!-- Customers -->
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="dashboard-metric-box">
+                <h3>Customers</h3>
+                <div class="main-value">{{ formatNumberWithCommas(totalCustomers) }}</div>
+                <div class="subtitle">New customers</div>
+                <div class="secondary-value">{{ formatNumberWithCommas(newCustomers) }}</div>
+                <div class="time-period">Last 1 month</div>
             </div>
         </div>
-    </div>
-    
-    <!-- Secondary Metrics -->
-    <div class="row metrics-row">
-        <div class="col-md-3" ng-repeat="metric in secondaryMetrics">
-            <div class="card metric-card secondary-metric">
-                <div class="card-body">
-                    <div class="metric-content">
-                        <h5 class="metric-title">{{ metric.label }}</h5>
-                        <h3 class="metric-value">{{ formatNumber(metric.value) }}</h3>
-                        <div class="metric-trend" ng-class="getTrendClass(metric.growth, metric.label.includes('Critical'))">
-                            <i class="fa" ng-class="getTrendIcon(metric.growth, metric.label.includes('Critical'))"></i>
-                            <span>{{ formatPercentage(metric.growth) }}</span>
-                        </div>
-                    </div>
-                </div>
+        
+        <!-- Income -->
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="dashboard-metric-box">
+                <h3>Income</h3>
+                <div class="main-value">₹{{ formatNumberWithCommas(totalIncome / 100000) }}</div>
+                <div class="subtitle">New income</div>
+                <div class="secondary-value">₹{{ formatNumberWithCommas(newIncome / 100000) }}</div>
+                <div class="time-period">Last 3 months</div>
+            </div>
+        </div>
+        
+        <!-- Open Events -->
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="dashboard-metric-box">
+                <h3>Open events</h3>
+                <div class="main-value">{{ formatNumberWithCommas(openEvents) }}</div>
+                <div class="subtitle">Open entitlements</div>
+                <div class="secondary-value">{{ formatNumberWithCommas(5059041) }}</div>
+                <div class="time-period">All months</div>
+            </div>
+        </div>
+        
+        <!-- Total Trades -->
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="dashboard-metric-box">
+                <h3>Total trades</h3>
+                <div class="main-value">{{ formatNumberWithCommas(totalTrades) }}</div>
+                <div class="subtitle">Total volume</div>
+                <div class="secondary-value">{{ formatNumberWithCommas(totalTradeValue) }}</div>
+                <div class="time-period">All months</div>
+            </div>
+        </div>
+        
+        <!-- CA Processing -->
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="dashboard-metric-box">
+                <h3>CA Processing</h3>
+                <div class="main-value">{{ formatNumberWithCommas(criticalEvents) }}</div>
+                <div class="subtitle">Predictions</div>
+                <div class="secondary-value">{{ formatNumberWithCommas(8) }}</div>
+                <div class="time-period">Next month</div>
+            </div>
+        </div>
+        
+        <!-- Deal Processing -->
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="dashboard-metric-box">
+                <h3>Deal processing</h3>
+                <div class="main-value">{{ formatNumberWithCommas(12) }}</div>
+                <div class="subtitle">Predictions</div>
+                <div class="secondary-value">{{ formatNumberWithCommas(24) }}</div>
+                <div class="time-period">Next month</div>
             </div>
         </div>
     </div>

@@ -1,49 +1,44 @@
 {
-  "totalCustomers": 15842,
-  "newCustomers": 216,
-  "growthRate": 3.7,
-  "retentionRate": 96.3,
-  "avgTradesPerCustomer": 33.1,
-  "customerSegmentation": {
-    "labels": ["Enterprise", "Corporate", "Institutional", "Small Business", "Retail"],
-    "data": [24, 35, 18, 15, 8]
-  },
-  "customerGrowth": {
-    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    "data": [14800, 14900, 15000, 15100, 15200, 15300, 15400, 15450, 15550, 15650, 15750, 15842]
-  },
-  "newCustomersMonthly": {
-    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    "data": [160, 172, 165, 183, 190, 176, 168, 194, 203, 210, 224, 216]
-  },
-  "customerTradeActivity": {
-    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    "data": [31.2, 31.5, 31.8, 32.1, 32.3, 32.5, 32.6, 32.7, 32.8, 32.9, 33.0, 33.1]
-  },
+  "totalCustomers": 139860,
+  "newCustomers": 20800,
+  "growth": 7.5,
+  "monthlyData": [
+    { "month": "Jan", "customers": 115000 },
+    { "month": "Feb", "customers": 119000 },
+    { "month": "Mar", "customers": 122000 },
+    { "month": "Apr", "customers": 125000 },
+    { "month": "May", "customers": 128000 },
+    { "month": "Jun", "customers": 130000 },
+    { "month": "Jul", "customers": 132000 },
+    { "month": "Aug", "customers": 134000 },
+    { "month": "Sep", "customers": 136000 },
+    { "month": "Oct", "customers": 137500 },
+    { "month": "Nov", "customers": 138900 },
+    { "month": "Dec", "customers": 139860 }
+  ],
+  "customersByProduct": [
+    { "product": "MUTUAL FUND", "customers": 48850 },
+    { "product": "FD", "customers": 39920 },
+    { "product": "PORTFOLIO", "customers": 27880 },
+    { "product": "EQUITIES", "customers": 15920 },
+    { "product": "BONDS", "customers": 7290 }
+  ],
+  "customersByCategory": [
+    { "category": "Individual", "customers": 95705 },
+    { "category": "Corporate", "customers": 31820 },
+    { "category": "Institutional", "customers": 12335 }
+  ],
+  "acquisitionChannels": [
+    { "channel": "Direct", "customers": 78921 },
+    { "channel": "Referral", "customers": 33960 },
+    { "channel": "Partnership", "customers": 18776 },
+    { "channel": "Online", "customers": 8203 }
+  ],
   "topCustomers": [
-    { "name": "Reliance Industries Ltd", "trades": 8754, "value": 125000000, "growth": 8.2 },
-    { "name": "HDFC Bank", "trades": 7985, "value": 110500000, "growth": 6.5 },
-    { "name": "Tata Consultancy Services", "trades": 7250, "value": 95800000, "growth": 5.8 },
-    { "name": "Bharti Airtel Ltd", "trades": 6547, "value": 87500000, "growth": 4.3 },
-    { "name": "Infosys Ltd", "trades": 5842, "value": 76300000, "growth": 3.7 }
-  ],
-  "customerList": [
-    { "id": 1, "name": "Reliance Industries Ltd", "type": "Enterprise", "onboarded": "Jan 15, 2018", "status": "Active", "risk": "Low" },
-    { "id": 2, "name": "HDFC Bank", "type": "Institutional", "onboarded": "Mar 22, 2019", "status": "Active", "risk": "Low" },
-    { "id": 3, "name": "Tata Consultancy Services", "type": "Enterprise", "onboarded": "Feb 10, 2018", "status": "Active", "risk": "Low" },
-    { "id": 4, "name": "Bharti Airtel Ltd", "type": "Corporate", "onboarded": "Jul 05, 2020", "status": "Active", "risk": "Medium" },
-    { "id": 5, "name": "Infosys Ltd", "type": "Enterprise", "onboarded": "Sep 18, 2019", "status": "Active", "risk": "Low" },
-    { "id": 6, "name": "ICICI Bank Ltd", "type": "Institutional", "onboarded": "Apr 30, 2021", "status": "Active", "risk": "Low" },
-    { "id": 7, "name": "Kotak Mahindra Bank", "type": "Institutional", "onboarded": "Aug 12, 2020", "status": "Active", "risk": "Low" },
-    { "id": 8, "name": "Larsen & Toubro Ltd", "type": "Corporate", "onboarded": "Nov 25, 2019", "status": "Active", "risk": "Medium" },
-    { "id": 9, "name": "Axis Bank Ltd", "type": "Institutional", "onboarded": "Jan 08, 2021", "status": "Active", "risk": "Low" },
-    { "id": 10, "name": "State Bank of India", "type": "Institutional", "onboarded": "Dec 15, 2018", "status": "Active", "risk": "Low" }
-  ],
-  "recentCustomers": [
-    { "id": 15842, "name": "Tech Innovate Solutions", "type": "Small Business", "onboarded": "Today", "trades": 0, "value": 0 },
-    { "id": 15841, "name": "Global Fintech Systems", "type": "Corporate", "onboarded": "Yesterday", "trades": 12, "value": 850000 },
-    { "id": 15840, "name": "Quantum Investments", "type": "Small Business", "onboarded": "2 days ago", "trades": 28, "value": 1250000 },
-    { "id": 15839, "name": "Nexus Trade Partners", "type": "Corporate", "onboarded": "3 days ago", "trades": 45, "value": 2350000 },
-    { "id": 15838, "name": "Apptunix Solutions", "type": "Small Business", "onboarded": "4 days ago", "trades": 32, "value": 1450000 }
+    { "name": "Reliance Industries", "assets": 3250000000, "products": 5, "lastActivity": "2 hours ago" },
+    { "name": "HDFC Bank", "assets": 2980000000, "products": 4, "lastActivity": "5 hours ago" },
+    { "name": "TCS Ltd", "assets": 2750000000, "products": 3, "lastActivity": "1 day ago" },
+    { "name": "Infosys", "assets": 2620000000, "products": 4, "lastActivity": "2 days ago" },
+    { "name": "SBI", "assets": 2580000000, "products": 3, "lastActivity": "3 days ago" }
   ]
 }

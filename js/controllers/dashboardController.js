@@ -50,6 +50,16 @@ app.controller('DashboardController', function($scope, DataService) {
         // Set recent activity
         $scope.recentActivity = data.recentActivity;
         
+        // Pass data to top-level metrics
+        $scope.totalCustomers = data.totalCustomers;
+        $scope.totalTrades = data.totalTrades;
+        $scope.openEvents = data.openEvents;
+        $scope.totalIncome = data.totalIncome;
+        $scope.newCustomers = data.newCustomers;
+        $scope.totalTradeValue = data.totalTradeValue;
+        $scope.criticalEvents = data.criticalEvents;
+        $scope.newIncome = data.newIncome;
+        
         // Set monthly trend data for charts
         let customerTrend = data.monthlyTrend.datasets[0].data;
         let tradeTrend = data.monthlyTrend.datasets[1].data;
