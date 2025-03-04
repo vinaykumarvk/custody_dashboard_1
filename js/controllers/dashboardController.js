@@ -1,8 +1,12 @@
 // Dashboard controller
 app.controller('DashboardController', function($scope, $rootScope, DataService) {
+    // We're using the custom filter instead of these functions
     // Define number formatting functions using the rootScope utility
     $scope.formatNumberWithCommas = function(num) {
-        return $rootScope.formatNumber(num);
+        if (num === undefined || num === null || isNaN(num)) {
+            return '0';
+        }
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     };
     
     // Format date helper

@@ -18,11 +18,11 @@ app.config(function($routeProvider) {
     $routeProvider
         .when('/', {
             templateUrl: 'templates/dashboard.html',
-            controller: 'MainController'
+            controller: 'DashboardController'
         })
         .when('/dashboard', {
             templateUrl: 'templates/dashboard.html',
-            controller: 'MainController'
+            controller: 'DashboardController'
         })
         .when('/customers', {
             templateUrl: 'templates/customers.html',
