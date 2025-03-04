@@ -1,97 +1,36 @@
 {
+  "totalCustomers": 139860,
+  "newCustomers": 20800,
+  "growth": 7.5,
+  "totalTrades": 5247890,
+  "totalTradeValue": 89756423100,
+  "tradeGrowth": 5.2,
+  "openEvents": 16,
+  "criticalEvents": 4,
+  "entitlementValue": 72548900,
+  "totalIncome": 92650000,
+  "newIncome": 8250000,
+  "incomeGrowth": 4.8,
   "metrics": {
     "keyMetrics": [
-      {
-        "label": "Customers",
-        "value": 139860,
-        "growth": 7.5,
-        "icon": "fa-users"
-      },
-      {
-        "label": "Total Trades",
-        "value": 1021258,
-        "growth": 12.8,
-        "icon": "fa-exchange-alt"
-      },
-      {
-        "label": "Open Events",
-        "value": 16,
-        "growth": -12.5,
-        "icon": "fa-exclamation-circle"
-      },
-      {
-        "label": "Income",
-        "value": 80518720,
-        "growth": 5.3,
-        "icon": "fa-money-bill-wave"
-      }
+      { "label": "Total Customers", "value": 139860, "growth": 7.5, "icon": "fa-users" },
+      { "label": "Total Trades", "value": 5247890, "growth": 5.2, "icon": "fa-exchange-alt" },
+      { "label": "Open Events", "value": 16, "growth": -12.5, "icon": "fa-exclamation-circle" },
+      { "label": "Income (YTD)", "value": 92650000, "growth": 4.8, "icon": "fa-money-bill-wave" }
     ],
     "secondaryMetrics": [
-      {
-        "label": "New Customers",
-        "value": 20800,
-        "growth": 4.2
-      },
-      {
-        "label": "Trade Value",
-        "value": 11853498,
-        "growth": 8.7
-      },
-      {
-        "label": "Critical Events",
-        "value": 3,
-        "growth": -15.0
-      },
-      {
-        "label": "New Income",
-        "value": 25617360,
-        "growth": 2.1
-      }
+      { "label": "New Customers", "value": 20800, "growth": 2.5 },
+      { "label": "Trade Value", "value": 89756423100, "growth": 6.3 },
+      { "label": "Critical Events", "value": 4, "growth": -20.0 },
+      { "label": "New Income", "value": 8250000, "growth": 3.1 }
     ]
   },
   "recentActivity": [
-    {
-      "type": "CUSTOMER",
-      "action": "New Customer Onboarded",
-      "entity": "DH Capital Partners",
-      "time": "2025-03-04T08:30:22"
-    },
-    {
-      "type": "TRADE",
-      "action": "Large Trade Settled",
-      "entity": "BlackRock Global Assets",
-      "time": "2025-03-04T07:45:10"
-    },
-    {
-      "type": "EVENT",
-      "action": "Critical Event Resolved",
-      "entity": "Settlement Failure #DX2243",
-      "time": "2025-03-04T06:12:47"
-    },
-    {
-      "type": "INCOME",
-      "action": "New Income Received",
-      "entity": "Custody Fee Invoice #28923",
-      "time": "2025-03-04T05:30:15"
-    },
-    {
-      "type": "CUSTOMER",
-      "action": "Customer Details Updated",
-      "entity": "Morgan Stanley Wealth",
-      "time": "2025-03-03T18:22:36"
-    },
-    {
-      "type": "TRADE",
-      "action": "Trade Canceled",
-      "entity": "JP Morgan FX Settlement",
-      "time": "2025-03-03T16:40:18"
-    },
-    {
-      "type": "EVENT",
-      "action": "New Event Created",
-      "entity": "Corporate Action #CA5543",
-      "time": "2025-03-03T15:15:47"
-    }
+    { "type": "CUSTOMER", "action": "New customer added", "entity": "Acme Corp", "time": "2 hours ago" },
+    { "type": "TRADE", "action": "Large trade executed", "entity": "HDFC Bank", "time": "3 hours ago" },
+    { "type": "EVENT", "action": "Critical event resolved", "entity": "Payment Failure", "time": "5 hours ago" },
+    { "type": "INCOME", "action": "Advisory fee received", "entity": "TCS Ltd", "time": "6 hours ago" },
+    { "type": "CUSTOMER", "action": "KYC updated", "entity": "Reliance Industries", "time": "8 hours ago" }
   ],
   "monthlyTrend": {
     "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
@@ -101,44 +40,13 @@
         "data": [115000, 119000, 122000, 125000, 128000, 130000, 132000, 134000, 136000, 137500, 138900, 139860]
       },
       {
-        "label": "Trades",
-        "data": [750000, 790000, 820000, 850000, 870000, 900000, 925000, 950000, 975000, 990000, 1005000, 1021258]
+        "label": "Trades (thousands)",
+        "data": [4250, 4350, 4450, 4550, 4650, 4750, 4850, 4900, 5000, 5100, 5150, 5250]
       },
       {
-        "label": "Income (₹ millions)",
-        "data": [60.2, 62.5, 64.8, 67.3, 69.1, 71.5, 73.2, 75.0, 76.4, 77.8, 79.2, 80.5]
+        "label": "Income (millions)",
+        "data": [65, 68, 71, 74, 76, 79, 81, 83, 86, 88, 90, 93]
       }
     ]
-  },
-  "customersByProduct": {
-    "labels": ["Custody", "Fund Admin", "Vault Services", "Prime Broker", "Asset Servicing"],
-    "data": [45, 25, 10, 15, 5]
-  },
-  "tradeVolumeTrend": {
-    "data": [8.7, 9.1, 9.5, 9.8, 10.2, 10.5, 10.7, 10.9, 11.2, 11.4, 11.6, 11.8]
-  },
-  "eventResolution": {
-    "data": [92, 91, 93, 90, 92, 94, 96, 95, 97, 98, 97, 99]
-  },
-  "incomeDistribution": {
-    "labels": ["Custody Fees", "Transaction Fees", "Value-Added Services", "FX Services", "Other"],
-    "data": [35, 30, 20, 10, 5]
-  },
-  "forecast": {
-    "labels": ["Jan", "Feb", "Mar"],
-    "customerForecast": [143000, 146000, 150000],
-    "tradeForecast": [1050000, 1080000, 1110000],
-    "incomeForecast": [82.5, 84.7, 87.0]
-  },
-  "totalCustomers": 139860,
-  "totalTrades": 1021258,
-  "openEvents": 16,
-  "totalIncome": 80518720,
-  "growth": 7.5,
-  "tradeGrowth": 12.8,
-  "incomeGrowth": 5.3,
-  "newCustomers": 20800,
-  "totalTradeValue": 11853498,
-  "criticalEvents": 3,
-  "newIncome": 25617360
+  }
 }
