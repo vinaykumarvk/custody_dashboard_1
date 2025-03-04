@@ -36,7 +36,7 @@
                     </div>
                     <div class="metric-content">
                         <h5 class="metric-title">New Customers</h5>
-                        <h2 class="metric-value">{{ formatNumberWithCommas(newCustomers) }}</h2>
+                        <h2 class="metric-value">{{ newCustomers | number }}</h2>
                         <div class="metric-trend trend-up">
                             <i class="fa fa-arrow-up"></i>
                             <span>{{ formatPercentage(customerGrowth) }}</span>
@@ -53,7 +53,7 @@
                     </div>
                     <div class="metric-content">
                         <h5 class="metric-title">Active Users</h5>
-                        <h2 class="metric-value">{{ formatNumberWithCommas(activeUsers) }}</h2>
+                        <h2 class="metric-value">{{ activeUsers | number }}</h2>
                         <div class="metric-trend trend-up">
                             <i class="fa fa-arrow-up"></i>
                             <span>{{ activePercentage }}%</span>
@@ -70,7 +70,7 @@
                     </div>
                     <div class="metric-content">
                         <h5 class="metric-title">Retention Rate</h5>
-                        <h2 class="metric-value">{{ formatNumberWithCommas(retentionRate) }}%</h2>
+                        <h2 class="metric-value">{{ retentionRate | number }}%</h2>
                         <div class="metric-trend trend-up">
                             <i class="fa fa-arrow-up"></i>
                             <span>{{ retentionChange }}%</span>
@@ -314,17 +314,17 @@
                     <div class="risk-distribution">
                         <div class="risk-category">
                             <div class="risk-label">Low Risk</div>
-                            <div class="risk-value">{{ formatNumberWithCommas(12250) }}</div>
+                            <div class="risk-value">{{ 12250 | number }}</div>
                             <div class="risk-percentage">77.3%</div>
                         </div>
                         <div class="risk-category mt-3">
                             <div class="risk-label">Medium Risk</div>
-                            <div class="risk-value">{{ formatNumberWithCommas(2981) }}</div>
+                            <div class="risk-value">{{ 2981 | number }}</div>
                             <div class="risk-percentage">18.8%</div>
                         </div>
                         <div class="risk-category mt-3">
                             <div class="risk-label high-risk">High Risk</div>
-                            <div class="risk-value">{{ formatNumberWithCommas(611) }}</div>
+                            <div class="risk-value">{{ 611 | number }}</div>
                             <div class="risk-percentage">3.9%</div>
                         </div>
                     </div>
@@ -348,7 +348,7 @@
                             </div>
                             <div class="opportunity-content">
                                 <div class="opportunity-title">Upsell FD to Portfolio</div>
-                                <div class="opportunity-stats">{{ formatNumberWithCommas(1250) }} customers | Est. ₹1.8B</div>
+                                <div class="opportunity-stats">{{ 1250 | number }} customers | Est. ₹1.8B</div>
                             </div>
                         </div>
                         <div class="opportunity-item mt-3">
@@ -357,7 +357,7 @@
                             </div>
                             <div class="opportunity-content">
                                 <div class="opportunity-title">Cross-sell Equity Products</div>
-                                <div class="opportunity-stats">{{ formatNumberWithCommas(3450) }} customers | Est. ₹4.2B</div>
+                                <div class="opportunity-stats">{{ 3450 | number }} customers | Est. ₹4.2B</div>
                             </div>
                         </div>
                         <div class="opportunity-item mt-3">
@@ -366,7 +366,7 @@
                             </div>
                             <div class="opportunity-content">
                                 <div class="opportunity-title">Referral Program Expansion</div>
-                                <div class="opportunity-stats">Est. {{ formatNumberWithCommas(950) }} new customers</div>
+                                <div class="opportunity-stats">Est. {{ 950 | number }} new customers</div>
                             </div>
                         </div>
                     </div>
