@@ -1,90 +1,189 @@
 // Main controller for the dashboard application
-app.controller('MainController', function($scope, $location) {
-    // Track current path for highlighting active navigation
-    $scope.currentPath = $location.path();
+app.controller('MainController', function($scope, $location, DataService) {
+    // Initialize navigation
+    $scope.activeTab = 'dashboard';
     
-    // Update current path when location changes
-    $scope.$on('$locationChangeSuccess', function() {
-        $scope.currentPath = $location.path();
-    });
+    // Handle navigation
+    $scope.navigate = function(tab) {
+        $scope.activeTab = tab;
+        $location.path('/' + tab);
+    };
     
-    // Header metrics data (these would normally come from a service)
-    $scope.headerMetrics = {
-        customers: {
-            total: 139860,
-            new: 20800,
-            period: 'Last 1 month'
+    // Initialize chart options for the dashboard
+    $scope.lineChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
         },
-        income: {
-            total: '₹80.51.872',
-            new: '₹25.61.736',
-            period: 'Last 3 months'
-        },
-        openEvents: {
-            total: 16,
-            entitlements: 5059041,
-            period: 'All months'
-        },
-        totalTrades: {
-            total: 1021258,
-            volume: 11853498,
-            period: 'All months'
-        },
-        caProcessing: {
-            title: 'CA Processing',
-            subtitle: 'Predictions'
-        },
-        dealProcessing: {
-            title: 'Deal processing',
-            subtitle: 'Predictions'
+        legend: {
+            display: true,
+            position: 'top'
         }
     };
     
-    // Payment aging data
-    $scope.paymentAging = [
-        {
-            range: '0-30 Days',
-            amount: '₹2,679',
-            class: 'payment-green'
-        },
-        {
-            range: '31-60 Days',
-            amount: '₹0',
-            class: 'payment-yellow'
-        },
-        {
-            range: '61-90 Days',
-            amount: '₹3,669,666',
-            class: 'payment-orange'
-        },
-        {
-            range: '91+ Days',
-            amount: '₹36,805',
-            class: 'payment-red'
+    $scope.pieChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: {
+            display: true,
+            position: 'bottom'
         }
-    ];
+    };
     
-    // Tickets aging data
-    $scope.ticketsAging = [
-        {
-            range: '0-15 days',
-            count: 0,
-            class: 'ticket-green'
-        },
-        {
-            range: '16-30 days',
-            count: 2,
-            class: 'ticket-yellow'
-        },
-        {
-            range: '31-45 days',
-            count: 7,
-            class: 'ticket-orange'
-        },
-        {
-            range: '45+ days',
-            count: 29,
-            class: 'ticket-red'
+    $scope.barChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
         }
-    ];
+    };
+    
+    // Get dashboard data
+    DataService.getDashboardData().then(function(data) {
+        // Set key metrics
+        $scope.keyMetrics = data.metrics.keyMetrics;
+        $scope.secondaryMetrics = data.metrics.secondaryMetrics;
+        
+        // Set recent activity
+        $scope.recentActivity = data.recentActivity;
+        
+        // Set monthly trend data
+        $scope.monthLabels = data.monthlyTrend.labels;
+        $scope.monthlyData = data.monthlyTrend.datasets.map(dataset => dataset.data);
+        $scope.monthlyDataLabels = data.monthlyTrend.datasets.map(dataset => dataset.label);
+        
+        // Calculate additional metrics for dashboard display
+        $scope.totalCustomers = data.totalCustomers;
+        $scope.totalTrades = data.totalTrades;
+        $scope.openEvents = data.openEvents;
+        $scope.totalIncome = data.totalIncome;
+        
+        // Calculate growth indicators
+        $scope.customerGrowth = data.growth;
+        $scope.tradeGrowth = data.tradeGrowth;
+        $scope.eventChange = -12.5; // Event reduction is positive
+        $scope.incomeGrowth = data.incomeGrowth;
+        
+        // Calculate secondary metrics
+        $scope.newCustomers = data.newCustomers;
+        $scope.tradeValue = data.totalTradeValue;
+        $scope.criticalEvents = data.criticalEvents;
+        $scope.newIncome = data.newIncome;
+    });
+    
+    // Format numbers for display
+    $scope.formatNumber = function(number) {
+        // Check if the number exists and is a number
+        if (number === undefined || number === null || isNaN(number)) {
+            return '0';
+        }
+        
+        // Format based on magnitude
+        if (number >= 1000000000) {
+            return (number / 1000000000).toFixed(2) + 'B';
+        } else if (number >= 1000000) {
+            return (number / 1000000).toFixed(2) + 'M';
+        } else if (number >= 1000) {
+            return (number / 1000).toFixed(2) + 'K';
+        } else {
+            return number.toString();
+        }
+    };
+    
+    // Format percentages for display
+    $scope.formatPercentage = function(percentage) {
+        if (percentage === undefined || percentage === null || isNaN(percentage)) {
+            return '0%';
+        }
+        
+        return percentage.toFixed(1) + '%';
+    };
+    
+    // Format dates for display
+    $scope.formatDate = function(dateString) {
+        if (!dateString) return '';
+        
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-IN', { 
+            year: 'numeric',
+            month: 'short', 
+            day: 'numeric'
+        });
+    };
+    
+    // Determine CSS class for trend indicators
+    $scope.getTrendClass = function(value, inverted) {
+        if (!value || isNaN(value)) return '';
+        
+        // For metrics where reduction is positive (like events, errors)
+        if (inverted) {
+            return value < 0 ? 'trend-up' : (value > 0 ? 'trend-down' : 'trend-neutral');
+        }
+        
+        // For normal metrics where increase is positive
+        return value > 0 ? 'trend-up' : (value < 0 ? 'trend-down' : 'trend-neutral');
+    };
+    
+    // Get icon for trend indicators
+    $scope.getTrendIcon = function(value, inverted) {
+        if (!value || isNaN(value)) return 'fa-minus';
+        
+        // For metrics where reduction is positive
+        if (inverted) {
+            return value < 0 ? 'fa-arrow-up' : (value > 0 ? 'fa-arrow-down' : 'fa-minus');
+        }
+        
+        // For normal metrics where increase is positive
+        return value > 0 ? 'fa-arrow-up' : (value < 0 ? 'fa-arrow-down' : 'fa-minus');
+    };
+    
+    // Determine background color class based on status
+    $scope.getStatusClass = function(status) {
+        status = status.toLowerCase();
+        
+        if (status === 'completed' || status === 'resolved' || status === 'active') {
+            return 'bg-success';
+        } else if (status === 'pending' || status === 'in progress' || status === 'processing') {
+            return 'bg-warning';
+        } else if (status === 'critical' || status === 'escalated' || status === 'failed') {
+            return 'bg-danger';
+        } else {
+            return 'bg-info';
+        }
+    };
+    
+    // Determine priority class for visual indicators
+    $scope.getPriorityClass = function(priority) {
+        priority = priority.toLowerCase();
+        
+        if (priority === 'critical') {
+            return 'priority-critical';
+        } else if (priority === 'high') {
+            return 'priority-high';
+        } else if (priority === 'medium') {
+            return 'priority-medium';
+        } else if (priority === 'low') {
+            return 'priority-low';
+        } else {
+            return '';
+        }
+    };
+    
+    // Initialize any other required functionality
+    $scope.init = function() {
+        // Any additional initialization can go here
+        console.log('Main controller initialized');
+    };
+    
+    // Call init function
+    $scope.init();
 });

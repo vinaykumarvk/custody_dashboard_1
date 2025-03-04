@@ -1,7 +1,7 @@
 // Dashboard controller
-app.controller('DashboardController', function($scope) {
-    // Default chart options
-    $scope.chartOptions = {
+app.controller('DashboardController', function($scope, DataService) {
+    // Initialize chart options
+    $scope.lineChartOptions = {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
@@ -14,33 +14,19 @@ app.controller('DashboardController', function($scope) {
         legend: {
             display: true,
             position: 'top'
-        },
-        elements: {
-            line: {
-                tension: 0.4,
-                borderWidth: 2
-            },
-            point: {
-                radius: 3,
-                hitRadius: 10,
-                hoverRadius: 5
-            }
         }
     };
     
-    // Donut chart options
-    $scope.donutOptions = {
+    $scope.pieChartOptions = {
         responsive: true,
         maintainAspectRatio: false,
         legend: {
             display: true,
             position: 'bottom'
-        },
-        cutoutPercentage: 70
+        }
     };
     
-    // Bar chart options for predictions
-    $scope.barOptions = {
+    $scope.barChartOptions = {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
@@ -49,65 +35,63 @@ app.controller('DashboardController', function($scope) {
                     beginAtZero: true
                 }
             }]
-        },
-        legend: {
-            display: true,
-            position: 'top'
         }
     };
     
-    // Common month labels for charts
+    // Month labels
     $scope.monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     
-    // Sample data for charts
-    
-    // Trades Chart Data
-    $scope.tradesChartData = [
-        [1250, 1380, 1520, 1340, 1900, 2100, 2300, 2150, 2400, 2600, 2800, 3100]
-    ];
-    
-    // Customers Chart Data
-    $scope.customersChartData = [
-        [950, 1000, 1150, 1200, 1300, 1400, 1550, 1600, 1700, 1750, 1850, 2000]
-    ];
-    
-    // Income Chart Data
-    $scope.incomeChartData = [
-        [5600, 5900, 6200, 6100, 6800, 7200, 7500, 7300, 7900, 8200, 8500, 9000]
-    ];
-    
-    // Events Chart Data
-    $scope.eventsChartData = [
-        [10, 8, 12, 11, 9, 15, 14, 13, 16, 15, 18, 16]
-    ];
-    
-    // Product distribution data
-    $scope.productLabels = ['MUTUAL FUND', 'FD', 'PORTFOLIO'];
-    
-    // Customers by product
-    $scope.productCustomersData = [2800, 3100, 4100];
-    
-    // Income by product
-    $scope.productIncomeData = [2041976.21, 1765430.99, 1607418.08];
-    
-    // Trade volume by product
-    $scope.productVolumeData = [69200.00, 1564498.00, 3369000.00];
-    
-    // Prediction data
-    $scope.predictionLabels = ['Sep', 'Oct', 'Nov'];
-    $scope.predictionYears = ['2023', '2024', '2025'];
-    
-    // Transaction rate prediction
-    $scope.transactionPredictionData = [
-        [2.74, 3.71, 2.21],  // 2023
-        [3.0, 3.73, 3.89],   // 2024
-        [4.3, 4.54, 3.98]    // 2025
-    ];
-    
-    // Client growth prediction
-    $scope.clientPredictionData = [
-        [21.67, 29.27, 22.14],  // 2023
-        [30.03, 26.6, 30.54],   // 2024
-        [40.23, 49.61, 45.39]   // 2025
-    ];
+    // Fetch dashboard data
+    DataService.getDashboardData().then(function(data) {
+        // Set key metrics
+        $scope.keyMetrics = data.metrics.keyMetrics;
+        $scope.secondaryMetrics = data.metrics.secondaryMetrics;
+        
+        // Set recent activity
+        $scope.recentActivity = data.recentActivity;
+        
+        // Set monthly trend data for charts
+        let customerTrend = data.monthlyTrend.datasets[0].data;
+        let tradeTrend = data.monthlyTrend.datasets[1].data;
+        let incomeTrend = data.monthlyTrend.datasets[2].data;
+        
+        $scope.trendData = [
+            customerTrend,
+            tradeTrend,
+            incomeTrend
+        ];
+        
+        $scope.trendLabels = ['Customers', 'Trades (thousands)', 'Income (millions)'];
+        
+        // Create custom chart data for the dashboard
+        // Customer distribution by product
+        $scope.customersByProductLabels = ['MUTUAL FUND', 'FD', 'PORTFOLIO', 'EQUITIES', 'BONDS'];
+        $scope.customersByProductData = [4850, 3920, 2780, 2590, 1702];
+        
+        // Trade volume trend
+        $scope.tradeVolumeTrendData = [
+            [712.5, 725.8, 739.2, 751.3, 763.5, 775.6, 787.8, 800.0, 810.0, 822.2, 834.3, 846.5]
+        ];
+        
+        // Event resolution rate
+        $scope.eventResolutionData = [
+            [92.5, 93.1, 93.8, 94.2, 94.6, 95.0, 95.5, 96.0, 96.5, 97.0, 97.5, 98.0] // Resolution rate
+        ];
+        
+        // Income distribution
+        $scope.incomeDistributionLabels = ['Transaction Fees', 'Advisory Services', 'Custody Fees', 'Interest Income', 'Other Fees'];
+        $scope.incomeDistributionData = [37.06, 20.38, 16.68, 10.19, 8.34];
+        
+        // Create forecast data
+        $scope.forecastLabels = ['Jan', 'Feb', 'Mar'];
+        $scope.customerForecastData = [
+            [15970, 16100, 16230]
+        ];
+        $scope.tradeForecastData = [
+            [530000, 536000, 542000]
+        ];
+        $scope.incomeForecastData = [
+            [9.5, 9.7, 9.9]
+        ];
+    });
 });
