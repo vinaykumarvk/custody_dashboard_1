@@ -16,9 +16,9 @@
         <div class="col-lg-2 col-md-4 col-sm-6">
             <div class="dashboard-metric-box">
                 <h3>Customers</h3>
-                <div class="main-value">{{ formatNumberWithCommas(totalCustomers) }}</div>
+                <div class="main-value">{{ totalCustomers | numberFormat }}</div>
                 <div class="subtitle">New customers</div>
-                <div class="secondary-value">{{ formatNumberWithCommas(newCustomers) }}</div>
+                <div class="secondary-value">{{ newCustomers | numberFormat }}</div>
                 <div class="time-period">Last 1 month</div>
             </div>
         </div>
@@ -27,9 +27,9 @@
         <div class="col-lg-2 col-md-4 col-sm-6">
             <div class="dashboard-metric-box">
                 <h3>Income</h3>
-                <div class="main-value">₹{{ formatNumberWithCommas(totalIncome / 100000) }}</div>
+                <div class="main-value">₹{{ totalIncome / 100000 | numberFormat }}</div>
                 <div class="subtitle">New income</div>
-                <div class="secondary-value">₹{{ formatNumberWithCommas(newIncome / 100000) }}</div>
+                <div class="secondary-value">₹{{ newIncome / 100000 | numberFormat }}</div>
                 <div class="time-period">Last 3 months</div>
             </div>
         </div>
@@ -38,9 +38,9 @@
         <div class="col-lg-2 col-md-4 col-sm-6">
             <div class="dashboard-metric-box">
                 <h3>Open events</h3>
-                <div class="main-value">{{ formatNumberWithCommas(openEvents) }}</div>
+                <div class="main-value">{{ openEvents | numberFormat }}</div>
                 <div class="subtitle">Open entitlements</div>
-                <div class="secondary-value">{{ formatNumberWithCommas(5059041) }}</div>
+                <div class="secondary-value">{{ 5059041 | numberFormat }}</div>
                 <div class="time-period">All months</div>
             </div>
         </div>
@@ -49,9 +49,9 @@
         <div class="col-lg-2 col-md-4 col-sm-6">
             <div class="dashboard-metric-box">
                 <h3>Total trades</h3>
-                <div class="main-value">{{ formatNumberWithCommas(totalTrades) }}</div>
+                <div class="main-value">{{ totalTrades | numberFormat }}</div>
                 <div class="subtitle">Total volume</div>
-                <div class="secondary-value">{{ formatNumberWithCommas(totalTradeValue) }}</div>
+                <div class="secondary-value">{{ totalTradeValue | numberFormat }}</div>
                 <div class="time-period">All months</div>
             </div>
         </div>
@@ -60,9 +60,9 @@
         <div class="col-lg-2 col-md-4 col-sm-6">
             <div class="dashboard-metric-box">
                 <h3>CA Processing</h3>
-                <div class="main-value">{{ formatNumberWithCommas(criticalEvents) }}</div>
+                <div class="main-value">{{ criticalEvents | numberFormat }}</div>
                 <div class="subtitle">Predictions</div>
-                <div class="secondary-value">{{ formatNumberWithCommas(8) }}</div>
+                <div class="secondary-value">{{ 8 | numberFormat }}</div>
                 <div class="time-period">Next month</div>
             </div>
         </div>
@@ -71,9 +71,9 @@
         <div class="col-lg-2 col-md-4 col-sm-6">
             <div class="dashboard-metric-box">
                 <h3>Deal processing</h3>
-                <div class="main-value">{{ formatNumberWithCommas(12) }}</div>
+                <div class="main-value">{{ 12 | numberFormat }}</div>
                 <div class="subtitle">Predictions</div>
-                <div class="secondary-value">{{ formatNumberWithCommas(24) }}</div>
+                <div class="secondary-value">{{ 24 | numberFormat }}</div>
                 <div class="time-period">Next month</div>
             </div>
         </div>

@@ -3,6 +3,16 @@
 // Initialize the Angular application
 var app = angular.module('eMACHCustodyApp', ['ngRoute', 'chart.js']);
 
+// Add a number formatting filter
+app.filter('numberFormat', function() {
+    return function(input) {
+        if (input === undefined || input === null || isNaN(input)) {
+            return '0';
+        }
+        return input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
+});
+
 // Configure routes
 app.config(function($routeProvider) {
     $routeProvider

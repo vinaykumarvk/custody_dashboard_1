@@ -99,19 +99,15 @@ app.controller('MainController', function($scope, $rootScope, $location, DataSer
         }
     };
     
-    // Format regular numbers with thousand separators
+    // Format regular numbers with thousand separators - now using the Angular filter
     $scope.formatNumberWithCommas = function(number) {
         if (number === undefined || number === null || isNaN(number)) {
             return '0';
         }
         
-        // Use $rootScope formatNumber utility if available, otherwise use the default implementation
-        if ($rootScope && $rootScope.formatNumber) {
-            return $rootScope.formatNumber(number);
-        } else {
-            // Convert to string with commas as thousand separators
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
+        // This function is now replaced with the numberFormat filter in app.js
+        // But we keep it for backward compatibility
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     };
     
     // Format percentages for display
