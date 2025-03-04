@@ -1,0 +1,66 @@
+{
+  "totalTrades": 524789,
+  "totalTradeValue": 8975642310,
+  "tradeGrowth": 5.2,
+  "avgTradeValue": 17103.1,
+  "dailyTradeVolume": 2385.4,
+  
+  "tradeVolumeData": {
+    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "data": [425000, 435000, 445000, 455000, 465000, 475000, 485000, 490000, 500000, 510000, 515000, 525000]
+  },
+  
+  "tradeValueData": {
+    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "data": [6900000000, 7100000000, 7325000000, 7550000000, 7775000000, 8000000000, 8220000000, 8450000000, 8675000000, 8800000000, 8900000000, 8975000000]
+  },
+  
+  "tradeTypeDistribution": {
+    "labels": ["Equity", "Debt", "Derivatives", "Mutual Funds", "ETFs", "Other"],
+    "data": [48, 22, 15, 10, 3, 2]
+  },
+  
+  "tradeSizeDistribution": {
+    "labels": ["Small (<₹1L)", "Medium (₹1L-10L)", "Large (₹10L-1Cr)", "Very Large (>₹1Cr)"],
+    "data": [25, 45, 22, 8]
+  },
+  
+  "tradeVolumeByDay": {
+    "labels": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+    "data": [2215, 2350, 2425, 2580, 2350]
+  },
+  
+  "tradeSettlementStatus": {
+    "labels": ["Settled", "In Progress", "Failed", "Pending"],
+    "data": [92, 6, 0.5, 1.5]
+  },
+  
+  "recentTrades": [
+    { "id": "TRD-2025030400001", "customer": "Reliance Industries", "type": "Equity", "value": 12500000, "status": "Settled", "timestamp": "09:32:15" },
+    { "id": "TRD-2025030400002", "customer": "HDFC Bank", "type": "Debt", "value": 8750000, "status": "Settled", "timestamp": "09:45:22" },
+    { "id": "TRD-2025030400003", "customer": "TCS Ltd", "type": "Equity", "value": 6500000, "status": "Settled", "timestamp": "10:01:48" },
+    { "id": "TRD-2025030400004", "customer": "Infosys Ltd", "type": "Derivatives", "value": 5200000, "status": "In Progress", "timestamp": "10:15:33" },
+    { "id": "TRD-2025030400005", "customer": "Bharti Airtel", "type": "Equity", "value": 4750000, "status": "Settled", "timestamp": "10:22:05" },
+    { "id": "TRD-2025030400006", "customer": "Kotak Mahindra Bank", "type": "Mutual Funds", "value": 3800000, "status": "Settled", "timestamp": "10:35:17" },
+    { "id": "TRD-2025030400007", "customer": "ICICI Bank", "type": "ETF", "value": 2950000, "status": "Settled", "timestamp": "10:44:59" },
+    { "id": "TRD-2025030400008", "customer": "Larsen & Toubro", "type": "Equity", "value": 5100000, "status": "In Progress", "timestamp": "10:53:26" },
+    { "id": "TRD-2025030400009", "customer": "Axis Bank", "type": "Debt", "value": 4250000, "status": "Settled", "timestamp": "11:07:42" },
+    { "id": "TRD-2025030400010", "customer": "SBI", "type": "Equity", "value": 3650000, "status": "Settled", "timestamp": "11:18:15" }
+  ],
+  
+  "topTradeCustomers": [
+    { "customer": "Reliance Industries Ltd", "trades": 8754, "value": 125000000, "avgTradeSize": 14279 },
+    { "customer": "HDFC Bank", "trades": 7985, "value": 110500000, "avgTradeSize": 13839 },
+    { "customer": "Tata Consultancy Services", "trades": 7250, "value": 95800000, "avgTradeSize": 13214 },
+    { "customer": "Bharti Airtel Ltd", "trades": 6547, "value": 87500000, "avgTradeSize": 13365 },
+    { "customer": "Infosys Ltd", "trades": 5842, "value": 76300000, "avgTradeSize": 13059 }
+  ],
+  
+  "tradeExceptions": [
+    { "id": "EXC-2025-001", "trade": "TRD-2025030300128", "customer": "Axis Bank", "type": "Settlement Failure", "value": 3500000, "status": "Pending", "age": "1 day" },
+    { "id": "EXC-2025-002", "trade": "TRD-2025030300256", "customer": "ICICI Bank", "type": "Reconciliation Error", "value": 2800000, "status": "Under Review", "age": "1 day" },
+    { "id": "EXC-2025-003", "trade": "TRD-2025030200487", "customer": "Larsen & Toubro", "type": "Missing Documentation", "value": 4200000, "status": "Pending", "age": "2 days" },
+    { "id": "EXC-2025-004", "trade": "TRD-2025030200512", "customer": "Kotak Mahindra Bank", "type": "Settlement Failure", "value": 3100000, "status": "Escalated", "age": "2 days" },
+    { "id": "EXC-2025-005", "trade": "TRD-2025030100745", "customer": "SBI", "type": "Reconciliation Error", "value": 2650000, "status": "Resolved", "age": "3 days" }
+  ]
+}

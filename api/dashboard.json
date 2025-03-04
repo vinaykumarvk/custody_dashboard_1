@@ -1,0 +1,52 @@
+{
+  "totalCustomers": 15842,
+  "newCustomers": 216,
+  "growth": 3.7,
+  "totalTrades": 524789,
+  "totalTradeValue": 8975642310,
+  "tradeGrowth": 5.2,
+  "openEvents": 16,
+  "criticalEvents": 4,
+  "entitlementValue": 72548900,
+  "totalIncome": 92650000,
+  "newIncome": 8250000,
+  "incomeGrowth": 4.8,
+  "metrics": {
+    "keyMetrics": [
+      { "label": "Total Customers", "value": 15842, "growth": 3.7, "icon": "fa-users" },
+      { "label": "Total Trades", "value": 524789, "growth": 5.2, "icon": "fa-exchange-alt" },
+      { "label": "Open Events", "value": 16, "growth": -12.5, "icon": "fa-exclamation-circle" },
+      { "label": "Income (YTD)", "value": 92650000, "growth": 4.8, "icon": "fa-money-bill-wave" }
+    ],
+    "secondaryMetrics": [
+      { "label": "New Customers", "value": 216, "growth": 2.5 },
+      { "label": "Trade Value", "value": 8975642310, "growth": 6.3 },
+      { "label": "Critical Events", "value": 4, "growth": -20.0 },
+      { "label": "New Income", "value": 8250000, "growth": 3.1 }
+    ]
+  },
+  "recentActivity": [
+    { "type": "CUSTOMER", "action": "New customer added", "entity": "Acme Corp", "time": "2 hours ago" },
+    { "type": "TRADE", "action": "Large trade executed", "entity": "HDFC Bank", "time": "3 hours ago" },
+    { "type": "EVENT", "action": "Critical event resolved", "entity": "Payment Failure", "time": "5 hours ago" },
+    { "type": "INCOME", "action": "Advisory fee received", "entity": "TCS Ltd", "time": "6 hours ago" },
+    { "type": "CUSTOMER", "action": "KYC updated", "entity": "Reliance Industries", "time": "8 hours ago" }
+  ],
+  "monthlyTrend": {
+    "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "datasets": [
+      {
+        "label": "Customers",
+        "data": [14800, 14900, 15000, 15100, 15200, 15300, 15400, 15450, 15550, 15650, 15750, 15842]
+      },
+      {
+        "label": "Trades (thousands)",
+        "data": [425, 435, 445, 455, 465, 475, 485, 490, 500, 510, 515, 525]
+      },
+      {
+        "label": "Income (millions)",
+        "data": [6.5, 6.8, 7.1, 7.4, 7.6, 7.9, 8.1, 8.3, 8.6, 8.8, 9.0, 9.3]
+      }
+    ]
+  }
+}
