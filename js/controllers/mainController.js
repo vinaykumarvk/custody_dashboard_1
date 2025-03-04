@@ -195,6 +195,16 @@ app.controller('MainController', function($scope, $rootScope, $location, DataSer
     
     // Initialize any other required functionality
     $scope.init = function() {
+        // Add the standard number formatting function to rootScope so it's available across all controllers
+        $rootScope.formatNumber = function(number) {
+            if (number === undefined || number === null || isNaN(number)) {
+                return '0';
+            }
+            
+            // Convert to string with commas as thousand separators for Smart Bank standard format
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        };
+        
         // Any additional initialization can go here
         console.log('Main controller initialized');
     };

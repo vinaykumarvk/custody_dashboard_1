@@ -4,7 +4,20 @@
  * Controller for the Income page of the eMACH Custody Dashboard
  */
 angular.module('eMACHApp')
-    .controller('IncomeController', ['$scope', 'DataService', '$filter', function($scope, DataService, $filter) {
+    .controller('IncomeController', ['$scope', 'DataService', '$filter', '$rootScope', function($scope, DataService, $filter, $rootScope) {
+        // Define number formatting functions using the rootScope utility
+        $scope.formatNumberWithCommas = function(num) {
+            return $rootScope.formatNumber(num);
+        };
+        
+        // Format date helper
+        $scope.formatDate = function(date) {
+            return date.toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        };
         console.log('Income controller initialized');
         
         // Initialize data

@@ -19,7 +19,7 @@
                     </div>
                     <div class="metric-content">
                         <h5 class="metric-title">Total Customers</h5>
-                        <h2 class="metric-value">{{ formatNumber(totalCustomers) }}</h2>
+                        <h2 class="metric-value">{{ formatNumberWithCommas(totalCustomers) }}</h2>
                         <div class="metric-trend" ng-class="getTrendClass(customerGrowth)">
                             <i class="fa" ng-class="getTrendIcon(customerGrowth)"></i>
                             <span>{{ formatPercentage(customerGrowth) }}</span>
