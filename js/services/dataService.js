@@ -153,7 +153,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.trades);
         }
         
-        return $http.get('api/trades')
+        return $http.get('api/trades/index.json')
             .then(function(response) {
                 cache.trades = response.data;
                 return cache.trades;
@@ -216,7 +216,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.income);
         }
         
-        return $http.get('api/income')
+        return $http.get('api/income/index.json')
             .then(function(response) {
                 cache.income = response.data;
                 return cache.income;
