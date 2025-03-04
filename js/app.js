@@ -1,6 +1,6 @@
 // eMACH Custody Dashboard Application
 
-// Initialize the Angular application
+// Initialize the Angular application with dependencies
 var app = angular.module('eMACHCustodyApp', ['ngRoute', 'chart.js']);
 
 // Add a number formatting filter
