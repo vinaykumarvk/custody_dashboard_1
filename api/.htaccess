@@ -1,0 +1,17 @@
+# Rewrite rules for API endpoints
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  
+  # If requesting a directory without trailing slash, add the trailing slash
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^(.+[^/])$ $1/ [R=301,L]
+  
+  # If requesting a directory, serve the index.json file
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^(.*)$ $1/index.json [L]
+</IfModule>
+
+# Default file types
+<IfModule mod_mime.c>
+  AddType application/json .json
+</IfModule>

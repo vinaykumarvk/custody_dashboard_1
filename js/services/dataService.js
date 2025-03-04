@@ -9,14 +9,46 @@ app.service('DataService', function($http, $q) {
         return data;
     }
     
+    // Helper function to try multiple API URLs with fallbacks
+    function getAPIWithFallbacks(paths, cacheName) {
+        // Try each path in sequence until one works
+        function tryNextPath(index) {
+            if (index >= paths.length) {
+                console.error('All API paths failed for', cacheName);
+                return $q.reject('All API paths failed');
+            }
+            
+            // Add cache busting parameter
+            const cacheBuster = '?v=' + new Date().getTime();
+            return $http.get(paths[index] + cacheBuster)
+                .then(function(response) {
+                    return response;
+                })
+                .catch(function(error) {
+                    console.warn('API path failed:', paths[index], error);
+                    // Try next path
+                    return tryNextPath(index + 1);
+                });
+        }
+        
+        return tryNextPath(0);
+    }
+    
     // Get dashboard overview data
     this.getDashboardData = function() {
         if (cache.dashboard) {
             return $q.resolve(cache.dashboard);
         }
         
-        // Use direct path to index.json with cache busting
-        return $http.get('api/dashboard/index.json?v=' + new Date().getTime())
+        // Multiple paths to try in order (with fallbacks)
+        const apiPaths = [
+            'api/dashboard/index.json',
+            'api/dashboard/index',
+            'api/dashboard.json',
+            'api/dashboard'
+        ];
+        
+        return getAPIWithFallbacks(apiPaths, 'dashboard')
             .then(function(response) {
                 cache.dashboard = response.data;
                 return cache.dashboard;
