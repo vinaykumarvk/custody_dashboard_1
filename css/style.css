@@ -6,11 +6,11 @@
  */
 
 :root {
-    --primary-color: #4e73df;
-    --primary-dark: #2e59d9;
-    --primary-light: #6f8be4;
+    --primary-color: #006400; /* Smart Bank Green */
+    --primary-dark: #005000;
+    --primary-light: #008000;
     --success-color: #1cc88a;
-    --header-color: #28a745; /* Green background for header per file #7 */
+    --header-color: #006400; /* Green background for header per file #7 */
     --info-color: #36b9cc;
     --warning-color: #f6c23e;
     --danger-color: #e74a3b;
@@ -698,6 +698,9 @@ body {
     font-weight: 700;
     color: var(--dark-color);
     margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dashboard-metric-box .subtitle {
@@ -710,6 +713,9 @@ body {
     font-size: 1.5rem;
     font-weight: 600;
     color: var(--dark-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dashboard-metric-box .time-period {
