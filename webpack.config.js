@@ -32,12 +32,13 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './public/index.html'
+      template: './index.html',
+      filename: 'index.html'
     })
   ],
   devServer: {
     static: {
-      directory: path.join(__dirname, 'public'),
+      directory: path.join(__dirname, '.'),
     },
     port: 5000,
     historyApiFallback: true,
@@ -46,6 +47,9 @@ module.exports = {
     allowedHosts: 'all',
     client: {
       webSocketURL: 'auto://0.0.0.0:0/ws'
+    },
+    devMiddleware: {
+      publicPath: '/'
     }
   }
 };
