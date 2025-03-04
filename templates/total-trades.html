@@ -1,118 +1,340 @@
-<div class="container-fluid">
-    <div class="section-title">Total Trades Overview</div>
-    
-    <!-- Summary Stats -->
+<!-- Total Trades Template -->
+<div class="container-fluid" ng-controller="TotalTradesController">
     <div class="row">
-        <div class="col-md-3">
-            <div class="metric-container">
-                <div class="metric-title">Total Trades</div>
-                <div class="metric-value">{{totalTrades | number}}</div>
-                <div class="metric-subtitle">Period</div>
-                <div class="metric-subvalue">All time</div>
+        <div class="col-12">
+            <div class="page-header">
+                <h1>Total Trades</h1>
+                <p class="text-muted">Trading activity analysis</p>
             </div>
         </div>
-        
+    </div>
+    
+    <!-- Trade Metrics -->
+    <div class="row metrics-row">
         <div class="col-md-3">
-            <div class="metric-container">
-                <div class="metric-title">Total Volume</div>
-                <div class="metric-value">{{totalVolume | number}}</div>
-                <div class="metric-subtitle">Period</div>
-                <div class="metric-subvalue">All time</div>
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon">
+                        <i class="fa fa-exchange-alt"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h5 class="metric-title">Total Trades</h5>
+                        <h2 class="metric-value">{{ formatNumber(totalTrades) }}</h2>
+                        <div class="metric-trend" ng-class="getTrendClass(tradeGrowth)">
+                            <i class="fa" ng-class="getTrendIcon(tradeGrowth)"></i>
+                            <span>{{ formatPercentage(tradeGrowth) }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
         <div class="col-md-3">
-            <div class="metric-container">
-                <div class="metric-title">Monthly Average</div>
-                <div class="metric-value">{{monthlyAverage | number}}</div>
-                <div class="metric-subtitle">Change</div>
-                <div class="metric-subvalue">{{monthlyChange}}%</div>
-                <div class="metric-subtext">From previous period</div>
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon">
+                        <i class="fa fa-chart-line"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h5 class="metric-title">Total Volume</h5>
+                        <h2 class="metric-value">{{ formatNumber(totalVolume) }}</h2>
+                        <div class="metric-trend trend-up">
+                            <i class="fa fa-arrow-up"></i>
+                            <span>{{ formatPercentage(tradeGrowth) }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
         <div class="col-md-3">
-            <div class="metric-container">
-                <div class="metric-title">Trade Growth</div>
-                <div class="metric-value">{{tradeGrowth}}%</div>
-                <div class="metric-subtitle">Period</div>
-                <div class="metric-subvalue">Last 12 months</div>
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon">
+                        <i class="fa fa-calendar-check"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h5 class="metric-title">Monthly Average</h5>
+                        <h2 class="metric-value">{{ formatNumber(monthlyAverage) }}</h2>
+                        <div class="metric-trend trend-up">
+                            <i class="fa fa-arrow-up"></i>
+                            <span>{{ monthlyChange }}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon">
+                        <i class="fa fa-chart-bar"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h5 class="metric-title">Growth Rate</h5>
+                        <h2 class="metric-value">{{ formatPercentage(tradeGrowth) }}</h2>
+                        <div class="metric-trend trend-up">
+                            <i class="fa fa-arrow-up"></i>
+                            <span>0.5%</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
     <!-- Charts Section -->
     <div class="row">
+        <!-- Trade Volume Trend -->
         <div class="col-md-8">
-            <div class="chart-container">
-                <div class="chart-title">Trade Volume Trend</div>
-                <div class="chart-subtitle">Last 12 months</div>
-                <canvas id="trade-volume-chart" class="chart" chart-data="tradeVolumeData" chart-labels="monthLabels" 
-                        chart-series="['Trade Volume']" chart-options="lineChartOptions" chart-type="line"></canvas>
+            <div class="card">
+                <div class="card-header">
+                    <h5>Trade Volume Trend (in thousands)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="tradeVolumeChart" class="chart-container"
+                            chart-data="tradeVolumeData"
+                            chart-labels="monthLabels"
+                            chart-series="['Volume (in thousands)']"
+                            chart-options="lineChartOptions"
+                            chart-type="line"></canvas>
+                </div>
             </div>
         </div>
         
+        <!-- Distribution by Product -->
         <div class="col-md-4">
-            <div class="chart-container">
-                <div class="chart-title">Trades by Product</div>
-                <div class="chart-subtitle">Distribution</div>
-                <canvas id="trades-by-product-chart" class="chart" chart-data="tradesByProductData" chart-labels="productLabels" 
-                        chart-options="pieChartOptions" chart-type="pie"></canvas>
+            <div class="card">
+                <div class="card-header">
+                    <h5>Trades by Product</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="productDistributionChart" class="chart-container"
+                            chart-data="tradesByProductData"
+                            chart-labels="productLabels"
+                            chart-options="pieChartOptions"
+                            chart-type="pie"></canvas>
+                </div>
             </div>
         </div>
     </div>
     
     <div class="row">
+        <!-- Trade Count Trend -->
         <div class="col-md-6">
-            <div class="chart-container">
-                <div class="chart-title">Monthly Trade Count</div>
-                <div class="chart-subtitle">Last 12 months</div>
-                <canvas id="trade-count-chart" class="chart" chart-data="tradeCountData" chart-labels="monthLabels" 
-                        chart-options="barChartOptions" chart-type="bar"></canvas>
+            <div class="card">
+                <div class="card-header">
+                    <h5>Trade Count Trend</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="tradeCountChart" class="chart-container"
+                            chart-data="tradeCountData"
+                            chart-labels="monthLabels"
+                            chart-options="barChartOptions"
+                            chart-type="bar"></canvas>
+                </div>
             </div>
         </div>
         
+        <!-- Performance Metrics -->
         <div class="col-md-6">
-            <div class="chart-container">
-                <div class="chart-title">Trade Performance</div>
-                <div class="chart-subtitle">Success rate and processing time</div>
-                <canvas id="trade-performance-chart" class="chart" chart-data="tradePerformanceData" chart-labels="monthLabels" 
-                        chart-series="['Success Rate', 'Avg Processing Time (s)']" chart-options="mixedChartOptions" chart-type="bar"></canvas>
+            <div class="card">
+                <div class="card-header">
+                    <h5>Trade Performance</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="tradePerformanceChart" class="chart-container"
+                            chart-data="tradePerformanceData"
+                            chart-labels="monthLabels"
+                            chart-series="['Success Rate (%)', 'Avg Processing Time (min)']"
+                            chart-options="mixedChartOptions"
+                            chart-type="line"></canvas>
+                </div>
             </div>
         </div>
     </div>
     
     <!-- Trade Breakdown Table -->
-    <div class="section-title">Trade Breakdown</div>
     <div class="row">
         <div class="col-12">
-            <div class="table-container">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Volume</th>
-                            <th>Count</th>
-                            <th>Avg Value</th>
-                            <th>Growth</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="item in tradeBreakdown">
-                            <td>{{item.product}}</td>
-                            <td>{{item.volume | number}}</td>
-                            <td>{{item.count | number}}</td>
-                            <td>{{item.avgValue | currency:'₹'}}</td>
-                            <td>{{item.growth}}%</td>
-                            <td>
-                                <span class="status-badge" ng-class="item.status.toLowerCase()">
-                                    {{item.status}}
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Trade Breakdown by Product</h5>
+                    <div class="header-actions">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                Filter
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item" href="#">All Products</a></li>
+                                <li><a class="dropdown-item" href="#">MUTUAL FUND</a></li>
+                                <li><a class="dropdown-item" href="#">FD</a></li>
+                                <li><a class="dropdown-item" href="#">PORTFOLIO</a></li>
+                                <li><a class="dropdown-item" href="#">EQUITIES</a></li>
+                                <li><a class="dropdown-item" href="#">BONDS</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Volume (₹)</th>
+                                    <th>Count</th>
+                                    <th>Avg Value (₹ Lakh)</th>
+                                    <th>Growth</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in tradeBreakdown">
+                                    <td>{{ item.product }}</td>
+                                    <td>{{ formatNumber(item.volume) }}</td>
+                                    <td>{{ formatNumber(item.count) }}</td>
+                                    <td>{{ item.avgValue }}</td>
+                                    <td>
+                                        <span ng-class="getTrendClass(item.growth)">
+                                            <i class="fa" ng-class="getTrendIcon(item.growth)"></i>
+                                            {{ formatPercentage(item.growth) }}
+                                        </span>
+                                    </td>
+                                    <td><span class="badge bg-success">{{ item.status }}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <nav>
+                        <ul class="pagination justify-content-end">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Previous</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Trade Insights -->
+    <div class="row">
+        <div class="col-12">
+            <div class="section-header">
+                <h4>Trade Insights</h4>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Trade Efficiency</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="satisfaction-meter">
+                        <div class="meter-value">97.2%</div>
+                        <div class="meter-label">Overall Efficiency</div>
+                    </div>
+                    <div class="satisfaction-trends mt-4">
+                        <div class="trend-item">
+                            <span class="trend-label">Success Rate</span>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" style="width: 98%"></div>
+                            </div>
+                            <span class="trend-value">98%</span>
+                        </div>
+                        <div class="trend-item mt-2">
+                            <span class="trend-label">Processing Speed</span>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" style="width: 94%"></div>
+                            </div>
+                            <span class="trend-value">94%</span>
+                        </div>
+                        <div class="trend-item mt-2">
+                            <span class="trend-label">Settlement</span>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" style="width: 96%"></div>
+                            </div>
+                            <span class="trend-value">96%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Trade Anomalies</h5>
+                </div>
+                <div class="card-body">
+                    <div class="risk-distribution">
+                        <div class="risk-category">
+                            <div class="risk-label">Flagged Trades</div>
+                            <div class="risk-value">84</div>
+                            <div class="risk-percentage">0.016%</div>
+                        </div>
+                        <div class="risk-category mt-3">
+                            <div class="risk-label">Processing Errors</div>
+                            <div class="risk-value">175</div>
+                            <div class="risk-percentage">0.033%</div>
+                        </div>
+                        <div class="risk-category mt-3">
+                            <div class="risk-label high-risk">Settlement Failures</div>
+                            <div class="risk-value">29</div>
+                            <div class="risk-percentage">0.006%</div>
+                        </div>
+                    </div>
+                    <div class="risk-actions mt-3">
+                        <button class="btn btn-sm btn-outline-danger">View All Anomalies</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Trade Optimization</h5>
+                </div>
+                <div class="card-body">
+                    <div class="opportunity-list">
+                        <div class="opportunity-item">
+                            <div class="opportunity-icon">
+                                <i class="fa fa-bolt"></i>
+                            </div>
+                            <div class="opportunity-content">
+                                <div class="opportunity-title">Batch Processing Enhancement</div>
+                                <div class="opportunity-stats">Est. 12% speedup</div>
+                            </div>
+                        </div>
+                        <div class="opportunity-item mt-3">
+                            <div class="opportunity-icon">
+                                <i class="fa fa-layer-group"></i>
+                            </div>
+                            <div class="opportunity-content">
+                                <div class="opportunity-title">Multi-asset Trading</div>
+                                <div class="opportunity-stats">Est. 18% volume increase</div>
+                            </div>
+                        </div>
+                        <div class="opportunity-item mt-3">
+                            <div class="opportunity-icon">
+                                <i class="fa fa-tasks"></i>
+                            </div>
+                            <div class="opportunity-content">
+                                <div class="opportunity-title">STP Workflow Improvement</div>
+                                <div class="opportunity-stats">Est. 5% error reduction</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

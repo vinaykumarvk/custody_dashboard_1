@@ -22,7 +22,7 @@ def generate_sample_data():
     customers_df = pd.DataFrame(customers_data)
     
     # Monthly aggregation
-    customers_monthly = customers_df.resample('M', on='date').agg({
+    customers_monthly = customers_df.resample('ME', on='date').agg({
         'total_customers': 'last',
         'new_customers': 'sum'
     }).reset_index()
@@ -36,7 +36,7 @@ def generate_sample_data():
     income_df = pd.DataFrame(income_data)
     
     # Monthly aggregation
-    income_monthly = income_df.resample('M', on='date').agg({
+    income_monthly = income_df.resample('ME', on='date').agg({
         'total_income': 'last',
         'new_income': 'sum'
     }).reset_index()
@@ -50,7 +50,7 @@ def generate_sample_data():
     trade_df = pd.DataFrame(trade_data)
     
     # Monthly aggregation
-    trade_monthly = trade_df.resample('M', on='date').agg({
+    trade_monthly = trade_df.resample('ME', on='date').agg({
         'total_trades': 'sum',
         'trade_volume': 'sum'
     }).reset_index()
@@ -64,7 +64,7 @@ def generate_sample_data():
     event_df = pd.DataFrame(event_data)
     
     # Monthly aggregation
-    event_monthly = event_df.resample('M', on='date').agg({
+    event_monthly = event_df.resample('ME', on='date').agg({
         'open_events': 'sum',
         'open_entitlements': 'sum'
     }).reset_index()

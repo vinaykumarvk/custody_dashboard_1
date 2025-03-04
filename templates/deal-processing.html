@@ -1,145 +1,431 @@
-<div class="container-fluid">
-    <div class="section-title">Deal Processing Overview</div>
-    
-    <!-- Summary Stats -->
+<!-- Deal Processing Template -->
+<div class="container-fluid" ng-controller="DealProcessingController">
     <div class="row">
-        <div class="col-md-3">
-            <div class="metric-container">
-                <div class="metric-title">Total Deals</div>
-                <div class="metric-value">{{totalDeals | number}}</div>
-                <div class="metric-subtitle">Period</div>
-                <div class="metric-subvalue">All time</div>
+        <div class="col-12">
+            <div class="page-header">
+                <h1>Deal Processing</h1>
+                <p class="text-muted">Deal workflow and efficiency analysis</p>
             </div>
         </div>
-        
+    </div>
+    
+    <!-- Deal Metrics -->
+    <div class="row metrics-row">
         <div class="col-md-3">
-            <div class="metric-container">
-                <div class="metric-title">Processing Time</div>
-                <div class="metric-value">{{avgProcessingTime}} mins</div>
-                <div class="metric-subtitle">Change</div>
-                <div class="metric-subvalue">{{processingTimeChange}}%</div>
-                <div class="metric-subtext">From previous period</div>
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon">
+                        <i class="fa fa-handshake"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h5 class="metric-title">Total Deals</h5>
+                        <h2 class="metric-value">{{ formatNumber(totalDeals) }}</h2>
+                        <div class="metric-trend trend-up">
+                            <i class="fa fa-arrow-up"></i>
+                            <span>3.4%</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
         <div class="col-md-3">
-            <div class="metric-container">
-                <div class="metric-title">Success Rate</div>
-                <div class="metric-value">{{successRate}}%</div>
-                <div class="metric-subtitle">Change</div>
-                <div class="metric-subvalue">{{successRateChange}}%</div>
-                <div class="metric-subtext">From previous period</div>
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon">
+                        <i class="fa fa-clock"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h5 class="metric-title">Avg Processing Time</h5>
+                        <h2 class="metric-value">{{ avgProcessingTime }} mins</h2>
+                        <div class="metric-trend trend-down">
+                            <i class="fa fa-arrow-down"></i>
+                            <span>{{ formatPercentage(processingTimeChange * -1) }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
         <div class="col-md-3">
-            <div class="metric-container">
-                <div class="metric-title">Pending Deals</div>
-                <div class="metric-value">{{pendingDeals | number}}</div>
-                <div class="metric-subtitle">Oldest</div>
-                <div class="metric-subvalue">{{oldestPendingDeal}} hours</div>
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon">
+                        <i class="fa fa-check-circle"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h5 class="metric-title">Success Rate</h5>
+                        <h2 class="metric-value">{{ successRate }}%</h2>
+                        <div class="metric-trend trend-up">
+                            <i class="fa fa-arrow-up"></i>
+                            <span>{{ formatPercentage(successRateChange) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card metric-card">
+                <div class="card-body">
+                    <div class="metric-icon">
+                        <i class="fa fa-hourglass-half"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h5 class="metric-title">Pending Deals</h5>
+                        <h2 class="metric-value">{{ pendingDeals }}</h2>
+                        <div class="metric-trend trend-down">
+                            <i class="fa fa-arrow-down"></i>
+                            <span>5.4%</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
     <!-- Charts Section -->
     <div class="row">
-        <div class="col-md-6">
-            <div class="chart-container">
-                <div class="chart-title">Deal Processing Status</div>
-                <div class="chart-subtitle">Current state</div>
-                <canvas id="deal-status-chart" class="chart" chart-data="dealStatusData" chart-labels="statusLabels" 
-                        chart-options="pieChartOptions" chart-type="pie"></canvas>
+        <!-- Processing Time Trend -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Processing Time Trend (minutes)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="processingTimeChart" class="chart-container"
+                            chart-data="processingTimeData"
+                            chart-labels="monthLabels"
+                            chart-series="['Average Processing Time (mins)']"
+                            chart-options="lineChartOptions"
+                            chart-type="line"></canvas>
+                </div>
             </div>
         </div>
         
-        <div class="col-md-6">
-            <div class="chart-container">
-                <div class="chart-title">Processing Time Trend</div>
-                <div class="chart-subtitle">Last 12 months (minutes)</div>
-                <canvas id="processing-time-chart" class="chart" chart-data="processingTimeData" chart-labels="monthLabels" 
-                        chart-series="['Processing Time']" chart-options="lineChartOptions" chart-type="line"></canvas>
+        <!-- Deal Status Distribution -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Deal Status Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="dealStatusChart" class="chart-container"
+                            chart-data="dealStatusData"
+                            chart-labels="statusLabels"
+                            chart-options="pieChartOptions"
+                            chart-type="pie"></canvas>
+                </div>
             </div>
         </div>
     </div>
     
     <div class="row">
-        <div class="col-md-8">
-            <div class="chart-container">
-                <div class="chart-title">Deal Volume by Type</div>
-                <div class="chart-subtitle">Last 12 months</div>
-                <canvas id="deal-volume-chart" class="chart" chart-data="dealVolumeData" chart-labels="monthLabels" 
-                        chart-series="dealTypes" chart-options="stackedBarOptions" chart-type="bar"></canvas>
+        <!-- Deal Volume by Type -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Deal Volume by Type</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="dealVolumeChart" class="chart-container"
+                            chart-data="dealVolumeData"
+                            chart-labels="monthLabels"
+                            chart-series="dealTypes"
+                            chart-options="stackedBarOptions"
+                            chart-type="bar"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Error Rate by Deal Type -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Error Rate by Deal Type (%)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="errorRateChart" class="chart-container"
+                            chart-data="errorRateData"
+                            chart-labels="dealTypes"
+                            chart-options="horizontalBarOptions"
+                            chart-type="horizontalBar"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pending Issues Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Pending Deal Issues</h5>
+                    <div class="header-actions">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search issues..." ng-model="issueSearch">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Deal ID</th>
+                                    <th>Type</th>
+                                    <th>Customer</th>
+                                    <th>Issue</th>
+                                    <th>Status</th>
+                                    <th>Age (hrs)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="issue in recentIssues">
+                                    <td>{{ issue.id }}</td>
+                                    <td>{{ issue.type }}</td>
+                                    <td>{{ issue.customer }}</td>
+                                    <td>{{ issue.issue }}</td>
+                                    <td><span class="badge" ng-class="getStatusClass(issue.status)">{{ issue.status }}</span></td>
+                                    <td>{{ issue.age }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary"><i class="fa fa-eye"></i></button>
+                                        <button class="btn btn-sm btn-outline-info"><i class="fa fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-outline-success"><i class="fa fa-check"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <nav>
+                        <ul class="pagination justify-content-end">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Previous</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Deal Prediction Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="section-header">
+                <h4>Deal Processing Forecasts</h4>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Deal Volume Forecast</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="futureVolumeChart" class="chart-container"
+                            chart-data="futureVolumeData"
+                            chart-labels="futurePeriodLabels"
+                            chart-series="['Projected Deal Volume']"
+                            chart-options="barChartOptions"
+                            chart-type="bar"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Processing Time Forecast (minutes)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="futureProcessingChart" class="chart-container"
+                            chart-data="futureProcessingData"
+                            chart-labels="futurePeriodLabels"
+                            chart-series="['Projected Processing Time']"
+                            chart-options="lineChartOptions"
+                            chart-type="line"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Deal Processing Optimization -->
+    <div class="row">
+        <div class="col-12">
+            <div class="section-header">
+                <h4>Deal Processing Optimization</h4>
             </div>
         </div>
         
         <div class="col-md-4">
-            <div class="chart-container">
-                <div class="chart-title">Error Rate by Deal Type</div>
-                <div class="chart-subtitle">Current period</div>
-                <canvas id="error-rate-chart" class="chart" chart-data="errorRateData" chart-labels="dealTypes" 
-                        chart-options="horizontalBarOptions" chart-type="horizontalBar"></canvas>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Processing Prediction -->
-    <div class="section-title">Processing Predictions</div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="chart-container">
-                <div class="chart-title">Future Deal Volume Prediction</div>
-                <div class="chart-subtitle">Next 3 months</div>
-                <canvas id="future-volume-chart" class="chart" chart-data="futureVolumeData" chart-labels="futurePeriodLabels" 
-                        chart-options="lineChartOptions" chart-type="line"></canvas>
+            <div class="card">
+                <div class="card-header">
+                    <h5>Processing Bottlenecks</h5>
+                </div>
+                <div class="card-body">
+                    <div class="bottlenecks-list">
+                        <div class="bottleneck-item">
+                            <div class="bottleneck-title">Data Validation</div>
+                            <div class="progress">
+                                <div class="progress-bar bg-danger" style="width: 65%"></div>
+                            </div>
+                            <div class="bottleneck-stats">
+                                <span>65% of delays</span>
+                                <span>Avg 4.2 minutes</span>
+                            </div>
+                        </div>
+                        <div class="bottleneck-item mt-3">
+                            <div class="bottleneck-title">Settlement Confirmation</div>
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" style="width: 22%"></div>
+                            </div>
+                            <div class="bottleneck-stats">
+                                <span>22% of delays</span>
+                                <span>Avg 2.8 minutes</span>
+                            </div>
+                        </div>
+                        <div class="bottleneck-item mt-3">
+                            <div class="bottleneck-title">Pricing Verification</div>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" style="width: 13%"></div>
+                            </div>
+                            <div class="bottleneck-stats">
+                                <span>13% of delays</span>
+                                <span>Avg 1.5 minutes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <div class="col-md-6">
-            <div class="chart-container">
-                <div class="chart-title">Processing Time Prediction</div>
-                <div class="chart-subtitle">Next 3 months (minutes)</div>
-                <canvas id="future-processing-chart" class="chart" chart-data="futureProcessingData" chart-labels="futurePeriodLabels" 
-                        chart-options="lineChartOptions" chart-type="line"></canvas>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Optimization Recommendations</h5>
+                </div>
+                <div class="card-body">
+                    <div class="recommendation-list">
+                        <div class="recommendation-item">
+                            <div class="recommendation-icon">
+                                <i class="fa fa-robot"></i>
+                            </div>
+                            <div class="recommendation-content">
+                                <div class="recommendation-title">Automated Data Validation</div>
+                                <div class="recommendation-desc">Implement machine learning for anomaly detection</div>
+                                <div class="recommendation-impact">Est. 35% bottleneck reduction</div>
+                            </div>
+                        </div>
+                        <div class="recommendation-item mt-3">
+                            <div class="recommendation-icon">
+                                <i class="fa fa-network-wired"></i>
+                            </div>
+                            <div class="recommendation-content">
+                                <div class="recommendation-title">Real-time Settlement Updates</div>
+                                <div class="recommendation-desc">Connect to settlement networks via API</div>
+                                <div class="recommendation-impact">Est. 18% bottleneck reduction</div>
+                            </div>
+                        </div>
+                        <div class="recommendation-item mt-3">
+                            <div class="recommendation-icon">
+                                <i class="fa fa-user-check"></i>
+                            </div>
+                            <div class="recommendation-content">
+                                <div class="recommendation-title">Streamlined Approval Workflow</div>
+                                <div class="recommendation-desc">Reduce approval steps for low-risk deals</div>
+                                <div class="recommendation-impact">Est. 12% overall time reduction</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Recent Deal Issues -->
-    <div class="section-title">Recent Deal Issues</div>
-    <div class="row">
-        <div class="col-12">
-            <div class="table-container">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Deal ID</th>
-                            <th>Type</th>
-                            <th>Customer</th>
-                            <th>Issue</th>
-                            <th>Status</th>
-                            <th>Age</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="item in recentIssues">
-                            <td>{{item.id}}</td>
-                            <td>{{item.type}}</td>
-                            <td>{{item.customer}}</td>
-                            <td>{{item.issue}}</td>
-                            <td>
-                                <span class="status-badge" ng-class="item.status.toLowerCase()">
-                                    {{item.status}}
-                                </span>
-                            </td>
-                            <td>{{item.age}} hours</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary">Resolve</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Processing Efficiency by Time</h5>
+                </div>
+                <div class="card-body">
+                    <div class="time-efficiency-chart">
+                        <div class="efficiency-chart-header">
+                            <div>Hour of Day</div>
+                            <div>Efficiency Score</div>
+                        </div>
+                        <div class="efficiency-hour-row">
+                            <div class="efficiency-hour">9-10 AM</div>
+                            <div class="efficiency-bar-container">
+                                <div class="efficiency-bar bg-success" style="width: 95%"></div>
+                            </div>
+                            <div class="efficiency-score">95%</div>
+                        </div>
+                        <div class="efficiency-hour-row">
+                            <div class="efficiency-hour">10-11 AM</div>
+                            <div class="efficiency-bar-container">
+                                <div class="efficiency-bar bg-success" style="width: 98%"></div>
+                            </div>
+                            <div class="efficiency-score">98%</div>
+                        </div>
+                        <div class="efficiency-hour-row">
+                            <div class="efficiency-hour">11-12 PM</div>
+                            <div class="efficiency-bar-container">
+                                <div class="efficiency-bar bg-success" style="width: 97%"></div>
+                            </div>
+                            <div class="efficiency-score">97%</div>
+                        </div>
+                        <div class="efficiency-hour-row">
+                            <div class="efficiency-hour">12-1 PM</div>
+                            <div class="efficiency-bar-container">
+                                <div class="efficiency-bar bg-warning" style="width: 82%"></div>
+                            </div>
+                            <div class="efficiency-score">82%</div>
+                        </div>
+                        <div class="efficiency-hour-row">
+                            <div class="efficiency-hour">1-2 PM</div>
+                            <div class="efficiency-bar-container">
+                                <div class="efficiency-bar bg-warning" style="width: 85%"></div>
+                            </div>
+                            <div class="efficiency-score">85%</div>
+                        </div>
+                        <div class="efficiency-hour-row">
+                            <div class="efficiency-hour">2-3 PM</div>
+                            <div class="efficiency-bar-container">
+                                <div class="efficiency-bar bg-success" style="width: 93%"></div>
+                            </div>
+                            <div class="efficiency-score">93%</div>
+                        </div>
+                        <div class="efficiency-hour-row">
+                            <div class="efficiency-hour">3-4 PM</div>
+                            <div class="efficiency-bar-container">
+                                <div class="efficiency-bar bg-success" style="width: 94%"></div>
+                            </div>
+                            <div class="efficiency-score">94%</div>
+                        </div>
+                        <div class="efficiency-hour-row">
+                            <div class="efficiency-hour">4-5 PM</div>
+                            <div class="efficiency-bar-container">
+                                <div class="efficiency-bar bg-danger" style="width: 78%"></div>
+                            </div>
+                            <div class="efficiency-score">78%</div>
+                        </div>
+                    </div>
+                    <div class="time-efficiency-insight mt-3">
+                        <div class="insight-icon"><i class="fa fa-lightbulb"></i></div>
+                        <div class="insight-text">Consider load balancing to improve efficiency during 12-1 PM and 4-5 PM periods</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
