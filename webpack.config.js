@@ -6,7 +6,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/'
+    publicPath: ''
   },
   module: {
     rules: [
@@ -42,6 +42,10 @@ module.exports = {
     port: 5000,
     historyApiFallback: true,
     hot: true,
-    host: '0.0.0.0'
+    host: '0.0.0.0',
+    allowedHosts: 'all',
+    client: {
+      webSocketURL: 'auto://0.0.0.0:0/ws'
+    }
   }
 };
