@@ -1,0 +1,521 @@
+{
+  "customers_monthly": [
+    {
+      "date": "2024-03-31",
+      "total_customers": 1230,
+      "new_customers": 3419
+    },
+    {
+      "date": "2024-04-30",
+      "total_customers": 2955,
+      "new_customers": 3357
+    },
+    {
+      "date": "2024-05-31",
+      "total_customers": 4514,
+      "new_customers": 2755
+    },
+    {
+      "date": "2024-06-30",
+      "total_customers": 5886,
+      "new_customers": 3311
+    },
+    {
+      "date": "2024-07-31",
+      "total_customers": 7578,
+      "new_customers": 3415
+    },
+    {
+      "date": "2024-08-31",
+      "total_customers": 9396,
+      "new_customers": 3321
+    },
+    {
+      "date": "2024-09-30",
+      "total_customers": 11047,
+      "new_customers": 3050
+    },
+    {
+      "date": "2024-10-31",
+      "total_customers": 13018,
+      "new_customers": 3092
+    },
+    {
+      "date": "2024-11-30",
+      "total_customers": 14759,
+      "new_customers": 3619
+    },
+    {
+      "date": "2024-12-31",
+      "total_customers": 16462,
+      "new_customers": 3394
+    },
+    {
+      "date": "2025-01-31",
+      "total_customers": 18009,
+      "new_customers": 3365
+    },
+    {
+      "date": "2025-02-28",
+      "total_customers": 19407,
+      "new_customers": 3097
+    },
+    {
+      "date": "2025-03-31",
+      "total_customers": 19632,
+      "new_customers": 436
+    }
+  ],
+  "income_monthly": [
+    {
+      "date": "2024-03-31",
+      "total_income": 967982,
+      "new_income": 93658
+    },
+    {
+      "date": "2024-04-30",
+      "total_income": 1916811,
+      "new_income": 94862
+    },
+    {
+      "date": "2024-05-31",
+      "total_income": 2771681,
+      "new_income": 84603
+    },
+    {
+      "date": "2024-06-30",
+      "total_income": 3759478,
+      "new_income": 85606
+    },
+    {
+      "date": "2024-07-31",
+      "total_income": 4707805,
+      "new_income": 78925
+    },
+    {
+      "date": "2024-08-31",
+      "total_income": 5698559,
+      "new_income": 82916
+    },
+    {
+      "date": "2024-09-30",
+      "total_income": 6620914,
+      "new_income": 105891
+    },
+    {
+      "date": "2024-10-31",
+      "total_income": 7589868,
+      "new_income": 106093
+    },
+    {
+      "date": "2024-11-30",
+      "total_income": 8448896,
+      "new_income": 89542
+    },
+    {
+      "date": "2024-12-31",
+      "total_income": 9363720,
+      "new_income": 106392
+    },
+    {
+      "date": "2025-01-31",
+      "total_income": 10284267,
+      "new_income": 88870
+    },
+    {
+      "date": "2025-02-28",
+      "total_income": 11159690,
+      "new_income": 71545
+    },
+    {
+      "date": "2025-03-31",
+      "total_income": 11236556,
+      "new_income": 9759
+    }
+  ],
+  "trade_monthly": [
+    {
+      "date": "2024-03-31",
+      "total_trades": 117809,
+      "trade_volume": 815419
+    },
+    {
+      "date": "2024-04-30",
+      "total_trades": 393558,
+      "trade_volume": 903860
+    },
+    {
+      "date": "2024-05-31",
+      "total_trades": 673950,
+      "trade_volume": 855261
+    },
+    {
+      "date": "2024-06-30",
+      "total_trades": 899125,
+      "trade_volume": 1029619
+    },
+    {
+      "date": "2024-07-31",
+      "total_trades": 1217898,
+      "trade_volume": 949794
+    },
+    {
+      "date": "2024-08-31",
+      "total_trades": 1502113,
+      "trade_volume": 968167
+    },
+    {
+      "date": "2024-09-30",
+      "total_trades": 1732734,
+      "trade_volume": 951242
+    },
+    {
+      "date": "2024-10-31",
+      "total_trades": 2070559,
+      "trade_volume": 868889
+    },
+    {
+      "date": "2024-11-30",
+      "total_trades": 2273039,
+      "trade_volume": 813861
+    },
+    {
+      "date": "2024-12-31",
+      "total_trades": 2641094,
+      "trade_volume": 991285
+    },
+    {
+      "date": "2025-01-31",
+      "total_trades": 2946890,
+      "trade_volume": 995302
+    },
+    {
+      "date": "2025-02-28",
+      "total_trades": 2891295,
+      "trade_volume": 664773
+    },
+    {
+      "date": "2025-03-31",
+      "total_trades": 429371,
+      "trade_volume": 103393
+    }
+  ],
+  "event_monthly": [
+    {
+      "date": "2024-03-31",
+      "open_events": 47,
+      "open_entitlements": 169742
+    },
+    {
+      "date": "2024-04-30",
+      "open_events": 48,
+      "open_entitlements": 162325
+    },
+    {
+      "date": "2024-05-31",
+      "open_events": 65,
+      "open_entitlements": 189832
+    },
+    {
+      "date": "2024-06-30",
+      "open_events": 72,
+      "open_entitlements": 154471
+    },
+    {
+      "date": "2024-07-31",
+      "open_events": 54,
+      "open_entitlements": 174777
+    },
+    {
+      "date": "2024-08-31",
+      "open_events": 67,
+      "open_entitlements": 166170
+    },
+    {
+      "date": "2024-09-30",
+      "open_events": 56,
+      "open_entitlements": 187062
+    },
+    {
+      "date": "2024-10-31",
+      "open_events": 65,
+      "open_entitlements": 138813
+    },
+    {
+      "date": "2024-11-30",
+      "open_events": 58,
+      "open_entitlements": 167926
+    },
+    {
+      "date": "2024-12-31",
+      "open_events": 52,
+      "open_entitlements": 188304
+    },
+    {
+      "date": "2025-01-31",
+      "open_events": 55,
+      "open_entitlements": 187726
+    },
+    {
+      "date": "2025-02-28",
+      "open_events": 38,
+      "open_entitlements": 157280
+    },
+    {
+      "date": "2025-03-31",
+      "open_events": 9,
+      "open_entitlements": 17611
+    }
+  ],
+  "product_df": [
+    {
+      "product": "MUTUAL FUND",
+      "customers": 2800,
+      "income": 2041976.21,
+      "trades": 69200.0
+    },
+    {
+      "product": "FD",
+      "customers": 3100,
+      "income": 1765430.99,
+      "trades": 1564498.0
+    },
+    {
+      "product": "PORTFOLIO",
+      "customers": 4100,
+      "income": 1607418.08,
+      "trades": 3369000.0
+    }
+  ],
+  "payment_aging_df": [
+    {
+      "range": "0-30 Days",
+      "amount": 2679
+    },
+    {
+      "range": "31-60 Days",
+      "amount": 0
+    },
+    {
+      "range": "61-90 Days",
+      "amount": 3669666
+    },
+    {
+      "range": "91+ Days",
+      "amount": 36805
+    }
+  ],
+  "tickets_aging_df": [
+    {
+      "range": "0-15 days",
+      "count": 0
+    },
+    {
+      "range": "16-30 days",
+      "count": 2
+    },
+    {
+      "range": "31-45 days",
+      "count": 7
+    },
+    {
+      "range": "45+ days",
+      "count": 29
+    }
+  ],
+  "transaction_prediction_df": [
+    {
+      "month": "Sep",
+      "year": "2023",
+      "count": 2.74
+    },
+    {
+      "month": "Oct",
+      "year": "2023",
+      "count": 3.71
+    },
+    {
+      "month": "Nov",
+      "year": "2023",
+      "count": 2.21
+    },
+    {
+      "month": "Sep",
+      "year": "2024",
+      "count": 3.0
+    },
+    {
+      "month": "Oct",
+      "year": "2024",
+      "count": 3.73
+    },
+    {
+      "month": "Nov",
+      "year": "2024",
+      "count": 3.89
+    },
+    {
+      "month": "Sep",
+      "year": "2025",
+      "count": 4.3
+    },
+    {
+      "month": "Oct",
+      "year": "2025",
+      "count": 4.54
+    },
+    {
+      "month": "Nov",
+      "year": "2025",
+      "count": 3.98
+    }
+  ],
+  "client_prediction_df": [
+    {
+      "month": "Sep",
+      "year": "2023",
+      "count": 21.67
+    },
+    {
+      "month": "Oct",
+      "year": "2023",
+      "count": 29.27
+    },
+    {
+      "month": "Nov",
+      "year": "2023",
+      "count": 22.14
+    },
+    {
+      "month": "Sep",
+      "year": "2024",
+      "count": 30.03
+    },
+    {
+      "month": "Oct",
+      "year": "2024",
+      "count": 26.6
+    },
+    {
+      "month": "Nov",
+      "year": "2024",
+      "count": 30.54
+    },
+    {
+      "month": "Sep",
+      "year": "2025",
+      "count": 40.23
+    },
+    {
+      "month": "Oct",
+      "year": "2025",
+      "count": 49.61
+    },
+    {
+      "month": "Nov",
+      "year": "2025",
+      "count": 45.39
+    }
+  ],
+  "events_details_df": [
+    {
+      "month": "Sep",
+      "year": "2023",
+      "count": 240
+    },
+    {
+      "month": "Oct",
+      "year": "2023",
+      "count": 290
+    },
+    {
+      "month": "Nov",
+      "year": "2023",
+      "count": 320
+    },
+    {
+      "month": "Sep",
+      "year": "2024",
+      "count": 250
+    },
+    {
+      "month": "Oct",
+      "year": "2024",
+      "count": 220
+    },
+    {
+      "month": "Nov",
+      "year": "2024",
+      "count": 200
+    },
+    {
+      "month": "Sep",
+      "year": "2025",
+      "count": 350
+    },
+    {
+      "month": "Oct",
+      "year": "2025",
+      "count": 340
+    },
+    {
+      "month": "Nov",
+      "year": "2025",
+      "count": 340
+    }
+  ],
+  "entitlements_prediction_df": [
+    {
+      "month": "Sep",
+      "year": "2023",
+      "count": 34.26
+    },
+    {
+      "month": "Oct",
+      "year": "2023",
+      "count": 24.59
+    },
+    {
+      "month": "Nov",
+      "year": "2023",
+      "count": 14.79
+    },
+    {
+      "month": "Sep",
+      "year": "2024",
+      "count": 20.07
+    },
+    {
+      "month": "Oct",
+      "year": "2024",
+      "count": 27.27
+    },
+    {
+      "month": "Nov",
+      "year": "2024",
+      "count": 13.91
+    },
+    {
+      "month": "Sep",
+      "year": "2025",
+      "count": 36.87
+    },
+    {
+      "month": "Oct",
+      "year": "2025",
+      "count": 36.36
+    },
+    {
+      "month": "Nov",
+      "year": "2025",
+      "count": 35.34
+    }
+  ],
+  "summary": {
+    "total_customers": 10000,
+    "total_income": 5414825.28,
+    "total_trades": 5002698,
+    "open_events": 38,
+    "open_entitlements": 3709150
+  }
+}
