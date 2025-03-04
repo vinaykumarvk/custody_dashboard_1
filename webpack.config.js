@@ -4,9 +4,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'public'),
     filename: 'bundle.js',
-    publicPath: ''
+    publicPath: '/'
   },
   module: {
     rules: [
@@ -38,7 +38,7 @@ module.exports = {
   ],
   devServer: {
     static: {
-      directory: path.join(__dirname, '.'),
+      directory: path.join(__dirname, 'public'),
     },
     port: 5000,
     historyApiFallback: true,

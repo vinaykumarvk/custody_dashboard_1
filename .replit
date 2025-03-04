@@ -31,7 +31,7 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd /home/runner/workspace && rm -rf .webpack-cache && npx webpack serve --mode development --host 0.0.0.0 --port 5000"
+args = "npx webpack serve --mode development --host 0.0.0.0 --port 5000"
 waitForPort = 5000
 
 [[ports]]
