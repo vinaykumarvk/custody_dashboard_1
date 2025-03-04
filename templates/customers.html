@@ -1,0 +1,86 @@
+<div class="container-fluid">
+    <div class="section-title">Customers Overview</div>
+    
+    <!-- Summary Stats -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Total Customers</div>
+                <div class="metric-value">{{totalCustomers | number}}</div>
+                <div class="metric-subtitle">Growth</div>
+                <div class="metric-subvalue">{{customerGrowth}}%</div>
+                <div class="metric-subtext">Last 12 months</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">New Customers</div>
+                <div class="metric-value">{{newCustomers | number}}</div>
+                <div class="metric-subtitle">Since</div>
+                <div class="metric-subvalue">Last month</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Active Users</div>
+                <div class="metric-value">{{activeUsers | number}}</div>
+                <div class="metric-subtitle">Percentage</div>
+                <div class="metric-subvalue">{{activePercentage}}%</div>
+                <div class="metric-subtext">Of total customers</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Retention Rate</div>
+                <div class="metric-value">{{retentionRate}}%</div>
+                <div class="metric-subtitle">Change</div>
+                <div class="metric-subvalue">{{retentionChange}}%</div>
+                <div class="metric-subtext">From previous period</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Section -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="chart-container">
+                <div class="chart-title">Customer Growth Trend</div>
+                <div class="chart-subtitle">Last 12 months</div>
+                <canvas id="customer-growth-chart" class="chart" chart-data="customersChartData" chart-labels="monthLabels" 
+                        chart-series="['Total Customers']" chart-options="lineChartOptions" chart-type="line"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="chart-container">
+                <div class="chart-title">Customers by Product</div>
+                <div class="chart-subtitle">Distribution</div>
+                <canvas id="customers-by-product-chart" class="chart" chart-data="customersByProductData" chart-labels="productLabels" 
+                        chart-options="pieChartOptions" chart-type="pie"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Customer Acquisition Channels</div>
+                <div class="chart-subtitle">Last 12 months</div>
+                <canvas id="acquisition-channels-chart" class="chart" chart-data="acquisitionChannelsData" chart-labels="channelLabels" 
+                        chart-options="barChartOptions" chart-type="bar"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Customer Engagement</div>
+                <div class="chart-subtitle">Activity levels</div>
+                <canvas id="customer-engagement-chart" class="chart" chart-data="engagementData" chart-labels="engagementLabels" 
+                        chart-options="barChartOptions" chart-type="horizontalBar"></canvas>
+            </div>
+        </div>
+    </div>
+</div>

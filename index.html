@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="dashboardApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eMACH.ai Custody Dashboard</title>
+    
+    <!-- External CSS Libraries -->
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body ng-controller="MainController">
+    <!-- Main Header -->
+    <header class="header">
+        <div class="logo">
+            <span class="logo-text">i</span>ICICI Bank
+        </div>
+        <div class="header-center">
+            <div class="dropdown">
+                <button class="dropbtn">Accounts ▼</button>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn">Departments ▼</button>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="chat-btn">CRM Contact</button>
+            <div class="user-info">
+                <div>Sumeet Neniwal</div>
+                <div class="user-id">User Login : 09-10-2023, 18:35</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sub Header with Filters -->
+    <div class="sub-header">
+        <div class="sub-header-left"></div>
+        <div class="sub-header-right">
+            <div class="dropdown">
+                <button class="filter-btn">Value ▼</button>
+            </div>
+            <div class="dropdown">
+                <button class="filter-btn">Volume ▼</button>
+            </div>
+            <button class="view-btn"><span class="icon">📊</span> View Balance</button>
+            <button class="customize-btn"><span class="icon">⚙️</span> Customize</button>
+        </div>
+    </div>
+
+    <!-- Dashboard Navigation -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar">
+                <div class="brand-logo text-center py-4">
+                    <img src="images/logo.png" alt="eMACH.ai" class="img-fluid" style="max-width: 150px;">
+                </div>
+                <h5 class="sidebar-title">eMACH.ai Custody</h5>
+                <p class="sidebar-subtitle">Financial Dashboard powered by CT Sigma</p>
+                
+                <div class="nav-divider"></div>
+                
+                <h6 class="nav-heading">Dashboard Views</h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#/dashboard" ng-class="{active: currentPath === '/dashboard'}">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#/customers" ng-class="{active: currentPath === '/customers'}">Customers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#/total-trades" ng-class="{active: currentPath === '/total-trades'}">Total Trades</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#/deal-processing" ng-class="{active: currentPath === '/deal-processing'}">Deal Processing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#/corporate-actions" ng-class="{active: currentPath === '/corporate-actions'}">Corporate Actions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#/open-events" ng-class="{active: currentPath === '/open-events'}">Open Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#/income" ng-class="{active: currentPath === '/income'}">Income</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="col-md-10 main-content">
+                <!-- Header Stats -->
+                <div class="row header-stats">
+                    <div class="col-md-2">
+                        <div class="metric-container">
+                            <div class="metric-title">Customers</div>
+                            <div class="metric-value">139860</div>
+                            <div class="metric-subtitle">New customers</div>
+                            <div class="metric-subvalue">20800</div>
+                            <div class="metric-subtext">Last 1 month</div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="metric-container">
+                            <div class="metric-title">Income</div>
+                            <div class="metric-value">₹80.51.872</div>
+                            <div class="metric-subtitle">New income</div>
+                            <div class="metric-subvalue">₹25.61.736</div>
+                            <div class="metric-subtext">Last 3 months</div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="metric-container">
+                            <div class="metric-title">Open events</div>
+                            <div class="metric-value">16</div>
+                            <div class="metric-subtitle">Open entitlements</div>
+                            <div class="metric-subvalue">5059041</div>
+                            <div class="metric-subtext">All months</div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="metric-container">
+                            <div class="metric-title">Total trades</div>
+                            <div class="metric-value">1021258</div>
+                            <div class="metric-subtitle">Total volume</div>
+                            <div class="metric-subvalue">11853498</div>
+                            <div class="metric-subtext">All months</div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="metric-container">
+                            <div class="metric-title">CA Processing</div>
+                            <div class="metric-subtitle">Predictions</div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="metric-container">
+                            <div class="metric-title">Deal processing</div>
+                            <div class="metric-subtitle">Predictions</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main View -->
+                <div class="view-container" ng-view></div>
+                
+                <!-- Footer Stats -->
+                <div class="row mt-4 footer-stats">
+                    <div class="col-md-6">
+                        <div class="footer-title">Payment aging</div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="payment-card payment-green">
+                                    <div class="payment-title">0-30 Days</div>
+                                    <div class="payment-value">₹2,679</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="payment-card payment-yellow">
+                                    <div class="payment-title">31-60 Days</div>
+                                    <div class="payment-value">₹0</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="payment-card payment-orange">
+                                    <div class="payment-title">61-90 Days</div>
+                                    <div class="payment-value">₹3,669,666</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="payment-card payment-red">
+                                    <div class="payment-title">91+ Days</div>
+                                    <div class="payment-value">₹36,805</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="footer-title">Tickets aging</div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="ticket-card ticket-green">
+                                    <div class="ticket-title">0-15 days</div>
+                                    <div class="ticket-circle">0</div>
+                                    <div class="ticket-label">Open</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="ticket-card ticket-yellow">
+                                    <div class="ticket-title">16-30 days</div>
+                                    <div class="ticket-circle">2</div>
+                                    <div class="ticket-label">Open</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="ticket-card ticket-orange">
+                                    <div class="ticket-title">31-45 days</div>
+                                    <div class="ticket-circle">7</div>
+                                    <div class="ticket-label">Open</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="ticket-card ticket-red">
+                                    <div class="ticket-title">45+ days</div>
+                                    <div class="ticket-circle">29</div>
+                                    <div class="ticket-label">Open</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- External JS Libraries -->
+    <script src="node_modules/angular/angular.min.js"></script>
+    <script src="node_modules/angular-route/angular-route.min.js"></script>
+    <script src="node_modules/chart.js/dist/Chart.min.js"></script>
+    <script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
+    
+    <!-- Application JS -->
+    <script src="js/app.js"></script>
+    <script src="js/controllers/mainController.js"></script>
+    <script src="js/controllers/dashboardController.js"></script>
+    <script src="js/controllers/customersController.js"></script>
+    <script src="js/controllers/totalTradesController.js"></script>
+    <script src="js/controllers/dealProcessingController.js"></script>
+    <script src="js/controllers/corporateActionsController.js"></script>
+    <script src="js/controllers/openEventsController.js"></script>
+    <script src="js/controllers/incomeController.js"></script>
+    <script src="js/services/dataService.js"></script>
+</body>
+</html>

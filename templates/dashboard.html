@@ -1,0 +1,131 @@
+<div class="container-fluid">
+    <!-- Main dashboard content -->
+    <div class="row">
+        <!-- Performance summary section -->
+        <div class="col-md-8">
+            <div class="section-title">Performance Summary</div>
+            <div class="row">
+                <!-- Monthly Trades Chart -->
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <div class="chart-title">Monthly Trades</div>
+                        <div class="chart-subtitle">Last 12 months</div>
+                        <canvas id="trades-chart" class="chart" chart-data="tradesChartData" chart-labels="monthLabels" 
+                                chart-series="['Trades']" chart-options="chartOptions" chart-type="line"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Monthly Customers Chart -->
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <div class="chart-title">Customer Growth</div>
+                        <div class="chart-subtitle">Last 12 months</div>
+                        <canvas id="customers-chart" class="chart" chart-data="customersChartData" chart-labels="monthLabels" 
+                                chart-series="['Customers']" chart-options="chartOptions" chart-type="line"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <!-- Monthly Income Chart -->
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <div class="chart-title">Monthly Income</div>
+                        <div class="chart-subtitle">Last 12 months</div>
+                        <canvas id="income-chart" class="chart" chart-data="incomeChartData" chart-labels="monthLabels" 
+                                chart-series="['Income']" chart-options="chartOptions" chart-type="line"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Events Chart -->
+                <div class="col-md-6">
+                    <div class="chart-container">
+                        <div class="chart-title">Open Events</div>
+                        <div class="chart-subtitle">Last 12 months</div>
+                        <canvas id="events-chart" class="chart" chart-data="eventsChartData" chart-labels="monthLabels" 
+                                chart-series="['Events']" chart-options="chartOptions" chart-type="line"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Distribution -->
+            <div class="section-title">Product Distribution</div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="chart-container">
+                        <div class="chart-title">Customers by Product</div>
+                        <canvas id="customers-donut" class="chart" chart-data="productCustomersData" chart-labels="productLabels" 
+                                chart-options="donutOptions" chart-type="doughnut"></canvas>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="chart-container">
+                        <div class="chart-title">Income by Product</div>
+                        <canvas id="income-donut" class="chart" chart-data="productIncomeData" chart-labels="productLabels" 
+                                chart-options="donutOptions" chart-type="doughnut"></canvas>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="chart-container">
+                        <div class="chart-title">Trade Volume by Product</div>
+                        <canvas id="volume-donut" class="chart" chart-data="productVolumeData" chart-labels="productLabels" 
+                                chart-options="donutOptions" chart-type="doughnut"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Predictions & Contact section -->
+        <div class="col-md-4">
+            <div class="section-title">AI Predictions</div>
+            
+            <!-- Transaction Predictions -->
+            <div class="chart-container">
+                <div class="chart-title">Transaction Rate Prediction</div>
+                <div class="chart-subtitle">Sep - Nov (2023 to 2025)</div>
+                <canvas id="transaction-prediction-chart" class="chart" chart-data="transactionPredictionData" chart-labels="predictionLabels" 
+                        chart-series="predictionYears" chart-options="barOptions" chart-type="bar"></canvas>
+            </div>
+            
+            <!-- Client Predictions -->
+            <div class="chart-container">
+                <div class="chart-title">Client Growth Prediction</div>
+                <div class="chart-subtitle">Sep - Nov (2023 to 2025)</div>
+                <canvas id="client-prediction-chart" class="chart" chart-data="clientPredictionData" chart-labels="predictionLabels" 
+                        chart-series="predictionYears" chart-options="barOptions" chart-type="bar"></canvas>
+            </div>
+            
+            <!-- Contact sections -->
+            <div class="section-title">Recent Contacts</div>
+            <div class="contact-section">
+                <div class="contact-title">Support Team</div>
+                <div class="contact-card">
+                    <span class="contact-icon">📞</span>
+                    <span class="contact-text">Rahul Mehta - +91 98765 43210</span>
+                </div>
+                <div class="contact-card">
+                    <span class="contact-icon">📱</span>
+                    <span class="contact-text">Priya Sharma - +91 87654 32109</span>
+                </div>
+                <div class="contact-card">
+                    <span class="contact-icon">📧</span>
+                    <span class="contact-text">support@emach.ai</span>
+                </div>
+            </div>
+            
+            <div class="contact-section mt-3">
+                <div class="contact-title">Account Manager</div>
+                <div class="contact-card">
+                    <span class="contact-icon">👤</span>
+                    <span class="contact-text">Vikram Singh - +91 76543 21098</span>
+                </div>
+                <div class="contact-card">
+                    <span class="contact-icon">📧</span>
+                    <span class="contact-text">vikram.singh@emach.ai</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

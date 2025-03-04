@@ -1,0 +1,402 @@
+/* Main theme colors */
+:root {
+    --primary-color: #006400;
+    --secondary-color: #FF6B35;
+    --text-color: #333333;
+    --light-bg: #FFFFFF;
+    --dark-bg: #1E3F20;
+    --green-100: #E6F4E6;
+    --green-200: #C2E0C2;
+    --green-300: #9DC69D;
+    --green-400: #6AAC6A;
+    --green-500: #2D882D;
+    --accent-orange: #FF6B35;
+    --accent-yellow: #FFC30B;
+    --gray-light: #F5F5F5;
+    --gray-medium: #E0E0E0;
+    --gray-dark: #757575;
+    --alert-red: #E63946;
+    --alert-yellow: #FFBF00;
+    --alert-green: #57A773;
+    --alert-orange: #FF9F1C;
+}
+
+/* Global styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-color);
+    background-color: var(--light-bg);
+}
+
+.stApp {
+    background-image: linear-gradient(to bottom right, rgba(0, 100, 0, 0.05), rgba(0, 100, 0, 0.02)), url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="transparent"/><circle cx="10" cy="10" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="30" cy="10" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="50" cy="10" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="70" cy="10" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="90" cy="10" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="10" cy="30" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="30" cy="30" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="50" cy="30" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="70" cy="30" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="90" cy="30" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="10" cy="50" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="30" cy="50" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="50" cy="50" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="70" cy="50" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="90" cy="50" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="10" cy="70" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="30" cy="70" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="50" cy="70" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="70" cy="70" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="90" cy="70" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="10" cy="90" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="30" cy="90" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="50" cy="90" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="70" cy="90" r="1" fill="rgba(0, 100, 0, 0.05)"/><circle cx="90" cy="90" r="1" fill="rgba(0, 100, 0, 0.05)"/></svg>');
+}
+
+/* Header styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #FF4500;
+    color: white;
+    border-bottom: 1px solid #d63600;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.logo-text {
+    background-color: white;
+    color: #FF4500;
+    padding: 2px 6px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.header-center {
+    display: flex;
+    gap: 20px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: transparent;
+    color: white;
+    padding: 8px 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.user-info {
+    text-align: right;
+    font-size: 14px;
+}
+
+.user-id {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.chat-btn {
+    background-color: #8B0000;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Sub-header styles */
+.sub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.sub-header-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.filter-btn {
+    background-color: white;
+    color: #555;
+    border: 1px solid #ddd;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.view-btn, .customize-btn {
+    background-color: white;
+    color: #555;
+    border: 1px solid #ddd;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.icon {
+    font-size: 16px;
+}
+
+/* Metric container styles */
+.metric-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.metric-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.metric-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.metric-subtitle {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.metric-subvalue {
+    font-size: 16px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+.metric-subtext {
+    font-size: 12px;
+    color: #999;
+}
+
+/* Chart styles */
+.chart-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+.chart-subtitle {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+/* Section divider */
+.section-divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 20px 0;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 20px 0 15px 0;
+    padding-bottom: 5px;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+/* Footer styles */
+.footer-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+/* Payment aging cards */
+.payment-card {
+    background-color: white;
+    border-radius: 4px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.payment-green {
+    border-top: 4px solid var(--alert-green);
+}
+
+.payment-yellow {
+    border-top: 4px solid var(--alert-yellow);
+}
+
+.payment-orange {
+    border-top: 4px solid var(--alert-orange);
+}
+
+.payment-red {
+    border-top: 4px solid var(--alert-red);
+}
+
+.payment-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.payment-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+}
+
+/* Ticket aging cards */
+.ticket-card {
+    background-color: white;
+    border-radius: 4px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ticket-green {
+    border-left: 4px solid var(--alert-green);
+}
+
+.ticket-yellow {
+    border-left: 4px solid var(--alert-yellow);
+}
+
+.ticket-orange {
+    border-left: 4px solid var(--alert-orange);
+}
+
+.ticket-red {
+    border-left: 4px solid var(--alert-red);
+}
+
+.ticket-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.ticket-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.ticket-label {
+    font-size: 12px;
+    color: #777;
+}
+
+/* Info box */
+.info-box {
+    background-color: var(--green-100);
+    border-left: 4px solid var(--primary-color);
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 4px;
+}
+
+.info-box h3 {
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.info-box ul {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.info-box li {
+    margin-bottom: 5px;
+}
+
+/* Contact section */
+.contact-section {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    padding: 15px;
+}
+
+.contact-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 15px;
+}
+
+.contact-card {
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.contact-card:hover {
+    background-color: #f0f0f0;
+}
+
+.contact-icon {
+    font-size: 20px;
+    color: var(--primary-color);
+}
+
+.contact-text {
+    font-size: 14px;
+    color: #555;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .header-center, .header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .metric-container {
+        padding: 10px;
+    }
+    
+    .metric-value {
+        font-size: 20px;
+    }
+}
