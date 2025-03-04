@@ -15,7 +15,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.dashboard);
         }
         
-        return $http.get('/api/dashboard')
+        return $http.get('/api/dashboard.json')
             .then(function(response) {
                 cache.dashboard = response.data;
                 return cache.dashboard;
@@ -88,7 +88,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.customers);
         }
         
-        return $http.get('/api/customers')
+        return $http.get('/api/customers.json')
             .then(function(response) {
                 cache.customers = response.data;
                 return cache.customers;
@@ -153,7 +153,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.trades);
         }
         
-        return $http.get('/api/trades')
+        return $http.get('/api/trades.json')
             .then(function(response) {
                 cache.trades = response.data;
                 return cache.trades;
@@ -211,12 +211,12 @@ app.service('DataService', function($http, $q) {
     };
     
     // Get income data
-    this.getIncomeData = function() {
+    this.getIncome = function() {
         if (cache.income) {
             return $q.resolve(cache.income);
         }
         
-        return $http.get('/api/income')
+        return $http.get('/api/income.json')
             .then(function(response) {
                 cache.income = response.data;
                 return cache.income;
@@ -228,47 +228,109 @@ app.service('DataService', function($http, $q) {
                 let mockData = {
                     totalIncome: 92650000,
                     newIncome: 8250000,
-                    growth: 4.8,
-                    monthlyData: [
-                        { month: 'Jan', income: 6500000 },
-                        { month: 'Feb', income: 6800000 },
-                        { month: 'Mar', income: 7100000 },
-                        { month: 'Apr', income: 7400000 },
-                        { month: 'May', income: 7600000 },
-                        { month: 'Jun', income: 7900000 },
-                        { month: 'Jul', income: 8100000 },
-                        { month: 'Aug', income: 8300000 },
-                        { month: 'Sep', income: 8600000 },
-                        { month: 'Oct', income: 8800000 },
-                        { month: 'Nov', income: 9000000 },
-                        { month: 'Dec', income: 9300000 }
-                    ],
-                    incomeByProduct: [
-                        { product: 'MUTUAL FUND', income: 23162500 },
-                        { product: 'FD', income: 27795000 },
-                        { product: 'PORTFOLIO', income: 18530000 },
-                        { product: 'EQUITIES', income: 13897500 },
-                        { product: 'BONDS', income: 9265000 }
-                    ],
-                    incomeByCategory: [
-                        { category: 'Transaction Fees', income: 37060000 },
-                        { category: 'Advisory Services', income: 20383000 },
-                        { category: 'Custody Fees', income: 16677000 },
-                        { category: 'Interest Income', income: 10191500 },
-                        { category: 'Other Fees', income: 8338500 }
-                    ],
-                    quarterlyData: [
-                        { quarter: 'Q1 2023', income: 20400000 },
-                        { quarter: 'Q2 2023', income: 22900000 },
-                        { quarter: 'Q3 2023', income: 25000000 },
-                        { quarter: 'Q4 2023', income: 24350000 }
-                    ],
-                    topCustomersByIncome: [
-                        { name: 'Reliance Industries', income: 7412000 },
-                        { name: 'HDFC Bank', income: 6485500 },
-                        { name: 'TCS Ltd', income: 5559000 },
-                        { name: 'Infosys', income: 4632500 },
-                        { name: 'SBI', income: 3706000 }
+                    incomeGrowth: 4.8,
+                    avgMonthlyIncome: 7720833,
+                    monthlyIncomeChange: 3.4,
+                    
+                    monthlyIncomeData: {
+                        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                        data: [6.5, 6.8, 7.1, 7.4, 7.6, 7.9, 8.1, 8.3, 8.6, 8.8, 9.0, 9.3]
+                    },
+                    
+                    incomeByProductData: {
+                        labels: ["Custody Services", "Trade Processing", "Corporate Actions", "Advisory Services", "Reporting", "Other"],
+                        data: [42, 25, 15, 10, 5, 3]
+                    },
+                    
+                    quarterlyIncomeData: {
+                        labels: ["Q1", "Q2", "Q3", "Q4"],
+                        data: [20.4, 22.9, 24.0, 25.35]
+                    },
+                    
+                    incomeCorrelationData: {
+                        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                        income: [6.5, 6.8, 7.1, 7.4, 7.6, 7.9, 8.1, 8.3, 8.6, 8.8, 9.0, 9.3],
+                        volume: [42.5, 43.5, 44.5, 45.5, 46.5, 47.5, 48.5, 49.0, 50.0, 51.0, 51.5, 52.5]
+                    },
+                    
+                    categoryDistributionData: {
+                        labels: ["Fee Income", "Interest Income", "Service Charges", "Advisory Income", "Other"],
+                        data: [55, 20, 15, 8, 2]
+                    },
+                    
+                    topCustomerData: {
+                        labels: ["Reliance Industries Ltd", "HDFC Bank", "Tata Consultancy Services", "Bharti Airtel Ltd", "Infosys Ltd"],
+                        data: [12.5, 11.1, 9.6, 8.8, 7.6]
+                    },
+                    
+                    predictedIncomeData: {
+                        labels: ["Q1", "Q2", "Q3", "Q4"],
+                        currentYear: [20.4, 22.9, 24.0, 25.35],
+                        nextYear: [21.5, 24.3, 25.5, 27.0]
+                    },
+                    
+                    growthProjectionData: {
+                        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                        baseline: [9.3, 9.4, 9.5, 9.6, 9.7, 9.8, 9.9, 10.0, 10.1, 10.2, 10.3, 10.4],
+                        optimistic: [9.3, 9.5, 9.7, 9.9, 10.1, 10.3, 10.5, 10.7, 10.9, 11.1, 11.3, 11.5],
+                        conservative: [9.3, 9.4, 9.5, 9.5, 9.6, 9.6, 9.7, 9.7, 9.8, 9.8, 9.9, 9.9]
+                    },
+                    
+                    incomeBreakdown: [
+                        {
+                            source: "Custody Services",
+                            currentMonth: 3850000,
+                            lastMonth: 3750000,
+                            threeMonthAvg: 3700000,
+                            ytd: 38900000,
+                            growth: 2.7,
+                            trend: "UP"
+                        },
+                        {
+                            source: "Trade Processing",
+                            currentMonth: 2325000,
+                            lastMonth: 2250000,
+                            threeMonthAvg: 2266667,
+                            ytd: 23162500,
+                            growth: 3.3,
+                            trend: "UP"
+                        },
+                        {
+                            source: "Corporate Actions",
+                            currentMonth: 1395000,
+                            lastMonth: 1350000,
+                            threeMonthAvg: 1360000,
+                            ytd: 13897500,
+                            growth: 3.3,
+                            trend: "UP"
+                        },
+                        {
+                            source: "Advisory Services",
+                            currentMonth: 930000,
+                            lastMonth: 900000,
+                            threeMonthAvg: 910000,
+                            ytd: 9265000,
+                            growth: 3.3,
+                            trend: "UP"
+                        },
+                        {
+                            source: "Reporting",
+                            currentMonth: 465000,
+                            lastMonth: 450000,
+                            threeMonthAvg: 453333,
+                            ytd: 4632500,
+                            growth: 3.3,
+                            trend: "UP"
+                        },
+                        {
+                            source: "Other Services",
+                            currentMonth: 279000,
+                            lastMonth: 270000,
+                            threeMonthAvg: 273333,
+                            ytd: 2779500,
+                            growth: 3.3,
+                            trend: "UP"
+                        }
                     ]
                 };
                 
