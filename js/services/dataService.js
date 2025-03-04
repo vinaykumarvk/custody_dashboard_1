@@ -20,8 +20,13 @@ app.service('DataService', function($http, $q) {
             
             // Add cache busting parameter
             const cacheBuster = '?v=' + new Date().getTime();
-            return $http.get(paths[index] + cacheBuster)
+            const currentPath = paths[index] + cacheBuster;
+            
+            console.log('Trying API path for ' + cacheName + ':', currentPath);
+            
+            return $http.get(currentPath)
                 .then(function(response) {
+                    console.log('API path succeeded for ' + cacheName + ':', currentPath);
                     return response;
                 })
                 .catch(function(error) {
@@ -121,7 +126,15 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.customers);
         }
         
-        return $http.get('api/customers/index.json?v=' + new Date().getTime())
+        // Multiple paths to try in order (with fallbacks)
+        const apiPaths = [
+            'api/customers/index.json',
+            'api/customers/index',
+            'api/customers.json',
+            'api/customers'
+        ];
+        
+        return getAPIWithFallbacks(apiPaths, 'customers')
             .then(function(response) {
                 cache.customers = response.data;
                 return cache.customers;
@@ -186,7 +199,15 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.trades);
         }
         
-        return $http.get('api/trades/index.json?v=' + new Date().getTime())
+        // Multiple paths to try in order (with fallbacks)
+        const apiPaths = [
+            'api/trades/index.json',
+            'api/trades/index',
+            'api/trades.json',
+            'api/trades'
+        ];
+        
+        return getAPIWithFallbacks(apiPaths, 'trades')
             .then(function(response) {
                 cache.trades = response.data;
                 return cache.trades;
@@ -249,7 +270,15 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.income);
         }
         
-        return $http.get('api/income/index.json?v=' + new Date().getTime())
+        // Multiple paths to try in order (with fallbacks)
+        const apiPaths = [
+            'api/income/index.json',
+            'api/income/index',
+            'api/income.json', 
+            'api/income'
+        ];
+        
+        return getAPIWithFallbacks(apiPaths, 'income')
             .then(function(response) {
                 cache.income = response.data;
                 return cache.income;
@@ -378,7 +407,15 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.events);
         }
         
-        return $http.get('api/events/index.json?v=' + new Date().getTime())
+        // Multiple paths to try in order (with fallbacks)
+        const apiPaths = [
+            'api/events/index.json',
+            'api/events/index',
+            'api/events.json',
+            'api/events'
+        ];
+        
+        return getAPIWithFallbacks(apiPaths, 'events')
             .then(function(response) {
                 cache.events = response.data;
                 return cache.events;
@@ -447,7 +484,15 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.deals);
         }
         
-        return $http.get('api/deals/index.json?v=' + new Date().getTime())
+        // Multiple paths to try in order (with fallbacks)
+        const apiPaths = [
+            'api/deals/index.json',
+            'api/deals/index',
+            'api/deals.json',
+            'api/deals'
+        ];
+        
+        return getAPIWithFallbacks(apiPaths, 'deals')
             .then(function(response) {
                 cache.deals = response.data;
                 return cache.deals;
@@ -525,7 +570,15 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.corporateActions);
         }
         
-        return $http.get('api/corporate-actions/index.json?v=' + new Date().getTime())
+        // Multiple paths to try in order (with fallbacks)
+        const apiPaths = [
+            'api/corporate-actions/index.json',
+            'api/corporate-actions/index',
+            'api/corporate-actions.json',
+            'api/corporate-actions'
+        ];
+        
+        return getAPIWithFallbacks(apiPaths, 'corporate-actions')
             .then(function(response) {
                 cache.corporateActions = response.data;
                 return cache.corporateActions;
