@@ -1,5 +1,18 @@
 // Customers controller
-app.controller('CustomersController', function($scope, DataService) {
+app.controller('CustomersController', function($scope, $rootScope, DataService) {
+    // Define number formatting functions using the rootScope utility
+    $scope.formatNumberWithCommas = function(num) {
+        return $rootScope.formatNumber(num);
+    };
+    
+    // Format date helper
+    $scope.formatDate = function(date) {
+        return date.toLocaleDateString('en-IN', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+    };
     // Initialize chart options
     $scope.lineChartOptions = {
         responsive: true,

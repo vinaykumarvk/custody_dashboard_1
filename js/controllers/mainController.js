@@ -1,5 +1,5 @@
 // Main controller for the dashboard application
-app.controller('MainController', function($scope, $location, DataService) {
+app.controller('MainController', function($scope, $rootScope, $location, DataService) {
     // Initialize navigation
     $scope.activeTab = 'dashboard';
     
@@ -105,8 +105,13 @@ app.controller('MainController', function($scope, $location, DataService) {
             return '0';
         }
         
-        // Convert to string with commas as thousand separators
-        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        // Use $rootScope formatNumber utility if available, otherwise use the default implementation
+        if ($rootScope && $rootScope.formatNumber) {
+            return $rootScope.formatNumber(number);
+        } else {
+            // Convert to string with commas as thousand separators
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
     };
     
     // Format percentages for display

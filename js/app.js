@@ -51,11 +51,11 @@ app.config(function() {
     Chart.defaults.global.responsive = true;
     Chart.defaults.global.maintainAspectRatio = false;
     
-    // Custom color palette with Smart Bank colors
+    // Custom color palette with Smart Bank colors (updated from file #7)
     Chart.defaults.global.colors = [
-        '#006400', // Primary Smart Bank green
-        '#008000', // Light green
-        '#005000', // Dark green
+        '#038559', // Primary Smart Bank green
+        '#04A46E', // Light green 
+        '#026844', // Dark green
         '#1cc88a', // Success green
         '#f6c23e', // Warning yellow
         '#e74a3b', // Danger red
@@ -82,6 +82,19 @@ app.run(function($rootScope) {
         month: 'long',
         day: 'numeric'
     });
+    
+    // Utility to format numbers with thousand separators
+    $rootScope.formatNumber = function(num) {
+        if (num === null || num === undefined) return '';
+        
+        // For numbers less than 1000, return as is
+        if (Math.abs(num) < 1000) {
+            return num.toString();
+        }
+        
+        // Format number with thousand separators
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
     
     // Set color theme classes for various metrics
     $rootScope.getMetricClass = function(type) {

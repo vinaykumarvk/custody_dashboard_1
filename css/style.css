@@ -6,11 +6,11 @@
  */
 
 :root {
-    --primary-color: #006400; /* Smart Bank Green */
-    --primary-dark: #005000;
-    --primary-light: #008000;
+    --primary-color: #038559; /* Smart Bank Green from file #7 */
+    --primary-dark: #026844;
+    --primary-light: #04A46E;
     --success-color: #1cc88a;
-    --header-color: #006400; /* Green background for header per file #7 */
+    --header-color: #038559; /* Green background for header per file #7 */
     --info-color: #36b9cc;
     --warning-color: #f6c23e;
     --danger-color: #e74a3b;
