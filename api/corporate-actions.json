@@ -1,0 +1,57 @@
+{
+  "totalActions": 4821,
+  "pendingActions": 187,
+  "criticalActions": 32,
+  "avgProcessingTime": 24.5,
+  "processingTimeChange": -8.6,
+  "successRate": 97.2,
+  "successRateChange": 1.5,
+  "actionsByType": [
+    { "type": "Dividend", "percentage": 45 },
+    { "type": "Rights Issue", "percentage": 15 },
+    { "type": "Bonus", "percentage": 20 },
+    { "type": "Split", "percentage": 10 },
+    { "type": "Merger", "percentage": 10 }
+  ],
+  "monthlyActionVolume": [
+    { "month": "Jan", "volume": 280 },
+    { "month": "Feb", "volume": 320 },
+    { "month": "Mar", "volume": 350 },
+    { "month": "Apr", "volume": 310 },
+    { "month": "May", "volume": 370 },
+    { "month": "Jun", "volume": 390 },
+    { "month": "Jul", "volume": 420 },
+    { "month": "Aug", "volume": 410 },
+    { "month": "Sep", "volume": 450 },
+    { "month": "Oct", "volume": 480 },
+    { "month": "Nov", "volume": 510 },
+    { "month": "Dec", "volume": 530 }
+  ],
+  "processingTimeByType": [
+    { "month": "Jan", "dividend": 32, "rightsIssue": 48, "bonus": 36, "split": 18, "merger": 60 },
+    { "month": "Feb", "dividend": 30, "rightsIssue": 46, "bonus": 35, "split": 18, "merger": 58 },
+    { "month": "Mar", "dividend": 29, "rightsIssue": 44, "bonus": 34, "split": 17, "merger": 56 },
+    { "month": "Apr", "dividend": 28, "rightsIssue": 42, "bonus": 33, "split": 17, "merger": 54 },
+    { "month": "May", "dividend": 28, "rightsIssue": 40, "bonus": 32, "split": 16, "merger": 52 },
+    { "month": "Jun", "dividend": 27, "rightsIssue": 38, "bonus": 31, "split": 16, "merger": 50 },
+    { "month": "Jul", "dividend": 26, "rightsIssue": 36, "bonus": 30, "split": 15, "merger": 48 },
+    { "month": "Aug", "dividend": 25, "rightsIssue": 35, "bonus": 29, "split": 15, "merger": 46 },
+    { "month": "Sep", "dividend": 24, "rightsIssue": 33, "bonus": 28, "split": 14, "merger": 44 },
+    { "month": "Oct", "dividend": 23, "rightsIssue": 32, "bonus": 28, "split": 14, "merger": 42 },
+    { "month": "Nov", "dividend": 24, "rightsIssue": 31, "bonus": 27, "split": 14, "merger": 40 },
+    { "month": "Dec", "dividend": 24, "rightsIssue": 30, "bonus": 26, "split": 13, "merger": 38 }
+  ],
+  "actionsByStatus": [
+    { "status": "Completed", "percentage": 79.5 },
+    { "status": "In Progress", "percentage": 12.3 },
+    { "status": "Pending", "percentage": 7.2 },
+    { "status": "Failed", "percentage": 1.0 }
+  ],
+  "pendingActions": [
+    { "id": "CA-1234", "type": "Dividend", "security": "HDFC Bank Ltd.", "exDate": "2023-12-15", "recordDate": "2023-12-17", "status": "Pending", "priority": "High" },
+    { "id": "CA-1235", "type": "Rights Issue", "security": "Reliance Industries Ltd.", "exDate": "2023-12-20", "recordDate": "2023-12-22", "status": "Processing", "priority": "Critical" },
+    { "id": "CA-1236", "type": "Bonus", "security": "Infosys Ltd.", "exDate": "2023-12-18", "recordDate": "2023-12-20", "status": "Pending", "priority": "Medium" },
+    { "id": "CA-1237", "type": "Split", "security": "TCS Ltd.", "exDate": "2023-12-25", "recordDate": "2023-12-27", "status": "Scheduled", "priority": "Low" },
+    { "id": "CA-1238", "type": "Merger", "security": "SBI", "exDate": "2023-12-12", "recordDate": "2023-12-14", "status": "Processing", "priority": "High" }
+  ]
+}
