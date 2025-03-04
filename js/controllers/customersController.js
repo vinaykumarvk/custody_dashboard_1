@@ -5,6 +5,15 @@ app.controller('CustomersController', function($scope, $rootScope, DataService) 
         return $rootScope.formatNumber(num);
     };
     
+    // Format percentage helper
+    $scope.formatPercentage = function(percentage) {
+        if (percentage === undefined || percentage === null || isNaN(percentage)) {
+            return '0%';
+        }
+        
+        return percentage.toFixed(1) + '%';
+    };
+    
     // Format date helper
     $scope.formatDate = function(date) {
         return date.toLocaleDateString('en-IN', {
