@@ -3,7 +3,7 @@
  * 
  * Controller for the Income page of the eMACH Custody Dashboard
  */
-angular.module('eMACHApp')
+angular.module('eMACHCustodyApp')
     .controller('IncomeController', ['$scope', 'DataService', '$filter', '$rootScope', function($scope, DataService, $filter, $rootScope) {
         // Define number formatting functions using the rootScope utility
         $scope.formatNumberWithCommas = function(num) {
