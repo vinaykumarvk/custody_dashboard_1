@@ -51,15 +51,15 @@ app.config(function() {
     Chart.defaults.global.responsive = true;
     Chart.defaults.global.maintainAspectRatio = false;
     
-    // Custom color palette
+    // Custom color palette with Smart Bank colors
     Chart.defaults.global.colors = [
-        '#4e73df', // Primary blue
+        '#006400', // Primary Smart Bank green
+        '#008000', // Light green
+        '#005000', // Dark green
         '#1cc88a', // Success green
-        '#36b9cc', // Info teal
         '#f6c23e', // Warning yellow
         '#e74a3b', // Danger red
         '#5a5c69', // Secondary gray
-        '#6f42c1', // Purple
         '#fd7e14', // Orange
         '#20c9a6', // Teal
         '#858796'  // Light gray

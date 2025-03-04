@@ -15,7 +15,8 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.dashboard);
         }
         
-        return $http.get('api/dashboard/index.json')
+        // Use direct path to index.json with cache busting
+        return $http.get('api/dashboard/index.json?v=' + new Date().getTime())
             .then(function(response) {
                 cache.dashboard = response.data;
                 return cache.dashboard;
@@ -88,7 +89,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.customers);
         }
         
-        return $http.get('api/customers/index.json')
+        return $http.get('api/customers/index.json?v=' + new Date().getTime())
             .then(function(response) {
                 cache.customers = response.data;
                 return cache.customers;
@@ -153,7 +154,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.trades);
         }
         
-        return $http.get('api/trades/index.json')
+        return $http.get('api/trades/index.json?v=' + new Date().getTime())
             .then(function(response) {
                 cache.trades = response.data;
                 return cache.trades;
@@ -216,7 +217,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.income);
         }
         
-        return $http.get('api/income/index.json')
+        return $http.get('api/income/index.json?v=' + new Date().getTime())
             .then(function(response) {
                 cache.income = response.data;
                 return cache.income;
@@ -345,7 +346,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.events);
         }
         
-        return $http.get('api/events')
+        return $http.get('api/events/index.json?v=' + new Date().getTime())
             .then(function(response) {
                 cache.events = response.data;
                 return cache.events;
@@ -414,7 +415,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.deals);
         }
         
-        return $http.get('api/deals')
+        return $http.get('api/deals/index.json?v=' + new Date().getTime())
             .then(function(response) {
                 cache.deals = response.data;
                 return cache.deals;
@@ -492,7 +493,7 @@ app.service('DataService', function($http, $q) {
             return $q.resolve(cache.corporateActions);
         }
         
-        return $http.get('api/corporate-actions')
+        return $http.get('api/corporate-actions/index.json?v=' + new Date().getTime())
             .then(function(response) {
                 cache.corporateActions = response.data;
                 return cache.corporateActions;
