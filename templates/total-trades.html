@@ -1,0 +1,119 @@
+<div class="container-fluid">
+    <div class="section-title">Total Trades Overview</div>
+    
+    <!-- Summary Stats -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Total Trades</div>
+                <div class="metric-value">{{totalTrades | number}}</div>
+                <div class="metric-subtitle">Period</div>
+                <div class="metric-subvalue">All time</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Total Volume</div>
+                <div class="metric-value">{{totalVolume | number}}</div>
+                <div class="metric-subtitle">Period</div>
+                <div class="metric-subvalue">All time</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Monthly Average</div>
+                <div class="metric-value">{{monthlyAverage | number}}</div>
+                <div class="metric-subtitle">Change</div>
+                <div class="metric-subvalue">{{monthlyChange}}%</div>
+                <div class="metric-subtext">From previous period</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Trade Growth</div>
+                <div class="metric-value">{{tradeGrowth}}%</div>
+                <div class="metric-subtitle">Period</div>
+                <div class="metric-subvalue">Last 12 months</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Section -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="chart-container">
+                <div class="chart-title">Trade Volume Trend</div>
+                <div class="chart-subtitle">Last 12 months</div>
+                <canvas id="trade-volume-chart" class="chart" chart-data="tradeVolumeData" chart-labels="monthLabels" 
+                        chart-series="['Trade Volume']" chart-options="lineChartOptions" chart-type="line"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="chart-container">
+                <div class="chart-title">Trades by Product</div>
+                <div class="chart-subtitle">Distribution</div>
+                <canvas id="trades-by-product-chart" class="chart" chart-data="tradesByProductData" chart-labels="productLabels" 
+                        chart-options="pieChartOptions" chart-type="pie"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Monthly Trade Count</div>
+                <div class="chart-subtitle">Last 12 months</div>
+                <canvas id="trade-count-chart" class="chart" chart-data="tradeCountData" chart-labels="monthLabels" 
+                        chart-options="barChartOptions" chart-type="bar"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Trade Performance</div>
+                <div class="chart-subtitle">Success rate and processing time</div>
+                <canvas id="trade-performance-chart" class="chart" chart-data="tradePerformanceData" chart-labels="monthLabels" 
+                        chart-series="['Success Rate', 'Avg Processing Time (s)']" chart-options="mixedChartOptions" chart-type="bar"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Trade Breakdown Table -->
+    <div class="section-title">Trade Breakdown</div>
+    <div class="row">
+        <div class="col-12">
+            <div class="table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Volume</th>
+                            <th>Count</th>
+                            <th>Avg Value</th>
+                            <th>Growth</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in tradeBreakdown">
+                            <td>{{item.product}}</td>
+                            <td>{{item.volume | number}}</td>
+                            <td>{{item.count | number}}</td>
+                            <td>{{item.avgValue | currency:'₹'}}</td>
+                            <td>{{item.growth}}%</td>
+                            <td>
+                                <span class="status-badge" ng-class="item.status.toLowerCase()">
+                                    {{item.status}}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

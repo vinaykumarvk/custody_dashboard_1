@@ -1,0 +1,146 @@
+<div class="container-fluid">
+    <div class="section-title">Deal Processing Overview</div>
+    
+    <!-- Summary Stats -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Total Deals</div>
+                <div class="metric-value">{{totalDeals | number}}</div>
+                <div class="metric-subtitle">Period</div>
+                <div class="metric-subvalue">All time</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Processing Time</div>
+                <div class="metric-value">{{avgProcessingTime}} mins</div>
+                <div class="metric-subtitle">Change</div>
+                <div class="metric-subvalue">{{processingTimeChange}}%</div>
+                <div class="metric-subtext">From previous period</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Success Rate</div>
+                <div class="metric-value">{{successRate}}%</div>
+                <div class="metric-subtitle">Change</div>
+                <div class="metric-subvalue">{{successRateChange}}%</div>
+                <div class="metric-subtext">From previous period</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Pending Deals</div>
+                <div class="metric-value">{{pendingDeals | number}}</div>
+                <div class="metric-subtitle">Oldest</div>
+                <div class="metric-subvalue">{{oldestPendingDeal}} hours</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Section -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Deal Processing Status</div>
+                <div class="chart-subtitle">Current state</div>
+                <canvas id="deal-status-chart" class="chart" chart-data="dealStatusData" chart-labels="statusLabels" 
+                        chart-options="pieChartOptions" chart-type="pie"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Processing Time Trend</div>
+                <div class="chart-subtitle">Last 12 months (minutes)</div>
+                <canvas id="processing-time-chart" class="chart" chart-data="processingTimeData" chart-labels="monthLabels" 
+                        chart-series="['Processing Time']" chart-options="lineChartOptions" chart-type="line"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="chart-container">
+                <div class="chart-title">Deal Volume by Type</div>
+                <div class="chart-subtitle">Last 12 months</div>
+                <canvas id="deal-volume-chart" class="chart" chart-data="dealVolumeData" chart-labels="monthLabels" 
+                        chart-series="dealTypes" chart-options="stackedBarOptions" chart-type="bar"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="chart-container">
+                <div class="chart-title">Error Rate by Deal Type</div>
+                <div class="chart-subtitle">Current period</div>
+                <canvas id="error-rate-chart" class="chart" chart-data="errorRateData" chart-labels="dealTypes" 
+                        chart-options="horizontalBarOptions" chart-type="horizontalBar"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Processing Prediction -->
+    <div class="section-title">Processing Predictions</div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Future Deal Volume Prediction</div>
+                <div class="chart-subtitle">Next 3 months</div>
+                <canvas id="future-volume-chart" class="chart" chart-data="futureVolumeData" chart-labels="futurePeriodLabels" 
+                        chart-options="lineChartOptions" chart-type="line"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Processing Time Prediction</div>
+                <div class="chart-subtitle">Next 3 months (minutes)</div>
+                <canvas id="future-processing-chart" class="chart" chart-data="futureProcessingData" chart-labels="futurePeriodLabels" 
+                        chart-options="lineChartOptions" chart-type="line"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Deal Issues -->
+    <div class="section-title">Recent Deal Issues</div>
+    <div class="row">
+        <div class="col-12">
+            <div class="table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Deal ID</th>
+                            <th>Type</th>
+                            <th>Customer</th>
+                            <th>Issue</th>
+                            <th>Status</th>
+                            <th>Age</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in recentIssues">
+                            <td>{{item.id}}</td>
+                            <td>{{item.type}}</td>
+                            <td>{{item.customer}}</td>
+                            <td>{{item.issue}}</td>
+                            <td>
+                                <span class="status-badge" ng-class="item.status.toLowerCase()">
+                                    {{item.status}}
+                                </span>
+                            </td>
+                            <td>{{item.age}} hours</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary">Resolve</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

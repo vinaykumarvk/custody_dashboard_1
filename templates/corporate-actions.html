@@ -1,0 +1,153 @@
+<div class="container-fluid">
+    <div class="section-title">Corporate Actions Overview</div>
+    
+    <!-- Summary Stats -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Total Actions</div>
+                <div class="metric-value">{{totalActions | number}}</div>
+                <div class="metric-subtitle">Period</div>
+                <div class="metric-subvalue">Last 12 months</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Pending Actions</div>
+                <div class="metric-value">{{pendingActions | number}}</div>
+                <div class="metric-subtitle">Critical</div>
+                <div class="metric-subvalue">{{criticalActions}}</div>
+                <div class="metric-subtext">Requires immediate attention</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Processing Time</div>
+                <div class="metric-value">{{avgProcessingTime}} hours</div>
+                <div class="metric-subtitle">Change</div>
+                <div class="metric-subvalue">{{processingTimeChange}}%</div>
+                <div class="metric-subtext">From previous period</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Success Rate</div>
+                <div class="metric-value">{{successRate}}%</div>
+                <div class="metric-subtitle">Change</div>
+                <div class="metric-subvalue">{{successRateChange}}%</div>
+                <div class="metric-subtext">From previous period</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Section -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Corporate Actions by Type</div>
+                <div class="chart-subtitle">Distribution</div>
+                <canvas id="actions-by-type-chart" class="chart" chart-data="actionsByTypeData" chart-labels="actionTypeLabels" 
+                        chart-options="pieChartOptions" chart-type="pie"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Monthly Action Volume</div>
+                <div class="chart-subtitle">Last 12 months</div>
+                <canvas id="monthly-action-chart" class="chart" chart-data="monthlyActionData" chart-labels="monthLabels" 
+                        chart-options="barChartOptions" chart-type="bar"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="chart-container">
+                <div class="chart-title">Action Processing Timeline</div>
+                <div class="chart-subtitle">Average processing time (hours)</div>
+                <canvas id="processing-timeline-chart" class="chart" chart-data="processingTimelineData" chart-labels="monthLabels" 
+                        chart-series="actionTypes" chart-options="lineChartOptions" chart-type="line"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="chart-container">
+                <div class="chart-title">Action Status</div>
+                <div class="chart-subtitle">Current period</div>
+                <canvas id="action-status-chart" class="chart" chart-data="actionStatusData" chart-labels="statusLabels" 
+                        chart-options="donutOptions" chart-type="doughnut"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Prediction Section -->
+    <div class="section-title">Action Predictions</div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Predicted Action Volume</div>
+                <div class="chart-subtitle">Next 3 months</div>
+                <canvas id="predicted-volume-chart" class="chart" chart-data="predictedVolumeData" chart-labels="predictionMonths" 
+                        chart-series="predictionYears" chart-options="groupedBarOptions" chart-type="bar"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Expected Processing Load</div>
+                <div class="chart-subtitle">By action type</div>
+                <canvas id="processing-load-chart" class="chart" chart-data="processingLoadData" chart-labels="actionTypeLabels" 
+                        chart-options="horizontalBarOptions" chart-type="horizontalBar"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pending Actions Table -->
+    <div class="section-title">Pending Corporate Actions</div>
+    <div class="row">
+        <div class="col-12">
+            <div class="table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Action ID</th>
+                            <th>Type</th>
+                            <th>Security</th>
+                            <th>Ex-Date</th>
+                            <th>Record Date</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="action in pendingActionsList">
+                            <td>{{action.id}}</td>
+                            <td>{{action.type}}</td>
+                            <td>{{action.security}}</td>
+                            <td>{{action.exDate | date:'dd-MMM-yyyy'}}</td>
+                            <td>{{action.recordDate | date:'dd-MMM-yyyy'}}</td>
+                            <td>
+                                <span class="status-badge" ng-class="action.status.toLowerCase()">
+                                    {{action.status}}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="priority-badge" ng-class="action.priority.toLowerCase()">
+                                    {{action.priority}}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary">Process</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

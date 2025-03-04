@@ -1,0 +1,152 @@
+<div class="container-fluid">
+    <div class="section-title">Open Events Overview</div>
+    
+    <!-- Summary Stats -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Open Events</div>
+                <div class="metric-value">{{openEvents | number}}</div>
+                <div class="metric-subtitle">Critical</div>
+                <div class="metric-subvalue">{{criticalEvents}}</div>
+                <div class="metric-subtext">Requires immediate attention</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Open Entitlements</div>
+                <div class="metric-value">{{openEntitlements | number}}</div>
+                <div class="metric-subtitle">Total Value</div>
+                <div class="metric-subvalue">₹{{entitlementsValue | number}}</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Average Age</div>
+                <div class="metric-value">{{avgEventAge}} days</div>
+                <div class="metric-subtitle">Max Age</div>
+                <div class="metric-subvalue">{{maxEventAge}} days</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Resolution Rate</div>
+                <div class="metric-value">{{resolutionRate}}%</div>
+                <div class="metric-subtitle">Change</div>
+                <div class="metric-subvalue">{{resolutionRateChange}}%</div>
+                <div class="metric-subtext">From previous period</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Section -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Events by Category</div>
+                <div class="chart-subtitle">Distribution</div>
+                <canvas id="events-by-category-chart" class="chart" chart-data="eventsByCategoryData" chart-labels="categoryLabels" 
+                        chart-options="pieChartOptions" chart-type="pie"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Event Aging</div>
+                <div class="chart-subtitle">By days</div>
+                <canvas id="event-aging-chart" class="chart" chart-data="eventAgingData" chart-labels="agingLabels" 
+                        chart-options="barChartOptions" chart-type="bar"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="chart-container">
+                <div class="chart-title">Monthly Event Trend</div>
+                <div class="chart-subtitle">Last 12 months</div>
+                <canvas id="monthly-events-chart" class="chart" chart-data="monthlyEventsData" chart-labels="monthLabels" 
+                        chart-series="['New Events', 'Resolved Events']" chart-options="stackedBarOptions" chart-type="bar"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="chart-container">
+                <div class="chart-title">Event Priority Distribution</div>
+                <div class="chart-subtitle">Current open events</div>
+                <canvas id="event-priority-chart" class="chart" chart-data="eventPriorityData" chart-labels="priorityLabels" 
+                        chart-options="horizontalBarOptions" chart-type="horizontalBar"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Prediction Section -->
+    <div class="section-title">Event Predictions</div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Predicted Event Volume</div>
+                <div class="chart-subtitle">Next 3 months</div>
+                <canvas id="predicted-events-chart" class="chart" chart-data="predictedEventsData" chart-labels="predictionMonths" 
+                        chart-series="predictionYears" chart-options="groupedBarOptions" chart-type="bar"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Expected Entitlements</div>
+                <div class="chart-subtitle">Next 3 months (in millions)</div>
+                <canvas id="expected-entitlements-chart" class="chart" chart-data="expectedEntitlementsData" chart-labels="predictionMonths" 
+                        chart-series="predictionYears" chart-options="groupedBarOptions" chart-type="bar"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Open Events Table -->
+    <div class="section-title">Open Events List</div>
+    <div class="row">
+        <div class="col-12">
+            <div class="table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Event ID</th>
+                            <th>Category</th>
+                            <th>Customer</th>
+                            <th>Created Date</th>
+                            <th>Age (days)</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="event in openEventsList">
+                            <td>{{event.id}}</td>
+                            <td>{{event.category}}</td>
+                            <td>{{event.customer}}</td>
+                            <td>{{event.createdDate | date:'dd-MMM-yyyy'}}</td>
+                            <td>{{event.age}}</td>
+                            <td>
+                                <span class="status-badge" ng-class="event.status.toLowerCase()">
+                                    {{event.status}}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="priority-badge" ng-class="event.priority.toLowerCase()">
+                                    {{event.priority}}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary">Process</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

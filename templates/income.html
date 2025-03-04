@@ -1,0 +1,165 @@
+<div class="container-fluid">
+    <div class="section-title">Income Overview</div>
+    
+    <!-- Summary Stats -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Total Income</div>
+                <div class="metric-value">₹{{totalIncome | number}}</div>
+                <div class="metric-subtitle">Period</div>
+                <div class="metric-subvalue">All time</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">New Income</div>
+                <div class="metric-value">₹{{newIncome | number}}</div>
+                <div class="metric-subtitle">Period</div>
+                <div class="metric-subvalue">Last 3 months</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Average Monthly</div>
+                <div class="metric-value">₹{{avgMonthlyIncome | number}}</div>
+                <div class="metric-subtitle">Change</div>
+                <div class="metric-subvalue">{{monthlyIncomeChange}}%</div>
+                <div class="metric-subtext">From previous period</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-container">
+                <div class="metric-title">Growth Rate</div>
+                <div class="metric-value">{{incomeGrowth}}%</div>
+                <div class="metric-subtitle">Period</div>
+                <div class="metric-subvalue">Year-on-year</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Section -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="chart-container">
+                <div class="chart-title">Monthly Income Trend</div>
+                <div class="chart-subtitle">Last 12 months</div>
+                <canvas id="monthly-income-chart" class="chart" chart-data="monthlyIncomeData" chart-labels="monthLabels" 
+                        chart-series="['Monthly Income']" chart-options="lineChartOptions" chart-type="line"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="chart-container">
+                <div class="chart-title">Income by Product</div>
+                <div class="chart-subtitle">Distribution</div>
+                <canvas id="income-by-product-chart" class="chart" chart-data="incomeByProductData" chart-labels="productLabels" 
+                        chart-options="pieChartOptions" chart-type="pie"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Quarterly Income</div>
+                <div class="chart-subtitle">Last 4 quarters</div>
+                <canvas id="quarterly-income-chart" class="chart" chart-data="quarterlyIncomeData" chart-labels="quarterLabels" 
+                        chart-options="barChartOptions" chart-type="bar"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Income vs Trade Volume</div>
+                <div class="chart-subtitle">Correlation analysis</div>
+                <canvas id="income-correlation-chart" class="chart" chart-data="incomeCorrelationData" chart-labels="monthLabels" 
+                        chart-series="['Income', 'Trade Volume']" chart-options="mixedChartOptions" chart-type="line"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Income by Customer Category -->
+    <div class="section-title">Income by Customer Category</div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Customer Category Distribution</div>
+                <div class="chart-subtitle">Income percentage</div>
+                <canvas id="category-distribution-chart" class="chart" chart-data="categoryDistributionData" chart-labels="categoryLabels" 
+                        chart-options="donutOptions" chart-type="doughnut"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Top Customer Income</div>
+                <div class="chart-subtitle">Top 5 customers by income</div>
+                <canvas id="top-customer-chart" class="chart" chart-data="topCustomerData" chart-labels="topCustomerLabels" 
+                        chart-options="horizontalBarOptions" chart-type="horizontalBar"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Income Prediction -->
+    <div class="section-title">Income Predictions</div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Predicted Income</div>
+                <div class="chart-subtitle">Next 3 months</div>
+                <canvas id="predicted-income-chart" class="chart" chart-data="predictedIncomeData" chart-labels="predictionMonths" 
+                        chart-series="predictionYears" chart-options="groupedBarOptions" chart-type="bar"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-title">Growth Projection</div>
+                <div class="chart-subtitle">Next 12 months</div>
+                <canvas id="growth-projection-chart" class="chart" chart-data="growthProjectionData" chart-labels="projectionMonths" 
+                        chart-options="areaChartOptions" chart-type="line"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Income Breakdown Table -->
+    <div class="section-title">Income Breakdown</div>
+    <div class="row">
+        <div class="col-12">
+            <div class="table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Source</th>
+                            <th>Current Month</th>
+                            <th>Last Month</th>
+                            <th>3 Month Avg</th>
+                            <th>YTD</th>
+                            <th>Growth</th>
+                            <th>Trend</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in incomeBreakdown">
+                            <td>{{item.source}}</td>
+                            <td>₹{{item.currentMonth | number}}</td>
+                            <td>₹{{item.lastMonth | number}}</td>
+                            <td>₹{{item.threeMonthAvg | number}}</td>
+                            <td>₹{{item.ytd | number}}</td>
+                            <td>{{item.growth}}%</td>
+                            <td>
+                                <span class="trend-indicator" ng-class="item.trend.toLowerCase()">
+                                    {{item.trend === 'UP' ? '↑' : item.trend === 'DOWN' ? '↓' : '→'}}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
