@@ -19,7 +19,7 @@
                     </div>
                     <div class="metric-content">
                         <h5 class="metric-title">Total Income (YTD)</h5>
-                        <h2 class="metric-value">{{ formatNumber(totalIncome) }}</h2>
+                        <h2 class="metric-value">{{ formatNumberWithCommas(totalIncome) }}</h2>
                         <div class="metric-trend trend-up">
                             <i class="fa fa-arrow-up"></i>
                             <span>{{ formatPercentage(incomeGrowth) }}</span>
@@ -36,7 +36,7 @@
                     </div>
                     <div class="metric-content">
                         <h5 class="metric-title">New Income</h5>
-                        <h2 class="metric-value">{{ formatNumber(newIncome) }}</h2>
+                        <h2 class="metric-value">{{ formatNumberWithCommas(newIncome) }}</h2>
                         <div class="metric-trend trend-up">
                             <i class="fa fa-arrow-up"></i>
                             <span>{{ formatPercentage(monthlyIncomeChange) }}</span>
@@ -53,7 +53,7 @@
                     </div>
                     <div class="metric-content">
                         <h5 class="metric-title">Monthly Average</h5>
-                        <h2 class="metric-value">{{ formatNumber(avgMonthlyIncome) }}</h2>
+                        <h2 class="metric-value">{{ formatNumberWithCommas(avgMonthlyIncome) }}</h2>
                         <div class="metric-trend trend-up">
                             <i class="fa fa-arrow-up"></i>
                             <span>3.2%</span>
@@ -231,10 +231,10 @@
                             <tbody>
                                 <tr ng-repeat="item in incomeBreakdown">
                                     <td>{{ item.source }}</td>
-                                    <td>{{ formatNumber(item.currentMonth) }}</td>
-                                    <td>{{ formatNumber(item.lastMonth) }}</td>
-                                    <td>{{ formatNumber(item.threeMonthAvg) }}</td>
-                                    <td>{{ formatNumber(item.ytd) }}</td>
+                                    <td>{{ formatNumberWithCommas(item.currentMonth) }}</td>
+                                    <td>{{ formatNumberWithCommas(item.lastMonth) }}</td>
+                                    <td>{{ formatNumberWithCommas(item.threeMonthAvg) }}</td>
+                                    <td>{{ formatNumberWithCommas(item.ytd) }}</td>
                                     <td>
                                         <span ng-class="getTrendClass(item.growth)">
                                             <i class="fa" ng-class="getTrendIcon(item.growth)"></i>
