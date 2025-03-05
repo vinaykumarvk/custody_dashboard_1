@@ -4,11 +4,21 @@ import { fetchData } from '../services/api';
 import MetricCard from './MetricCard';
 import Chart from './Chart';
 import DataTable from './DataTable';
+import DateRangeFilter from './DateRangeFilter';
+import TradeDetailModal from './TradeDetailModal';
 
 const Dashboard = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedTrade, setSelectedTrade] = useState(null);
+  const [filterParams, setFilterParams] = useState({
+    startDate: null,
+    endDate: new Date(),
+    range: '30d'
+  });
+  const [filteredVolumeData, setFilteredVolumeData] = useState([]);
+  const [filteredTradeCountData, setFilteredTradeCountData] = useState([]);
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -21,6 +31,9 @@ const Dashboard = () => {
         const processedData = processApiData(dashboardData);
         setData(processedData);
         setLoading(false);
+        
+        // Set initial filtered data
+        applyDateFilter(processedData.tradingVolumeHistory, processedData.tradeCountHistory, filterParams);
       } catch (err) {
         console.error('Error loading dashboard data:', err);
         setError('Failed to load dashboard data');
@@ -30,6 +43,48 @@ const Dashboard = () => {
 
     loadDashboardData();
   }, []);
+  
+  const handleDateFilterChange = (newFilterParams) => {
+    setFilterParams(newFilterParams);
+    if (data) {
+      applyDateFilter(data.tradingVolumeHistory, data.tradeCountHistory, newFilterParams);
+    }
+  };
+  
+  const applyDateFilter = (volumeData, tradeCountData, filterParams) => {
+    const { startDate, endDate } = filterParams;
+    
+    // If 'all' is selected, use all data
+    if (filterParams.range === 'all') {
+      setFilteredVolumeData(volumeData);
+      setFilteredTradeCountData(tradeCountData);
+      return;
+    }
+    
+    // Apply date filters
+    const filteredVolume = volumeData.filter(item => {
+      const itemDate = new Date(item.date);
+      return (!startDate || itemDate >= startDate) && 
+             (!endDate || itemDate <= endDate);
+    });
+    
+    const filteredCount = tradeCountData.filter(item => {
+      const itemDate = new Date(item.date);
+      return (!startDate || itemDate >= startDate) && 
+             (!endDate || itemDate <= endDate);
+    });
+    
+    setFilteredVolumeData(filteredVolume);
+    setFilteredTradeCountData(filteredCount);
+  };
+  
+  const handleRowClick = (trade) => {
+    setSelectedTrade(trade);
+  };
+  
+  const closeTradeModal = () => {
+    setSelectedTrade(null);
+  };
   
   /**
    * Process API data into the format expected by the dashboard component
@@ -137,9 +192,7 @@ const Dashboard = () => {
     tradesByAssetClass,
     monthlyIncome,
     incomeByService,
-    recentTrades,
-    tradingVolumeHistory,
-    tradeCountHistory
+    recentTrades
   } = data;
 
   // Prepare chart data
@@ -170,31 +223,35 @@ const Dashboard = () => {
   };
 
   const tradingVolumeChartData = {
-    labels: tradingVolumeHistory.map(item => {
+    labels: filteredVolumeData.map(item => {
       const date = new Date(item.date);
       return `${date.getMonth() + 1}/${date.getDate()}`;
     }),
     datasets: [
       {
         label: 'Trading Volume',
-        data: tradingVolumeHistory.map(item => item.value),
+        data: filteredVolumeData.map(item => item.value),
         fill: true,
         tension: 0.4,
+        backgroundColor: 'rgba(0, 124, 117, 0.2)',
+        borderColor: '#007C75',
       }
     ]
   };
 
   const tradeCountChartData = {
-    labels: tradeCountHistory.map(item => {
+    labels: filteredTradeCountData.map(item => {
       const date = new Date(item.date);
       return `${date.getMonth() + 1}/${date.getDate()}`;
     }),
     datasets: [
       {
         label: 'Trade Count',
-        data: tradeCountHistory.map(item => item.value),
+        data: filteredTradeCountData.map(item => item.value),
         fill: true,
         tension: 0.4,
+        backgroundColor: 'rgba(0, 124, 117, 0.2)',
+        borderColor: '#007C75',
       }
     ]
   };
@@ -202,11 +259,11 @@ const Dashboard = () => {
   // Table columns for recent trades
   const recentTradesColumns = [
     { field: 'id', header: 'Trade ID', width: '15%' },
-    { field: 'customer', header: 'Customer', width: '25%' },
+    { field: 'customer', header: 'Customer', width: '20%' },
     { field: 'type', header: 'Type', width: '10%' },
-    { field: 'asset', header: 'Asset', width: '15%' },
+    { field: 'asset', header: 'Asset', width: '10%' },
     { field: 'amount', header: 'Amount', type: 'currency', width: '15%' },
-    { field: 'status', header: 'Status', type: 'status', width: '15%' },
+    { field: 'status', header: 'Status', type: 'status', width: '10%' },
     { field: 'date', header: 'Date', type: 'date', format: 'datetime', width: '20%' }
   ];
 
@@ -217,14 +274,14 @@ const Dashboard = () => {
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Total Customers" 
-            value={formatNumber(totalCustomers)} 
+            value={formatNumber(totalCustomers, false)} 
             icon="users"
           />
         </div>
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Active Customers" 
-            value={formatNumber(activeCustomers)} 
+            value={formatNumber(activeCustomers, false)} 
             subtitle={`${Math.round((activeCustomers / totalCustomers) * 100)}% of total`}
             icon="user-check"
           />
@@ -232,7 +289,7 @@ const Dashboard = () => {
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Total Accounts" 
-            value={formatNumber(totalAccounts)} 
+            value={formatNumber(totalAccounts, false)} 
             icon="folder-open"
           />
         </div>
@@ -251,21 +308,22 @@ const Dashboard = () => {
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Total Trades" 
-            value={formatNumber(totalTrades)} 
+            value={formatNumber(totalTrades, false)} 
             icon="exchange-alt"
           />
         </div>
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Trading Volume" 
-            value={formatCurrency(tradingVolume)} 
+            value={formatCurrency(tradingVolume, 'USD', 0)} 
             icon="dollar-sign"
+            valueClassName="smaller-value"
           />
         </div>
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Pending Trades" 
-            value={formatNumber(pendingTrades)} 
+            value={formatNumber(pendingTrades, false)} 
             icon="clock"
             color="#FFC107"
           />
@@ -273,7 +331,7 @@ const Dashboard = () => {
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Open Events" 
-            value={formatNumber(openEvents)} 
+            value={formatNumber(openEvents, false)} 
             icon="exclamation-circle"
             color="#DC3545"
           />
@@ -284,14 +342,38 @@ const Dashboard = () => {
       <div className="row g-3 mb-4">
         <div className="col-md-8">
           <div className="card">
-            <div className="card-header">
+            <div className="card-header d-flex justify-content-between align-items-center">
               <h2>Trading Volume History</h2>
+              <DateRangeFilter onFilterChange={handleDateFilterChange} />
             </div>
             <div className="card-body">
               <Chart 
                 type="line"
                 data={tradingVolumeChartData}
                 height="300px"
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        callback: function(value) {
+                          return formatCurrency(value, 'USD', 0);
+                        }
+                      }
+                    }
+                  },
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: function(context) {
+                          return formatCurrency(context.raw, 'USD', 0);
+                        }
+                      }
+                    }
+                  }
+                }}
               />
             </div>
           </div>
@@ -306,6 +388,15 @@ const Dashboard = () => {
                 type="doughnut"
                 data={customerSegmentChartData}
                 height="300px"
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'bottom'
+                    }
+                  }
+                }}
               />
             </div>
           </div>
@@ -316,14 +407,27 @@ const Dashboard = () => {
       <div className="row g-3 mb-4">
         <div className="col-md-6">
           <div className="card">
-            <div className="card-header">
+            <div className="card-header d-flex justify-content-between align-items-center">
               <h2>Trade Count History</h2>
+              <DateRangeFilter onFilterChange={handleDateFilterChange} />
             </div>
             <div className="card-body">
               <Chart 
                 type="line"
                 data={tradeCountChartData}
                 height="250px"
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        precision: 0
+                      }
+                    }
+                  }
+                }}
               />
             </div>
           </div>
@@ -338,6 +442,20 @@ const Dashboard = () => {
                 type="bar"
                 data={tradesByAssetChartData}
                 height="250px"
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        precision: 0
+                      }
+                    }
+                  },
+                  barPercentage: 0.6,
+                  categoryPercentage: 0.8
+                }}
               />
             </div>
           </div>
@@ -353,9 +471,18 @@ const Dashboard = () => {
           <DataTable 
             data={recentTrades}
             columns={recentTradesColumns}
+            onRowClick={handleRowClick}
           />
         </div>
       </div>
+      
+      {/* Trade detail modal */}
+      {selectedTrade && (
+        <TradeDetailModal 
+          trade={selectedTrade} 
+          onClose={closeTradeModal} 
+        />
+      )}
     </div>
   );
 };

@@ -1,6 +1,13 @@
 import React from 'react';
 
-const MetricCard = ({ title, value, subtitle, icon, color = '#007C75' }) => {
+const MetricCard = ({ 
+  title, 
+  value, 
+  subtitle, 
+  icon, 
+  color = '#007C75',
+  valueClassName = ''
+}) => {
   return (
     <div className="metric-card">
       {icon && (
@@ -8,7 +15,7 @@ const MetricCard = ({ title, value, subtitle, icon, color = '#007C75' }) => {
           <i className={`fas fa-${icon}`}></i>
         </div>
       )}
-      <div className="value" style={{ color }}>{value}</div>
+      <div className={`value ${valueClassName}`} style={{ color }}>{value}</div>
       <div className="title">{title}</div>
       {subtitle && <div className="subtitle">{subtitle}</div>}
     </div>

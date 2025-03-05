@@ -4,7 +4,8 @@ import { formatDate, formatNumber, formatCurrency, getStatusColor } from '../uti
 const DataTable = ({ 
   data = [], 
   columns = [],
-  noDataMessage = "No data available" 
+  noDataMessage = "No data available",
+  onRowClick
 }) => {
   if (!data || data.length === 0) {
     return (
@@ -13,6 +14,12 @@ const DataTable = ({
       </div>
     );
   }
+  
+  const handleRowClick = (row) => {
+    if (onRowClick) {
+      onRowClick(row);
+    }
+  };
 
   return (
     <div className="table-responsive">
@@ -28,7 +35,12 @@ const DataTable = ({
         </thead>
         <tbody>
           {data.map((row, rowIndex) => (
-            <tr key={rowIndex}>
+            <tr 
+              key={rowIndex} 
+              onClick={() => handleRowClick(row)}
+              className={onRowClick ? 'clickable-row' : ''}
+              title={onRowClick ? 'Click for details' : ''}
+            >
               {columns.map((column, colIndex) => (
                 <td key={colIndex}>
                   {renderCell(row, column)}

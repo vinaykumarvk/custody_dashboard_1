@@ -35,17 +35,22 @@ const ChartComponent = ({ type, data, options, height = '100%' }) => {
   
   // Render appropriate chart based on type
   const renderChart = () => {
+    const chartProps = {
+      data: chartConfig.data,
+      options: chartConfig.options || {}
+    };
+    
     switch (type.toLowerCase()) {
       case 'line':
-        return <Line {...chartConfig} />;
+        return <Line data={chartProps.data} options={chartProps.options} />;
       case 'bar':
-        return <Bar {...chartConfig} />;
+        return <Bar data={chartProps.data} options={chartProps.options} />;
       case 'pie':
-        return <Pie {...chartConfig} />;
+        return <Pie data={chartProps.data} options={chartProps.options} />;
       case 'doughnut':
-        return <Doughnut {...chartConfig} />;
+        return <Doughnut data={chartProps.data} options={chartProps.options} />;
       default:
-        return <Line {...chartConfig} />;
+        return <Line data={chartProps.data} options={chartProps.options} />;
     }
   };
 
