@@ -6,9 +6,16 @@ import './assets/styles.css';
 
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activePage, setActivePage] = useState('dashboard');
   
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  const handlePageChange = (pageId) => {
+    setActivePage(pageId);
+    // In a real application, this would load different page components
+    console.log(`Navigating to page: ${pageId}`);
   };
 
   useEffect(() => {
@@ -45,6 +52,16 @@ const App = () => {
     };
   }, []);
 
+  const renderPage = () => {
+    // For now, we only have the Dashboard component
+    // In a real application, this would switch between different page components
+    switch (activePage) {
+      case 'dashboard':
+      default:
+        return <Dashboard />;
+    }
+  };
+
   return (
     <div className={`app-container ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`} data-react-root="true">
       <Header 
@@ -56,11 +73,13 @@ const App = () => {
       <div className="app-content">
         <Sidebar 
           isOpen={sidebarOpen} 
-          toggleSidebar={toggleSidebar}
+          onClose={toggleSidebar}
+          activePage={activePage}
+          onPageChange={handlePageChange}
         />
         
         <main className="main-content">
-          <Dashboard />
+          {renderPage()}
         </main>
       </div>
     </div>

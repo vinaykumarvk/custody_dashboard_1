@@ -1,52 +1,51 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-const Sidebar = ({ isOpen, toggleSidebar }) => {
-  const [activeItem, setActiveItem] = useState('dashboard');
-
+const Sidebar = ({ isOpen, onClose, activePage, onPageChange }) => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'tachometer-alt' },
-    { id: 'customers', label: 'Customers', icon: 'users' },
     { id: 'trades', label: 'Trades', icon: 'exchange-alt' },
-    { id: 'corporate-actions', label: 'Corporate Actions', icon: 'file-contract' },
-    { id: 'deal-processing', label: 'Deal Processing', icon: 'file-invoice-dollar' },
-    { id: 'reports', label: 'Reports', icon: 'chart-bar' },
-    { id: 'settings', label: 'Settings', icon: 'cog' },
+    { id: 'customers', label: 'Customers', icon: 'users' },
+    { id: 'income', label: 'Income', icon: 'chart-line' },
+    { id: 'corporate-actions', label: 'Corporate Actions', icon: 'building' },
+    { id: 'settlements', label: 'Settlements', icon: 'money-check-alt' },
+    { id: 'reports', label: 'Reports', icon: 'file-alt' },
+    { id: 'settings', label: 'Settings', icon: 'cog' }
   ];
 
-  const handleMenuClick = (itemId) => {
-    setActiveItem(itemId);
-    // On mobile, close the sidebar after selecting an item
+  const handleMenuClick = (pageId) => {
+    onPageChange(pageId);
     if (window.innerWidth < 768) {
-      toggleSidebar();
+      onClose();
     }
   };
 
   return (
-    <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+    <div className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
-        <h3>Menu</h3>
-        <button className="close-sidebar" onClick={toggleSidebar}>
+        <h3>Navigation</h3>
+        <button className="close-sidebar" onClick={onClose}>
           <i className="fas fa-times"></i>
         </button>
       </div>
-      <nav className="sidebar-nav">
+      <div className="sidebar-nav">
         <ul>
           {menuItems.map(item => (
-            <li 
+            <li
               key={item.id}
-              className={activeItem === item.id ? 'active' : ''}
+              className={activePage === item.id ? 'active' : ''}
               onClick={() => handleMenuClick(item.id)}
             >
               <i className={`fas fa-${item.icon}`}></i>
-              <span>{item.label}</span>
+              {item.label}
             </li>
           ))}
         </ul>
-      </nav>
-      <div className="sidebar-footer">
-        <span>© 2025 Smart Bank</span>
       </div>
-    </aside>
+      <div className="sidebar-footer">
+        <p>Smart Bank Custody Solutions</p>
+        <p>Version 2.5.1</p>
+      </div>
+    </div>
   );
 };
 
