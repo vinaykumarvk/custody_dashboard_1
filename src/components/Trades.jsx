@@ -3,7 +3,6 @@ import Chart from './Chart';
 import DataTable from './DataTable';
 import MetricCard from './MetricCard';
 import DateRangeFilter from './DateRangeFilter';
-import TradeDetailModal from './TradeDetailModal';
 import { fetchData } from '../services/api';
 import { formatNumber, formatCurrency, formatDate, formatPercentage } from '../utils';
 
@@ -49,9 +48,9 @@ const Trades = () => {
     );
   };
 
-  // Prepare volume chart data
-  const prepareVolumeChartData = () => {
-    // Get last entries or filter by selected date range
+  // Prepare trading volume history chart data
+  const prepareVolumeHistoryChartData = () => {
+    // Get data filtered by selected date range
     let filteredData = [...data.volume_history];
     
     // Apply date filter
@@ -80,19 +79,18 @@ const Trades = () => {
       labels: filteredData.map(item => formatDate(item.date, 'short')),
       datasets: [
         {
-          label: 'Trade Volume',
+          label: 'Trading Volume',
           data: filteredData.map(item => item.volume),
+          backgroundColor: 'rgba(0, 124, 117, 0.7)',
           borderColor: '#007C75',
-          backgroundColor: 'rgba(0, 124, 117, 0.1)',
-          tension: 0.4,
-          fill: true,
+          borderWidth: 1,
         }
       ],
     };
   };
 
-  // Prepare asset class breakdown chart data
-  const prepareAssetClassChartData = () => {
+  // Prepare trade by asset class chart data
+  const prepareTradeByAssetClassChartData = () => {
     return {
       labels: data.trade_by_asset_class.map(item => item.asset_class),
       datasets: [
@@ -103,7 +101,6 @@ const Trades = () => {
             '#009E94',  // SmartBank light green
             '#006560',  // SmartBank dark green
             '#00BFB3',  // Additional blue-green
-            '#005450',  // Additional dark green
           ],
           borderWidth: 1,
         },
@@ -111,16 +108,16 @@ const Trades = () => {
     };
   };
 
-  // Prepare trade direction (buy/sell) chart data
-  const prepareTradeDirectionChartData = () => {
+  // Prepare buy vs. sell chart data
+  const prepareBuySellChartData = () => {
     return {
-      labels: ['Buy', 'Sell'],
+      labels: ['Buy Trades', 'Sell Trades'],
       datasets: [
         {
           data: [data.trades_buy, data.trades_sell],
           backgroundColor: [
-            '#28A745',  // Buy - green
-            '#DC3545',  // Sell - red
+            '#28A745',  // Green for buy
+            '#006560',  // Dark green for sell
           ],
           borderWidth: 1,
         },
@@ -131,18 +128,9 @@ const Trades = () => {
   // Table columns configuration
   const tradeColumns = [
     { field: 'trade_id', header: 'Trade ID', width: '100px' },
-    { field: 'date', header: 'Date', type: 'date', width: '120px' },
+    { field: 'date', header: 'Date', type: 'date', width: '150px' },
     { field: 'client_name', header: 'Client', width: '150px' },
-    { 
-      field: 'trade_type', 
-      header: 'Type', 
-      width: '80px',
-      render: (value) => (
-        <span className={`trade-type ${value?.toLowerCase()}`}>
-          {value}
-        </span>
-      )
-    },
+    { field: 'trade_type', header: 'Type', width: '80px' },
     { field: 'security_name', header: 'Security', width: '150px' },
     { 
       field: 'amount', 
@@ -151,18 +139,24 @@ const Trades = () => {
       width: '120px'
     },
     { 
+      field: 'currency', 
+      header: 'Currency', 
+      width: '90px',
+    },
+    { 
       field: 'status', 
       header: 'Status', 
       type: 'status',
       width: '110px'
-    },
-    { 
-      field: 'settlement_date', 
-      header: 'Settlement',
-      type: 'date',
-      width: '120px'
     }
   ];
+
+  // Calculate success rate color
+  const calculateSuccessColor = (rate) => {
+    if (rate >= 0.95) return '#28A745'; // High - green
+    if (rate >= 0.90) return '#FFC107'; // Medium - yellow
+    return '#DC3545'; // Low - red
+  };
 
   const handleTradeClick = (trade) => {
     setSelectedTrade(trade);
@@ -198,7 +192,7 @@ const Trades = () => {
             title="Avg. Trade Size" 
             value={formatCurrency(data.avg_trade_size)}
             subtitle="Last 30 days"
-            icon="dollar-sign"
+            icon="balance-scale"
             color="#17A2B8"
           />
         </div>
@@ -208,7 +202,7 @@ const Trades = () => {
             value={formatPercentage(data.success_rate)}
             subtitle="Completed trades"
             icon="check-circle"
-            color="#FFC107"
+            color={calculateSuccessColor(data.success_rate)}
           />
         </div>
       </div>
@@ -227,7 +221,7 @@ const Trades = () => {
           <MetricCard 
             title="Pending" 
             value={formatNumber(data.pending_trades)}
-            icon="clock"
+            icon="hourglass-half"
             color="#FFC107"
           />
         </div>
@@ -235,7 +229,7 @@ const Trades = () => {
           <MetricCard 
             title="Processing" 
             value={formatNumber(data.processing_trades)}
-            icon="spinner"
+            icon="cog"
             color="#17A2B8"
           />
         </div>
@@ -255,32 +249,32 @@ const Trades = () => {
           <div className="card">
             <div className="card-header">
               <div className="d-flex justify-content-between align-items-center">
-                <h2>Trading Volume</h2>
+                <h2>Trading Volume History</h2>
                 <DateRangeFilter activeRange={dateRange} onChange={setDateRange} />
               </div>
             </div>
             <div className="card-body">
               <Chart 
-                type="line" 
-                data={prepareVolumeChartData()} 
+                type="bar" 
+                data={prepareVolumeHistoryChartData()} 
                 options={{
                   responsive: true,
                   maintainAspectRatio: false,
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                      ticks: {
-                        callback: function(value) {
-                          return '$' + (value / 1000000) + 'M';
-                        }
-                      }
-                    }
-                  },
                   plugins: {
+                    legend: {
+                      position: 'top',
+                    },
                     tooltip: {
                       callbacks: {
                         label: function(context) {
-                          return 'Volume: ' + formatCurrency(context.raw);
+                          let label = context.dataset.label || '';
+                          if (label) {
+                            label += ': ';
+                          }
+                          if (context.parsed.y !== null) {
+                            label += formatCurrency(context.parsed.y);
+                          }
+                          return label;
                         }
                       }
                     }
@@ -293,61 +287,55 @@ const Trades = () => {
         </div>
         
         <div className="col-md-4">
-          <div className="row">
-            <div className="col-md-12">
-              <div className="card mb-4">
-                <div className="card-header">
-                  <h2>Asset Class Breakdown</h2>
-                </div>
-                <div className="card-body">
-                  <Chart 
-                    type="doughnut" 
-                    data={prepareAssetClassChartData()} 
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                        legend: {
-                          position: 'right',
-                          labels: {
-                            boxWidth: 15,
-                            padding: 10
-                          }
-                        }
-                      }
-                    }}
-                    height="140px"
-                  />
-                </div>
-              </div>
+          <div className="card mb-4">
+            <div className="card-header">
+              <h2>Asset Class Breakdown</h2>
             </div>
-            
-            <div className="col-md-12">
-              <div className="card">
-                <div className="card-header">
-                  <h2>Buy vs Sell</h2>
-                </div>
-                <div className="card-body">
-                  <Chart 
-                    type="pie" 
-                    data={prepareTradeDirectionChartData()} 
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                        legend: {
-                          position: 'right',
-                          labels: {
-                            boxWidth: 15,
-                            padding: 10
-                          }
-                        }
+            <div className="card-body">
+              <Chart 
+                type="doughnut" 
+                data={prepareTradeByAssetClassChartData()} 
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'right',
+                      labels: {
+                        boxWidth: 15,
+                        padding: 10
                       }
-                    }}
-                    height="140px"
-                  />
-                </div>
-              </div>
+                    }
+                  }
+                }}
+                height="140px"
+              />
+            </div>
+          </div>
+          
+          <div className="card">
+            <div className="card-header">
+              <h2>Buy vs. Sell Trades</h2>
+            </div>
+            <div className="card-body">
+              <Chart 
+                type="pie" 
+                data={prepareBuySellChartData()} 
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'right',
+                      labels: {
+                        boxWidth: 15,
+                        padding: 10
+                      }
+                    }
+                  }
+                }}
+                height="140px"
+              />
             </div>
           </div>
         </div>
@@ -395,12 +383,159 @@ const Trades = () => {
         </div>
       </div>
       
-      {/* Display trade details modal if a trade is selected */}
+      {/* Trade Detail Modal */}
       {selectedTrade && (
-        <TradeDetailModal 
-          trade={selectedTrade} 
-          onClose={() => setSelectedTrade(null)}
-        />
+        <div className="modal-backdrop" onClick={() => setSelectedTrade(null)}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Trade #{selectedTrade.trade_id}</h2>
+              <button className="close-button" onClick={() => setSelectedTrade(null)}>×</button>
+            </div>
+            <div className="modal-body">
+              <div className="trade-detail-grid">
+                <div className="detail-section">
+                  <h3>Trade Information</h3>
+                  <div className="detail-row">
+                    <div className="detail-label">Trade ID:</div>
+                    <div className="detail-value">{selectedTrade.trade_id}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Date:</div>
+                    <div className="detail-value">{formatDate(selectedTrade.date, 'long')}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Type:</div>
+                    <div className="detail-value">{selectedTrade.trade_type}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Status:</div>
+                    <div className="detail-value">
+                      <span className={`status status-${selectedTrade.status?.toLowerCase()}`}>
+                        {selectedTrade.status}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Settlement Date:</div>
+                    <div className="detail-value">{formatDate(selectedTrade.settlement_date, 'long')}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Settlement Status:</div>
+                    <div className="detail-value">
+                      <span className={`status status-${selectedTrade.settlement_status?.toLowerCase()}`}>
+                        {selectedTrade.settlement_status}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Exchange:</div>
+                    <div className="detail-value">{selectedTrade.exchange}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Settlement Location:</div>
+                    <div className="detail-value">{selectedTrade.settlement_location}</div>
+                  </div>
+                </div>
+                
+                <div className="detail-section">
+                  <h3>Financial Details</h3>
+                  <div className="detail-row">
+                    <div className="detail-label">Price:</div>
+                    <div className="detail-value">{formatCurrency(selectedTrade.price, selectedTrade.currency)}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Quantity:</div>
+                    <div className="detail-value">{formatNumber(selectedTrade.quantity)}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Amount:</div>
+                    <div className="detail-value">{formatCurrency(selectedTrade.amount, selectedTrade.currency)}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Commission:</div>
+                    <div className="detail-value">{formatCurrency(selectedTrade.commission, selectedTrade.currency)}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Fees:</div>
+                    <div className="detail-value">{formatCurrency(selectedTrade.fees, selectedTrade.currency)}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Total:</div>
+                    <div className="detail-value">{formatCurrency(selectedTrade.total_amount, selectedTrade.currency)}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Currency:</div>
+                    <div className="detail-value">{selectedTrade.currency}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Asset Class:</div>
+                    <div className="detail-value">{selectedTrade.asset_class}</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="detail-grid-2col mt-3">
+                <div className="detail-section">
+                  <h3>Security Information</h3>
+                  <div className="detail-row">
+                    <div className="detail-label">Security Name:</div>
+                    <div className="detail-value">{selectedTrade.security_name}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Symbol:</div>
+                    <div className="detail-value">{selectedTrade.security_id}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">ISIN:</div>
+                    <div className="detail-value">{selectedTrade.isin}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">CUSIP:</div>
+                    <div className="detail-value">{selectedTrade.cusip}</div>
+                  </div>
+                </div>
+                
+                <div className="detail-section">
+                  <h3>Client Information</h3>
+                  <div className="detail-row">
+                    <div className="detail-label">Client Name:</div>
+                    <div className="detail-value">{selectedTrade.client_name}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Client ID:</div>
+                    <div className="detail-value">{selectedTrade.client_id}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Account ID:</div>
+                    <div className="detail-value">{selectedTrade.account_id}</div>
+                  </div>
+                  <div className="detail-row">
+                    <div className="detail-label">Relationship Manager:</div>
+                    <div className="detail-value">{selectedTrade.relationship_manager}</div>
+                  </div>
+                </div>
+              </div>
+              
+              {selectedTrade.notes && (
+                <div className="detail-section mt-3">
+                  <h3>Notes</h3>
+                  <div className="detail-notes">
+                    {selectedTrade.notes}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setSelectedTrade(null)}>Close</button>
+              {selectedTrade.status === 'Pending' && (
+                <button className="btn btn-primary">Process Trade</button>
+              )}
+              {selectedTrade.status === 'Failed' && (
+                <button className="btn btn-primary">Retry Trade</button>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

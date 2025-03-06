@@ -233,6 +233,10 @@ const CorporateActions = () => {
                   plugins: {
                     legend: {
                       position: 'right',
+                      labels: {
+                        boxWidth: 15,
+                        padding: 10
+                      }
                     }
                   }
                 }}
@@ -263,7 +267,11 @@ const CorporateActions = () => {
                   },
                   plugins: {
                     legend: {
-                      position: 'top',
+                      position: 'right',
+                      labels: {
+                        boxWidth: 15,
+                        padding: 10
+                      }
                     }
                   }
                 }}

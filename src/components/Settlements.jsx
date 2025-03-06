@@ -266,7 +266,11 @@ const Settlements = () => {
                   },
                   plugins: {
                     legend: {
-                      position: 'top',
+                      position: 'right',
+                      labels: {
+                        boxWidth: 15,
+                        padding: 10
+                      }
                     },
                     tooltip: {
                       callbacks: {
