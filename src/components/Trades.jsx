@@ -308,7 +308,7 @@ const Trades = () => {
                     }
                   }
                 }}
-                height="200px"
+                height="300px"
               />
             </div>
           </div>
@@ -334,7 +334,7 @@ const Trades = () => {
                     }
                   }
                 }}
-                height="200px"
+                height="300px"
               />
             </div>
           </div>
