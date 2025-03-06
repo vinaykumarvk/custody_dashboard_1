@@ -629,6 +629,12 @@ const getMockData = (endpoint) => {
         { date: '2025-02-28', total_customers: 19196, new_customers: 495 },
         { date: '2025-03-31', total_customers: 19632, new_customers: 436 }
       ],
+      customer_segments: [
+        { segment: 'Institutional', count: 7854, percentage: 0.40 },
+        { segment: 'Corporate', count: 5889, percentage: 0.30 },
+        { segment: 'Wealth Management', count: 3927, percentage: 0.20 },
+        { segment: 'Retail', count: 1962, percentage: 0.10 }
+      ],
       customers_by_type: [
         { type: 'Institutional', count: 7854 },
         { type: 'Corporate', count: 5889 },
@@ -641,6 +647,53 @@ const getMockData = (endpoint) => {
         { region: 'Asia Pacific', count: 2945 },
         { region: 'Middle East', count: 982 },
         { region: 'Latin America', count: 980 }
+      ],
+      recent_customers: [
+        {
+          customer_id: 'C-12345',
+          name: 'BlackRock Inc.',
+          type: 'Institutional',
+          country: 'United States',
+          date_onboarded: '2024-04-15',
+          accounts: 12,
+          status: 'Active'
+        },
+        {
+          customer_id: 'C-12346',
+          name: 'Vanguard Group',
+          type: 'Institutional',
+          country: 'United States',
+          date_onboarded: '2024-04-22',
+          accounts: 10,
+          status: 'Active'
+        },
+        {
+          customer_id: 'C-12347',
+          name: 'Goldman Sachs Asset Management',
+          type: 'Institutional',
+          country: 'United States',
+          date_onboarded: '2024-05-03',
+          accounts: 8,
+          status: 'Active'
+        },
+        {
+          customer_id: 'C-12348',
+          name: 'JP Morgan Asset Management',
+          type: 'Institutional',
+          country: 'United States',
+          date_onboarded: '2024-05-10',
+          accounts: 9,
+          status: 'Active'
+        },
+        {
+          customer_id: 'C-12349',
+          name: 'Fidelity Investments',
+          type: 'Institutional',
+          country: 'United States',
+          date_onboarded: '2024-05-17',
+          accounts: 7,
+          status: 'Active'
+        }
       ],
       top_customers: [
         {
