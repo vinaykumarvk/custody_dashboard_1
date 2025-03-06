@@ -149,7 +149,7 @@ const Reports = () => {
         <div className="col-md-3">
           <MetricCard 
             title="Scheduled Reports" 
-            value={formatNumber(data.scheduled_reports)}
+            value={formatNumber(Array.isArray(data.scheduled_reports) ? data.scheduled_reports.length : data.scheduled_reports)}
             subtitle="Automated reports"
             icon="clock"
             color="#17A2B8"
