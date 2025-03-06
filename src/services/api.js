@@ -29,6 +29,30 @@ const API_ENDPOINTS = {
     'api/settlements/index',
     'api/settlements.json',
     'api/settlements'
+  ],
+  customers: [
+    'api/customers/index.json',
+    'api/customers/index',
+    'api/customers.json',
+    'api/customers'
+  ],
+  income: [
+    'api/income/index.json',
+    'api/income/index',
+    'api/income.json',
+    'api/income'
+  ],
+  reports: [
+    'api/reports/index.json',
+    'api/reports/index',
+    'api/reports.json',
+    'api/reports'
+  ],
+  settings: [
+    'api/settings/index.json',
+    'api/settings/index',
+    'api/settings.json',
+    'api/settings'
   ]
 };
 

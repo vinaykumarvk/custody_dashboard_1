@@ -270,6 +270,380 @@ export const mockApiCall = (endpoint, options = {}) => {
  */
 const getMockData = (endpoint) => {
   const mockData = {
+    'customers': {
+      total_customers: 19632,
+      active_customers: 17254,
+      inactive_customers: 2378,
+      new_customers_mtd: 436,
+      new_customers_ytd: 3097,
+      total_accounts: 34257,
+      active_accounts: 29478,
+      kyc_pending: 184,
+      onboarding_in_progress: 342,
+      
+      // Customer segments data
+      customer_segments: [
+        { segment: 'Institutional', count: 8835, percentage: 0.45 },
+        { segment: 'Corporate', count: 5890, percentage: 0.30 },
+        { segment: 'Wealth Management', count: 3926, percentage: 0.20 },
+        { segment: 'Retail', count: 981, percentage: 0.05 }
+      ],
+      
+      // Customer by region data
+      customers_by_region: [
+        { region: 'North America', count: 9816 },
+        { region: 'Europe', count: 5889 },
+        { region: 'Asia Pacific', count: 2945 },
+        { region: 'Middle East', count: 589 },
+        { region: 'Latin America', count: 393 }
+      ],
+      
+      // Customer growth data
+      customers_monthly: [
+        { date: '2024-03-31', total_customers: 1230, new_customers: 1230 },
+        { date: '2024-04-30', total_customers: 2955, new_customers: 1725 },
+        { date: '2024-05-31', total_customers: 4514, new_customers: 1559 },
+        { date: '2024-06-30', total_customers: 5886, new_customers: 1372 },
+        { date: '2024-07-31', total_customers: 7578, new_customers: 1692 },
+        { date: '2024-08-31', total_customers: 9396, new_customers: 1818 },
+        { date: '2024-09-30', total_customers: 11047, new_customers: 1651 },
+        { date: '2024-10-31', total_customers: 13018, new_customers: 1971 },
+        { date: '2024-11-30', total_customers: 14759, new_customers: 1741 },
+        { date: '2024-12-31', total_customers: 16462, new_customers: 1703 },
+        { date: '2025-01-31', total_customers: 18009, new_customers: 1547 },
+        { date: '2025-02-28', total_customers: 19407, new_customers: 1398 },
+        { date: '2025-03-31', total_customers: 19632, new_customers: 225 }
+      ],
+      
+      // Recent customers
+      recent_customers: [
+        {
+          customer_id: 'C-87543',
+          name: 'Platinum Asset Management',
+          type: 'Institutional',
+          date_onboarded: '2025-03-01',
+          country: 'United States',
+          accounts: 4,
+          status: 'Active',
+          relationship_manager: 'Sarah Wilson',
+          aum: 425000000,
+          contact_name: 'Michael Thompson',
+          contact_email: 'michael.thompson@platinum-am.com',
+          contact_phone: '+1-212-555-7890'
+        },
+        {
+          customer_id: 'C-87544',
+          name: 'Global Securities Corp',
+          type: 'Corporate',
+          date_onboarded: '2025-03-01',
+          country: 'United Kingdom',
+          accounts: 2,
+          status: 'Active',
+          relationship_manager: 'James Roberts',
+          aum: 125000000,
+          contact_name: 'Emma Davies',
+          contact_email: 'emma.davies@globalsec.com',
+          contact_phone: '+44-20-5555-1234'
+        },
+        {
+          customer_id: 'C-87545',
+          name: 'Pacific Wealth Advisors',
+          type: 'Wealth Management',
+          date_onboarded: '2025-03-02',
+          country: 'Singapore',
+          accounts: 8,
+          status: 'Pending',
+          relationship_manager: 'Daniel Chen',
+          aum: 85000000,
+          contact_name: 'Sophia Tan',
+          contact_email: 'sophia.tan@pacificwealth.com',
+          contact_phone: '+65-6555-9876'
+        },
+        {
+          customer_id: 'C-87546',
+          name: 'Europa Investment Partners',
+          type: 'Institutional',
+          date_onboarded: '2025-03-02',
+          country: 'Germany',
+          accounts: 3,
+          status: 'Active',
+          relationship_manager: 'Laura Schmidt',
+          aum: 310000000,
+          contact_name: 'Hans Mueller',
+          contact_email: 'hans.mueller@europainvest.com',
+          contact_phone: '+49-30-5555-4321'
+        },
+        {
+          customer_id: 'C-87547',
+          name: 'Alpha Retirement Solutions',
+          type: 'Corporate',
+          date_onboarded: '2025-03-03',
+          country: 'Australia',
+          accounts: 5,
+          status: 'Active',
+          relationship_manager: 'Thomas Johnson',
+          aum: 175000000,
+          contact_name: 'Jessica White',
+          contact_email: 'jessica.white@alpharetire.com',
+          contact_phone: '+61-2-5555-7654'
+        }
+      ]
+    },
+    'income': {
+      total_income_ytd: 32458765,
+      total_income_mtd: 3457892,
+      fees_collected: 24765432,
+      fees_outstanding: 3254678,
+      average_fee_per_customer: 1654,
+      income_growth_yoy: 0.17,
+      
+      // Income by service type
+      income_by_service: [
+        { service: 'Custody Fees', amount: 17843621, percentage: 0.55 },
+        { service: 'Trading Commissions', amount: 8114692, percentage: 0.25 },
+        { service: 'Corporate Action Fees', amount: 3245876, percentage: 0.10 },
+        { service: 'Other Services', amount: 3254576, percentage: 0.10 }
+      ],
+      
+      // Income by region
+      income_by_region: [
+        { region: 'North America', amount: 16229382 },
+        { region: 'Europe', amount: 8114691 },
+        { region: 'Asia Pacific', amount: 4868815 },
+        { region: 'Middle East', amount: 1622938 },
+        { region: 'Latin America', amount: 1622939 }
+      ],
+      
+      // Monthly income history
+      income_monthly: [
+        { date: '2024-03-31', total_income: 967982, new_income: 967982 },
+        { date: '2024-04-30', total_income: 1986532, new_income: 1018550 },
+        { date: '2024-05-31', total_income: 3254765, new_income: 1268233 },
+        { date: '2024-06-30', total_income: 4876421, new_income: 1621656 },
+        { date: '2024-07-31', total_income: 6543278, new_income: 1666857 },
+        { date: '2024-08-31', total_income: 8765432, new_income: 2222154 },
+        { date: '2024-09-30', total_income: 11346789, new_income: 2581357 },
+        { date: '2024-10-31', total_income: 14568932, new_income: 3222143 },
+        { date: '2024-11-30', total_income: 17865432, new_income: 3296500 },
+        { date: '2024-12-31', total_income: 21543678, new_income: 3678246 },
+        { date: '2025-01-31', total_income: 25432765, new_income: 3889087 },
+        { date: '2025-02-28', total_income: 29000873, new_income: 3568108 },
+        { date: '2025-03-31', total_income: 32458765, new_income: 3457892 }
+      ],
+      
+      // Top revenue customers
+      top_customers: [
+        {
+          customer_id: 'C-54321',
+          name: 'BlackRock Inc.',
+          type: 'Institutional',
+          ytd_revenue: 1567843,
+          mtd_revenue: 143256,
+          fees_outstanding: 97543,
+          relationship_manager: 'Robert Johnson'
+        },
+        {
+          customer_id: 'C-54322',
+          name: 'Vanguard Group',
+          type: 'Institutional',
+          ytd_revenue: 1342657,
+          mtd_revenue: 125478,
+          fees_outstanding: 68754,
+          relationship_manager: 'Sarah Williams'
+        },
+        {
+          customer_id: 'C-54323',
+          name: 'State Street Corp',
+          type: 'Institutional',
+          ytd_revenue: 987563,
+          mtd_revenue: 98745,
+          fees_outstanding: 45321,
+          relationship_manager: 'Amanda Chen'
+        },
+        {
+          customer_id: 'C-54324',
+          name: 'Fidelity Investments',
+          type: 'Institutional',
+          ytd_revenue: 865492,
+          mtd_revenue: 87456,
+          fees_outstanding: 32457,
+          relationship_manager: 'Thomas Martinez'
+        },
+        {
+          customer_id: 'C-54325',
+          name: 'JP Morgan Asset Management',
+          type: 'Institutional',
+          ytd_revenue: 654387,
+          mtd_revenue: 65987,
+          fees_outstanding: 29876,
+          relationship_manager: 'Laura Kim'
+        }
+      ]
+    },
+    'reports': {
+      available_reports: 42,
+      generated_reports_mtd: 386,
+      scheduled_reports: 176,
+      favorite_reports: 8,
+      
+      // Report categories
+      report_categories: [
+        { category: 'Compliance', count: 12 },
+        { category: 'Performance', count: 9 },
+        { category: 'Trading', count: 8 },
+        { category: 'Settlements', count: 7 },
+        { category: 'Corporate Actions', count: 6 }
+      ],
+      
+      // Recent reports
+      recent_reports: [
+        {
+          report_id: 'R-34567',
+          name: 'Monthly Trade Summary',
+          category: 'Trading',
+          generated_date: '2025-03-03T09:30:45',
+          generated_by: 'Sarah Wilson',
+          format: 'PDF',
+          size: '2.4 MB',
+          status: 'Completed'
+        },
+        {
+          report_id: 'R-34568',
+          name: 'Corporate Actions Pending',
+          category: 'Corporate Actions',
+          generated_date: '2025-03-03T10:15:22',
+          generated_by: 'James Roberts',
+          format: 'XLSX',
+          size: '1.8 MB',
+          status: 'Completed'
+        },
+        {
+          report_id: 'R-34569',
+          name: 'Settlement Fails Analysis',
+          category: 'Settlements',
+          generated_date: '2025-03-03T14:45:19',
+          generated_by: 'Daniel Chen',
+          format: 'PDF',
+          size: '3.6 MB',
+          status: 'Completed'
+        },
+        {
+          report_id: 'R-34570',
+          name: 'Regulatory Compliance Review',
+          category: 'Compliance',
+          generated_date: '2025-03-03T16:22:37',
+          generated_by: 'Laura Schmidt',
+          format: 'PDF',
+          size: '5.2 MB',
+          status: 'Processing'
+        },
+        {
+          report_id: 'R-34571',
+          name: 'Customer Performance Summary',
+          category: 'Performance',
+          generated_date: '2025-03-04T08:10:51',
+          generated_by: 'Thomas Johnson',
+          format: 'XLSX',
+          size: '4.1 MB',
+          status: 'Completed'
+        }
+      ],
+      
+      // Scheduled reports
+      scheduled_reports: [
+        {
+          schedule_id: 'S-23456',
+          report_name: 'Daily Trade Summary',
+          frequency: 'Daily',
+          next_run: '2025-03-05T06:00:00',
+          recipients: 12,
+          format: 'PDF',
+          created_by: 'System Administrator'
+        },
+        {
+          schedule_id: 'S-23457',
+          report_name: 'Weekly Settlement Status',
+          frequency: 'Weekly',
+          next_run: '2025-03-08T07:00:00',
+          recipients: 8,
+          format: 'XLSX',
+          created_by: 'System Administrator'
+        },
+        {
+          schedule_id: 'S-23458',
+          report_name: 'Monthly Performance Report',
+          frequency: 'Monthly',
+          next_run: '2025-04-01T06:00:00',
+          recipients: 15,
+          format: 'PDF',
+          created_by: 'System Administrator'
+        },
+        {
+          schedule_id: 'S-23459',
+          report_name: 'Quarterly Compliance Review',
+          frequency: 'Quarterly',
+          next_run: '2025-06-01T06:00:00',
+          recipients: 7,
+          format: 'PDF',
+          created_by: 'System Administrator'
+        },
+        {
+          schedule_id: 'S-23460',
+          report_name: 'Daily Corporate Actions Alert',
+          frequency: 'Daily',
+          next_run: '2025-03-05T06:30:00',
+          recipients: 10,
+          format: 'XLSX',
+          created_by: 'System Administrator'
+        }
+      ]
+    },
+    'settings': {
+      user_preferences: {
+        language: 'English',
+        theme: 'Default',
+        timezone: 'UTC-05:00',
+        notifications_enabled: true,
+        email_notifications: true,
+        sms_notifications: false,
+        two_factor_auth: true,
+        dashboard_layout: 'Standard'
+      },
+      
+      // System settings
+      system_settings: {
+        maintenance_mode: false,
+        system_version: '2.5.1',
+        database_version: '1.8.3',
+        api_version: '3.2.0',
+        last_backup: '2025-03-03T23:00:00',
+        last_update: '2025-02-28T01:30:00'
+      },
+      
+      // User roles and permissions
+      user_roles: [
+        {
+          role_name: 'Administrator',
+          users_count: 4,
+          permissions: 'Full access'
+        },
+        {
+          role_name: 'Operations Manager',
+          users_count: 8,
+          permissions: 'Create, Read, Update'
+        },
+        {
+          role_name: 'Relationship Manager',
+          users_count: 15,
+          permissions: 'Create, Read'
+        },
+        {
+          role_name: 'View Only',
+          users_count: 23,
+          permissions: 'Read'
+        }
+      ]
+    },
     'trades': {
       total_trades: 8735,
       trading_volume: 1765342800,
