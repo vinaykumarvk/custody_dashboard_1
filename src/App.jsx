@@ -5,6 +5,10 @@ import Dashboard from './components/Dashboard';
 import CorporateActions from './components/CorporateActions';
 import Trades from './components/Trades';
 import Settlements from './components/Settlements';
+import Customers from './components/Customers';
+import Income from './components/Income';
+import Reports from './components/Reports';
+import Settings from './components/Settings';
 import './assets/styles.css';
 
 const App = () => {
@@ -65,6 +69,14 @@ const App = () => {
         return <Settlements />;
       case 'corporate-actions':
         return <CorporateActions />;
+      case 'customers':
+        return <Customers />;
+      case 'income':
+        return <Income />;
+      case 'reports':
+        return <Reports />;
+      case 'settings':
+        return <Settings />;
       default:
         return <Dashboard />;
     }
