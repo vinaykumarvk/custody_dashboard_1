@@ -225,12 +225,22 @@ body {
   flex-direction: column;
 }
 
+/* All notifications panel */
+.all-notifications {
+  width: 500px;
+  max-height: 600px;
+}
+
 .dropdown-header {
   padding: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--border-color);
+}
+
+.all-notifications .dropdown-header {
+  padding: 12px 15px;
 }
 
 .dropdown-header h3 {
@@ -247,9 +257,88 @@ body {
   font-size: 14px;
 }
 
+.btn-back {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+}
+
+.btn-back:hover {
+  color: var(--smartbank-green);
+}
+
+.notifications-filters {
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-group span {
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.btn-filter {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: 15px;
+  padding: 3px 12px;
+  font-size: 12px;
+  color: var(--text-light);
+  cursor: pointer;
+}
+
+.btn-filter.active {
+  background-color: var(--smartbank-green);
+  color: white;
+  border-color: var(--smartbank-green);
+}
+
+.search-notifications {
+  display: flex;
+  align-items: center;
+  background-color: var(--background-color);
+  border-radius: 15px;
+  padding: 4px 10px;
+}
+
+.search-notifications i {
+  color: var(--text-light);
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+.search-notifications input {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  width: 150px;
+}
+
 .notifications-list {
   overflow-y: auto;
   max-height: 350px;
+}
+
+.all-notifications .notifications-list {
+  max-height: 450px;
 }
 
 .notification-item {
@@ -278,6 +367,13 @@ body {
   flex: 1;
 }
 
+.notification-category {
+  font-size: 11px;
+  color: var(--smartbank-green);
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
 .notification-content p {
   margin: 0 0 5px 0;
   font-size: 14px;
@@ -291,6 +387,7 @@ body {
 .notification-actions {
   display: flex;
   align-items: center;
+  gap: 5px;
 }
 
 .btn-icon {
@@ -330,6 +427,39 @@ body {
 
 .btn-view-all:hover {
   background-color: var(--smartbank-dark-green);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.pagination-btn:hover:not(.disabled) {
+  background-color: var(--background-color);
+}
+
+.pagination-btn.disabled {
+  color: var(--border-color);
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 12px;
+  color: var(--text-light);
 }
 
 @keyframes fadeIn {
