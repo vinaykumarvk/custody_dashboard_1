@@ -87,36 +87,54 @@ const Reports = () => {
         </div>
       </div>
       
-      <div className="metrics-cards">
-        <div className="metric-card">
-          <div className="metric-icon"><i className="fas fa-file-alt"></i></div>
-          <div className="metric-content">
-            <h3>Available Reports</h3>
-            <div className="metric-value">{data.available_reports}</div>
+      <div className="metrics-summary">
+        <div className="row">
+          <div className="col-md-3">
+            <div className="summary-card">
+              <div className="card-icon">
+                <i className="fas fa-file-alt"></i>
+              </div>
+              <div className="card-info">
+                <h2>{data.available_reports}</h2>
+                <p>Available Reports</p>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div className="metric-card">
-          <div className="metric-icon"><i className="fas fa-calendar-check"></i></div>
-          <div className="metric-content">
-            <h3>Generated (MTD)</h3>
-            <div className="metric-value">{data.generated_reports_mtd}</div>
+          
+          <div className="col-md-3">
+            <div className="summary-card">
+              <div className="card-icon">
+                <i className="fas fa-calendar-check"></i>
+              </div>
+              <div className="card-info">
+                <h2>{data.generated_reports_mtd}</h2>
+                <p>Generated (MTD)</p>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div className="metric-card">
-          <div className="metric-icon"><i className="fas fa-clock"></i></div>
-          <div className="metric-content">
-            <h3>Scheduled Reports</h3>
-            <div className="metric-value">{data.scheduled_reports}</div>
+          
+          <div className="col-md-3">
+            <div className="summary-card">
+              <div className="card-icon">
+                <i className="fas fa-clock"></i>
+              </div>
+              <div className="card-info">
+                <h2>{data.scheduled_reports}</h2>
+                <p>Scheduled Reports</p>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div className="metric-card">
-          <div className="metric-icon"><i className="fas fa-star"></i></div>
-          <div className="metric-content">
-            <h3>Favorite Reports</h3>
-            <div className="metric-value">{data.favorite_reports}</div>
+          
+          <div className="col-md-3">
+            <div className="summary-card">
+              <div className="card-icon">
+                <i className="fas fa-star"></i>
+              </div>
+              <div className="card-info">
+                <h2>{data.favorite_reports}</h2>
+                <p>Favorite Reports</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
