@@ -125,6 +125,7 @@ body {
 
 .notifications {
   position: relative;
+  cursor: pointer;
 }
 
 .notifications .badge {
@@ -148,6 +149,7 @@ body {
   cursor: pointer;
   padding: 5px 10px;
   border-radius: 20px;
+  position: relative;
 }
 
 .header .user-info:hover {
@@ -169,6 +171,176 @@ body {
 
 .header .user-info .user-name {
   margin-right: 8px;
+}
+
+/* Dropdown Menu Styles */
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: var(--card-background);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  z-index: 1000;
+  width: 250px;
+  margin-top: 8px;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* User dropdown menu */
+.user-dropdown {
+  min-width: 220px;
+}
+
+.dropdown-item {
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: var(--background-color);
+}
+
+.dropdown-item i {
+  margin-right: 10px;
+  width: 18px;
+  color: var(--smartbank-green);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 5px 0;
+}
+
+/* Notifications panel styles */
+.notifications-panel {
+  width: 350px;
+  max-height: 450px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-header {
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dropdown-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: var(--smartbank-green);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.notifications-list {
+  overflow-y: auto;
+  max-height: 350px;
+}
+
+.notification-item {
+  padding: 12px 15px;
+  display: flex;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s;
+}
+
+.notification-item:hover {
+  background-color: var(--background-color);
+}
+
+.notification-item.unread {
+  background-color: rgba(0, 124, 117, 0.05);
+}
+
+.notification-icon {
+  margin-right: 12px;
+  font-size: 16px;
+  padding-top: 3px;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-content p {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.notification-actions {
+  display: flex;
+  align-items: center;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.btn-icon:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--smartbank-green);
+}
+
+.dropdown-footer {
+  padding: 10px 15px;
+  border-top: 1px solid var(--border-color);
+}
+
+.btn-view-all {
+  background-color: var(--smartbank-green);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-view-all:hover {
+  background-color: var(--smartbank-dark-green);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Sidebar Styles */
