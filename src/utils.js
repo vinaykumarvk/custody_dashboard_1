@@ -270,6 +270,193 @@ export const mockApiCall = (endpoint, options = {}) => {
  */
 const getMockData = (endpoint) => {
   const mockData = {
+    reports: {
+      available_reports: 48,
+      generated_reports_mtd: 156,
+      scheduled_reports: 12,
+      favorite_reports: 5,
+      report_categories: [
+        { category: 'Regulatory', count: 15 },
+        { category: 'Operational', count: 12 },
+        { category: 'Client', count: 10 },
+        { category: 'Financial', count: 8 },
+        { category: 'Audit', count: 3 }
+      ],
+      recent_reports: [
+        {
+          report_id: 'REP-10045',
+          name: 'Monthly Activity Summary',
+          category: 'Client',
+          generated_date: '2025-03-01T15:30:22',
+          generated_by: 'Sarah Williams',
+          format: 'PDF',
+          status: 'Completed'
+        },
+        {
+          report_id: 'REP-10044',
+          name: 'Regulatory Capital Report',
+          category: 'Regulatory',
+          generated_date: '2025-03-01T12:15:47',
+          generated_by: 'John Anderson',
+          format: 'XLS',
+          status: 'Completed'
+        },
+        {
+          report_id: 'REP-10043',
+          name: 'Failed Trade Analysis',
+          category: 'Operational',
+          generated_date: '2025-03-01T09:48:33',
+          generated_by: 'Michael Chen',
+          format: 'PDF',
+          status: 'Completed'
+        },
+        {
+          report_id: 'REP-10042',
+          name: 'Asset Holdings Report',
+          category: 'Client',
+          generated_date: '2025-02-28T16:22:05',
+          generated_by: 'Lisa Johnson',
+          format: 'XLS',
+          status: 'Completed'
+        },
+        {
+          report_id: 'REP-10041',
+          name: 'Settlement Efficiency Report',
+          category: 'Operational',
+          generated_date: '2025-02-28T14:10:19',
+          generated_by: 'David Smith',
+          format: 'PDF',
+          status: 'Completed'
+        }
+      ],
+      scheduled_reports: [
+        {
+          schedule_id: 'SCH-1234',
+          report_name: 'Daily Position Report',
+          frequency: 'Daily',
+          next_run: '2025-03-03T18:00:00',
+          recipients: 'trading@smartbank.com',
+          format: 'PDF',
+          created_by: 'James Wilson'
+        },
+        {
+          schedule_id: 'SCH-1235',
+          report_name: 'Weekly Custody Fee Report',
+          frequency: 'Weekly',
+          next_run: '2025-03-07T17:00:00',
+          recipients: 'billing@smartbank.com, finance@smartbank.com',
+          format: 'XLS',
+          created_by: 'Emma Thompson'
+        },
+        {
+          schedule_id: 'SCH-1236',
+          report_name: 'Monthly Client Statement',
+          frequency: 'Monthly',
+          next_run: '2025-04-01T00:00:00',
+          recipients: 'clientservices@smartbank.com',
+          format: 'PDF',
+          created_by: 'Robert Johnson'
+        }
+      ],
+      available_report_list: [
+        {
+          id: 101,
+          name: 'Account Holdings Summary',
+          category: 'Client',
+          description: 'Summary of all holdings for client accounts, including market values and asset allocations.',
+          last_generated: '2025-03-01T10:45:22',
+          available_formats: ['pdf', 'xlsx', 'csv']
+        },
+        {
+          id: 102,
+          name: 'Transaction Activity Report',
+          category: 'Client',
+          description: 'Detailed list of all transactions for a specified period, including trades, corporate actions and cash movements.',
+          last_generated: '2025-03-01T14:30:15',
+          available_formats: ['pdf', 'xlsx', 'csv']
+        },
+        {
+          id: 103,
+          name: 'Settlement Status Report',
+          category: 'Operational',
+          description: 'Current settlement status of all trades, highlighting exceptions and failed settlements.',
+          last_generated: '2025-03-01T08:15:33',
+          available_formats: ['pdf', 'xlsx', 'json']
+        },
+        {
+          id: 104,
+          name: 'Income and Corporate Actions Calendar',
+          category: 'Operational',
+          description: 'Calendar view of upcoming income payments and corporate actions for the next 30 days.',
+          last_generated: '2025-02-28T16:45:12',
+          available_formats: ['pdf', 'xlsx', 'ics']
+        },
+        {
+          id: 105,
+          name: 'Regulatory Holdings Report',
+          category: 'Regulatory',
+          description: 'Report of holdings for regulatory filing purposes, formatted according to regulatory requirements.',
+          last_generated: '2025-02-28T11:30:45',
+          available_formats: ['pdf', 'xlsx', 'xml']
+        },
+        {
+          id: 106,
+          name: 'Risk Exposure Analysis',
+          category: 'Financial',
+          description: 'Analysis of portfolio risk exposures including market, credit, and concentration risks.',
+          last_generated: '2025-02-27T15:20:10',
+          available_formats: ['pdf', 'xlsx']
+        },
+        {
+          id: 107,
+          name: 'Fee Revenue Report',
+          category: 'Financial',
+          description: 'Breakdown of custody and administration fees by client, service type, and asset class.',
+          last_generated: '2025-02-27T09:45:38',
+          available_formats: ['pdf', 'xlsx']
+        },
+        {
+          id: 108,
+          name: 'Asset Servicing Exception Report',
+          category: 'Operational',
+          description: 'Detailed report of exceptions in corporate actions, income events, and tax processing.',
+          last_generated: '2025-02-26T14:15:22',
+          available_formats: ['pdf', 'xlsx', 'csv']
+        },
+        {
+          id: 109,
+          name: 'Compliance Monitoring Report',
+          category: 'Regulatory',
+          description: 'Report on compliance with internal policies and regulatory requirements.',
+          last_generated: '2025-02-26T10:30:45',
+          available_formats: ['pdf', 'xlsx']
+        },
+        {
+          id: 110,
+          name: 'Client Profitability Analysis',
+          category: 'Financial',
+          description: 'Analysis of client-level profitability across service lines and products.',
+          last_generated: '2025-02-25T16:40:15',
+          available_formats: ['pdf', 'xlsx']
+        },
+        {
+          id: 111,
+          name: 'Audit Trail Report',
+          category: 'Audit',
+          description: 'Detailed log of all system actions and user activities for audit purposes.',
+          last_generated: '2025-02-25T11:15:33',
+          available_formats: ['pdf', 'xlsx', 'csv']
+        },
+        {
+          id: 112,
+          name: 'New Account Setup Report',
+          category: 'Operational',
+          description: 'Status report of all new accounts in the setup process, including pending items.',
+          last_generated: '2025-02-24T15:50:22',
+          available_formats: ['pdf', 'xlsx']
+        }
+      ]
+    },
     'customers': {
       total_customers: 19632,
       active_customers: 17254,
