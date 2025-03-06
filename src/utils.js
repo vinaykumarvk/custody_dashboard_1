@@ -308,7 +308,307 @@ export const mockApiCall = (endpoint, options = {}) => {
  * @returns {object} Mock data
  */
 const getMockData = (endpoint) => {
+  // Map corporate_actions to corporateActions if needed
+  if (endpoint === 'corporate_actions') {
+    endpoint = 'corporateActions';
+  }
+  
   const mockData = {
+    'corporateActions': {
+      total_actions: 1875,
+      pending_actions: 342,
+      completed_actions: 1421,
+      failed_actions: 112,
+      dividend_actions: 723,
+      stock_split_actions: 245,
+      rights_issue_actions: 187,
+      merger_actions: 129,
+      
+      // Actions by status
+      actions_by_status: [
+        { status: 'Completed', count: 1421 },
+        { status: 'Pending', count: 342 },
+        { status: 'Failed', count: 112 }
+      ],
+      
+      // Actions by type
+      actions_by_type: [
+        { type: 'Dividend', count: 723 },
+        { type: 'Stock Split', count: 245 },
+        { type: 'Rights Issue', count: 187 },
+        { type: 'Merger', count: 129 },
+        { type: 'Spinoff', count: 94 },
+        { type: 'Acquisition', count: 82 },
+        { type: 'Other', count: 415 }
+      ],
+      
+      // Recent actions
+      recent_actions: [
+        {
+          action_id: 'CA-45678',
+          security_name: 'Apple Inc.',
+          security_id: 'AAPL',
+          type: 'Dividend',
+          announcement_date: '2025-02-20',
+          record_date: '2025-03-10',
+          payment_date: '2025-03-15',
+          status: 'Pending',
+          amount: 0.24,
+          currency: 'USD',
+          description: 'Quarterly dividend payment',
+          affected_accounts: 342,
+          total_value: 2457650,
+          processor: 'Sarah Williams',
+          notes: 'Standard quarterly dividend processing'
+        },
+        {
+          action_id: 'CA-45679',
+          security_name: 'Tesla, Inc.',
+          security_id: 'TSLA',
+          type: 'Stock Split',
+          announcement_date: '2025-02-15',
+          record_date: '2025-03-05',
+          payment_date: '2025-03-08',
+          status: 'Completed',
+          split_ratio: '3:1',
+          description: '3-for-1 stock split',
+          affected_accounts: 198,
+          processor: 'James Wilson',
+          notes: 'Stock split completed successfully'
+        },
+        {
+          action_id: 'CA-45680',
+          security_name: 'JP Morgan Chase',
+          security_id: 'JPM',
+          type: 'Dividend',
+          announcement_date: '2025-02-22',
+          record_date: '2025-03-12',
+          payment_date: '2025-03-18',
+          status: 'Pending',
+          amount: 1.15,
+          currency: 'USD',
+          description: 'Quarterly dividend payment',
+          affected_accounts: 287,
+          total_value: 1854320,
+          processor: 'Michael Chen',
+          notes: 'Dividend announced, pending record date'
+        },
+        {
+          action_id: 'CA-45681',
+          security_name: 'Microsoft Corp',
+          security_id: 'MSFT',
+          type: 'Dividend',
+          announcement_date: '2025-02-18',
+          record_date: '2025-03-08',
+          payment_date: '2025-03-14',
+          status: 'Pending',
+          amount: 0.68,
+          currency: 'USD',
+          description: 'Quarterly dividend payment',
+          affected_accounts: 312,
+          total_value: 2967450,
+          processor: 'Emma Davies',
+          notes: 'Verifying eligible positions'
+        },
+        {
+          action_id: 'CA-45682',
+          security_name: 'Amazon.com Inc.',
+          security_id: 'AMZN',
+          type: 'Stock Split',
+          announcement_date: '2025-02-10',
+          record_date: '2025-03-01',
+          payment_date: '2025-03-05',
+          status: 'Completed',
+          split_ratio: '20:1',
+          description: '20-for-1 stock split',
+          affected_accounts: 276,
+          processor: 'Thomas Johnson',
+          notes: 'Stock split completed successfully'
+        },
+        {
+          action_id: 'CA-45683',
+          security_name: 'Exxon Mobil Corp',
+          security_id: 'XOM',
+          type: 'Dividend',
+          announcement_date: '2025-02-25',
+          record_date: '2025-03-15',
+          payment_date: '2025-03-22',
+          status: 'Announced',
+          amount: 0.95,
+          currency: 'USD',
+          description: 'Quarterly dividend payment',
+          affected_accounts: 234,
+          total_value: 1456780,
+          processor: 'Robert Johnson',
+          notes: 'Announcement received, pending processing'
+        }
+      ],
+      
+      // Actions timeline
+      actions_timeline: [
+        { date: '2025-02-01', total_actions: 45, completed: 28, pending: 14, failed: 3 },
+        { date: '2025-02-05', total_actions: 58, completed: 32, pending: 21, failed: 5 },
+        { date: '2025-02-10', total_actions: 67, completed: 39, pending: 23, failed: 5 },
+        { date: '2025-02-15', total_actions: 72, completed: 45, pending: 20, failed: 7 },
+        { date: '2025-02-20', total_actions: 83, completed: 52, pending: 24, failed: 7 },
+        { date: '2025-02-25', total_actions: 89, completed: 58, pending: 26, failed: 5 },
+        { date: '2025-03-01', total_actions: 94, completed: 63, pending: 27, failed: 4 }
+      ]
+    },
+    'settlements': {
+      total_settlements: 7824,
+      pending_settlements: 643,
+      failed_settlements: 84,
+      success_rate: 0.96,
+      settlement_volume: 1453298760,
+      average_settlement_time: 1.4,
+      
+      // Settlements by status
+      settlements_by_status: [
+        { status: 'Completed', count: 7097 },
+        { status: 'Pending', count: 643 },
+        { status: 'Failed', count: 84 }
+      ],
+      
+      // Settlements by type
+      settlements_by_type: [
+        { type: 'DVP', count: 5865 },
+        { type: 'FOP', count: 1432 },
+        { type: 'Internal', count: 527 }
+      ],
+      
+      // Settlements by currency
+      settlements_by_currency: [
+        { currency: 'USD', count: 4512 },
+        { currency: 'EUR', count: 1623 },
+        { currency: 'GBP', count: 834 },
+        { currency: 'JPY', count: 423 },
+        { currency: 'Other', count: 432 }
+      ],
+      
+      // Recent settlements
+      recent_settlements: [
+        {
+          settlement_id: 'S-34567',
+          trade_id: 'T-78945',
+          client_name: 'BlackRock Inc.',
+          client_id: 'C-54321',
+          security_name: 'Apple Inc.',
+          security_id: 'AAPL',
+          settlement_date: '2025-03-03',
+          amount: 1253125,
+          currency: 'USD',
+          status: 'Completed',
+          type: 'DVP',
+          counterparty: 'Morgan Stanley',
+          location: 'DTC',
+          account: 'A-1234',
+          processor: 'Jane Smith',
+          notes: 'Standard settlement completed'
+        },
+        {
+          settlement_id: 'S-34568',
+          trade_id: 'T-78946',
+          client_name: 'Vanguard Group',
+          client_id: 'C-54322',
+          security_name: 'Microsoft Corp',
+          security_id: 'MSFT',
+          settlement_date: '2025-03-03',
+          amount: 978038.77,
+          currency: 'USD',
+          status: 'Completed',
+          type: 'DVP',
+          counterparty: 'Goldman Sachs',
+          location: 'DTC',
+          account: 'A-2234',
+          processor: 'Michael Brown',
+          notes: 'Settlement completed on time'
+        },
+        {
+          settlement_id: 'S-34569',
+          trade_id: 'T-78950',
+          client_name: 'State Street Corp',
+          client_id: 'C-54323',
+          security_name: 'Alphabet Inc.',
+          security_id: 'GOOGL',
+          settlement_date: '2025-03-04',
+          amount: 1880685.98,
+          currency: 'USD',
+          status: 'Pending',
+          type: 'DVP',
+          counterparty: 'UBS',
+          location: 'DTC',
+          account: 'A-3234',
+          processor: 'David Lee',
+          notes: 'Awaiting confirmation from counterparty'
+        },
+        {
+          settlement_id: 'S-34570',
+          trade_id: 'T-78953',
+          client_name: 'Fidelity Investments',
+          client_id: 'C-54324',
+          security_name: 'Amazon.com Inc.',
+          security_id: 'AMZN',
+          settlement_date: '2025-03-04',
+          amount: 2155373,
+          currency: 'USD',
+          status: 'Pending',
+          type: 'DVP',
+          counterparty: 'JP Morgan',
+          location: 'DTC',
+          account: 'A-4234',
+          processor: 'Patricia Wilson',
+          notes: 'Waiting for client funds'
+        },
+        {
+          settlement_id: 'S-34571',
+          trade_id: 'T-78957',
+          client_name: 'JP Morgan Asset Management',
+          client_id: 'C-54325',
+          security_name: 'Tesla, Inc.',
+          security_id: 'TSLA',
+          settlement_date: '2025-03-04',
+          amount: 1560086.02,
+          currency: 'USD',
+          status: 'Failed',
+          type: 'DVP',
+          counterparty: 'Citigroup',
+          location: 'DTC',
+          account: 'A-5234',
+          processor: 'Steven Garcia',
+          notes: 'Settlement failed due to insufficient shares'
+        },
+        {
+          settlement_id: 'S-34572',
+          trade_id: 'T-78960',
+          client_name: 'UBS Asset Management',
+          client_id: 'C-54326',
+          security_name: 'Facebook Inc.',
+          security_id: 'FB',
+          settlement_date: '2025-03-05',
+          amount: 706752.47,
+          currency: 'USD',
+          status: 'Pending',
+          type: 'DVP',
+          counterparty: 'Bank of America',
+          location: 'DTC',
+          account: 'A-6234',
+          processor: 'Richard Taylor',
+          notes: 'Settlement in process'
+        }
+      ],
+      
+      // Settlement timeline
+      settlement_timeline: [
+        { date: '2025-02-01', total: 245, completed: 230, pending: 12, failed: 3 },
+        { date: '2025-02-05', total: 268, completed: 249, pending: 15, failed: 4 },
+        { date: '2025-02-10', total: 274, completed: 258, pending: 13, failed: 3 },
+        { date: '2025-02-15', total: 262, completed: 248, pending: 11, failed: 3 },
+        { date: '2025-02-20', total: 289, completed: 270, pending: 14, failed: 5 },
+        { date: '2025-02-25', total: 295, completed: 279, pending: 12, failed: 4 },
+        { date: '2025-03-01', total: 304, completed: 285, pending: 15, failed: 4 }
+      ]
+    },
     'customers': {
       total_customers: 19632,
       active_customers: 16584,
@@ -898,6 +1198,15 @@ const getMockData = (endpoint) => {
       failed_trades: 84,
       
       total_corporate_actions: 1875,
+      
+      // Trade history data for charts
+      trade_monthly: [
+        { date: '2025-01-01', trade_volume: 145000000, total_trades: 710 },
+        { date: '2025-01-15', trade_volume: 168000000, total_trades: 754 },
+        { date: '2025-02-01', trade_volume: 152000000, total_trades: 684 },
+        { date: '2025-02-15', trade_volume: 195000000, total_trades: 812 },
+        { date: '2025-03-01', trade_volume: 205000000, total_trades: 842 }
+      ],
       pending_corporate_actions: 342,
       
       system_status: {

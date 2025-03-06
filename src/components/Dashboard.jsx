@@ -90,8 +90,27 @@ const Dashboard = () => {
    * Process API data into the format expected by the dashboard component
    */
   const processApiData = (apiData) => {
-    // Extract summary metrics
-    const summary = apiData.summary || {};
+    if (!apiData) {
+      console.error('No API data provided to processApiData');
+      return {
+        totalCustomers: 0,
+        activeCustomers: 0,
+        totalAccounts: 0,
+        totalTrades: 0,
+        tradingVolume: 0,
+        pendingTrades: 0,
+        openEvents: 0,
+        corporateActions: 0,
+        dealProcessing: 0,
+        monthlyIncome: 0,
+        incomeByService: [],
+        customerSegments: [],
+        tradesByAssetClass: [],
+        recentTrades: [],
+        tradingVolumeHistory: [],
+        tradeCountHistory: []
+      };
+    }
     
     // Extract and transform customer data
     const customerSegments = [
@@ -100,16 +119,21 @@ const Dashboard = () => {
       { label: 'PORTFOLIO', value: 4100 }
     ];
     
-    // Extract trade data
-    const tradingVolumeHistory = apiData.trade_monthly.map(item => ({
-      date: item.date,
-      value: item.trade_volume
-    }));
+    // Extract trade data from API - handling potential missing data
+    let tradingVolumeHistory = [];
+    let tradeCountHistory = [];
     
-    const tradeCountHistory = apiData.trade_monthly.map(item => ({
-      date: item.date,
-      value: item.total_trades
-    }));
+    if (apiData.trade_monthly && Array.isArray(apiData.trade_monthly)) {
+      tradingVolumeHistory = apiData.trade_monthly.map(item => ({
+        date: item.date,
+        value: item.trade_volume || 0
+      }));
+      
+      tradeCountHistory = apiData.trade_monthly.map(item => ({
+        date: item.date,
+        value: item.total_trades || 0
+      }));
+    }
     
     // Create asset class breakdown
     const tradesByAssetClass = [
@@ -132,16 +156,16 @@ const Dashboard = () => {
     
     // Return processed data
     return {
-      totalCustomers: summary.total_customers || 0,
-      activeCustomers: Math.round(summary.total_customers * 0.8) || 0,
-      totalAccounts: summary.total_customers * 1.5 || 0,
-      totalTrades: summary.total_trades || 0,
-      tradingVolume: summary.total_trades * 1000 || 0,
-      pendingTrades: Math.round(summary.total_trades * 0.05) || 0,
-      openEvents: summary.open_events || 0,
-      corporateActions: 12,
+      totalCustomers: apiData.total_customers || 0,
+      activeCustomers: apiData.active_accounts || 0,
+      totalAccounts: apiData.total_accounts || 0,
+      totalTrades: apiData.total_trades || 0,
+      tradingVolume: apiData.trading_volume || apiData.total_trades * 5000 || 0,
+      pendingTrades: apiData.pending_trades || 0,
+      openEvents: apiData.total_open_events || 0,
+      corporateActions: apiData.total_corporate_actions || 0,
       dealProcessing: 8,
-      monthlyIncome: summary.total_income || 0,
+      monthlyIncome: apiData.revenue_mtd || 0,
       incomeByService: [],
       customerSegments,
       tradesByAssetClass,
