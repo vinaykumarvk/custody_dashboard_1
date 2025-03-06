@@ -146,36 +146,54 @@ const Customers = () => {
         </div>
       </div>
       
-      <div className="metrics-cards">
-        <div className="metric-card">
-          <div className="metric-icon"><i className="fas fa-users"></i></div>
-          <div className="metric-content">
-            <h3>Total Customers</h3>
-            <div className="metric-value">{formatNumber(data.total_customers)}</div>
+      <div className="metrics-summary">
+        <div className="row">
+          <div className="col-md-3">
+            <div className="summary-card">
+              <div className="card-icon">
+                <i className="fas fa-users"></i>
+              </div>
+              <div className="card-info">
+                <h2>{formatNumber(data.total_customers)}</h2>
+                <p>Total Customers</p>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div className="metric-card">
-          <div className="metric-icon"><i className="fas fa-user-check"></i></div>
-          <div className="metric-content">
-            <h3>Active Customers</h3>
-            <div className="metric-value">{formatNumber(data.active_customers)}</div>
+          
+          <div className="col-md-3">
+            <div className="summary-card">
+              <div className="card-icon">
+                <i className="fas fa-user-check"></i>
+              </div>
+              <div className="card-info">
+                <h2>{formatNumber(data.active_customers)}</h2>
+                <p>Active Customers</p>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div className="metric-card">
-          <div className="metric-icon"><i className="fas fa-user-plus"></i></div>
-          <div className="metric-content">
-            <h3>New Customers (MTD)</h3>
-            <div className="metric-value">{formatNumber(data.new_customers_mtd)}</div>
+          
+          <div className="col-md-3">
+            <div className="summary-card">
+              <div className="card-icon">
+                <i className="fas fa-user-plus"></i>
+              </div>
+              <div className="card-info">
+                <h2>{formatNumber(data.new_customers_mtd)}</h2>
+                <p>New Customers (MTD)</p>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div className="metric-card">
-          <div className="metric-icon"><i className="fas fa-layer-group"></i></div>
-          <div className="metric-content">
-            <h3>Total Accounts</h3>
-            <div className="metric-value">{formatNumber(data.total_accounts)}</div>
+          
+          <div className="col-md-3">
+            <div className="summary-card">
+              <div className="card-icon">
+                <i className="fas fa-layer-group"></i>
+              </div>
+              <div className="card-info">
+                <h2>{formatNumber(data.total_accounts)}</h2>
+                <p>Total Accounts</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

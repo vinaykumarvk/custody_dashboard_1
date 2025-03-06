@@ -146,36 +146,54 @@ const Income = () => {
         </div>
       </div>
       
-      <div className="metrics-cards">
-        <div className="metric-card">
-          <div className="metric-icon"><i className="fas fa-chart-line"></i></div>
-          <div className="metric-content">
-            <h3>Total Income YTD</h3>
-            <div className="metric-value">{formatCurrency(data.total_income_ytd)}</div>
+      <div className="metrics-summary">
+        <div className="row">
+          <div className="col-md-3">
+            <div className="summary-card">
+              <div className="card-icon">
+                <i className="fas fa-chart-line"></i>
+              </div>
+              <div className="card-info">
+                <h2>{formatCurrency(data.total_income_ytd)}</h2>
+                <p>Total Income YTD</p>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div className="metric-card">
-          <div className="metric-icon"><i className="fas fa-money-bill-wave"></i></div>
-          <div className="metric-content">
-            <h3>Income MTD</h3>
-            <div className="metric-value">{formatCurrency(data.total_income_mtd)}</div>
+          
+          <div className="col-md-3">
+            <div className="summary-card">
+              <div className="card-icon">
+                <i className="fas fa-money-bill-wave"></i>
+              </div>
+              <div className="card-info">
+                <h2>{formatCurrency(data.total_income_mtd)}</h2>
+                <p>Income MTD</p>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div className="metric-card">
-          <div className="metric-icon"><i className="fas fa-percentage"></i></div>
-          <div className="metric-content">
-            <h3>YoY Growth</h3>
-            <div className="metric-value">{formatPercentage(data.income_growth_yoy)}</div>
+          
+          <div className="col-md-3">
+            <div className="summary-card">
+              <div className="card-icon">
+                <i className="fas fa-percentage"></i>
+              </div>
+              <div className="card-info">
+                <h2>{formatPercentage(data.income_growth_yoy)}</h2>
+                <p>YoY Growth</p>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div className="metric-card">
-          <div className="metric-icon"><i className="fas fa-file-invoice-dollar"></i></div>
-          <div className="metric-content">
-            <h3>Outstanding Fees</h3>
-            <div className="metric-value">{formatCurrency(data.fees_outstanding)}</div>
+          
+          <div className="col-md-3">
+            <div className="summary-card">
+              <div className="card-icon">
+                <i className="fas fa-file-invoice-dollar"></i>
+              </div>
+              <div className="card-info">
+                <h2>{formatCurrency(data.fees_outstanding)}</h2>
+                <p>Outstanding Fees</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
