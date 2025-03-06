@@ -11,6 +11,12 @@ const API_ENDPOINTS = {
     'api/dashboard/index',
     'api/dashboard.json',
     'api/dashboard'
+  ],
+  corporate_actions: [
+    'api/corporate_actions/index.json',
+    'api/corporate_actions/index',
+    'api/corporate_actions.json',
+    'api/corporate_actions'
   ]
 };
 

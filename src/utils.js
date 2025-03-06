@@ -367,6 +367,320 @@ const getMockData = (endpoint) => {
         { date: '2025-02-22', value: 15987 },
         { date: '2025-03-01', value: 16847 }
       ]
+    },
+    'corporate_actions': {
+      total_upcoming: 46,
+      high_priority: 8,
+      pending_elections: 12,
+      total_value: 3827500,
+      
+      // Monthly history of corporate actions
+      monthly_history: [
+        {
+          month: '2024-04-01',
+          dividends: 18,
+          stock_splits: 2,
+          rights_issues: 1,
+          mergers: 0
+        },
+        {
+          month: '2024-05-01',
+          dividends: 23,
+          stock_splits: 0,
+          rights_issues: 2,
+          mergers: 1
+        },
+        {
+          month: '2024-06-01',
+          dividends: 20,
+          stock_splits: 1,
+          rights_issues: 0,
+          mergers: 1
+        },
+        {
+          month: '2024-07-01',
+          dividends: 25,
+          stock_splits: 3,
+          rights_issues: 1,
+          mergers: 0
+        },
+        {
+          month: '2024-08-01',
+          dividends: 22,
+          stock_splits: 2,
+          rights_issues: 2,
+          mergers: 2
+        },
+        {
+          month: '2024-09-01',
+          dividends: 24,
+          stock_splits: 1,
+          rights_issues: 1,
+          mergers: 1
+        },
+        {
+          month: '2024-10-01',
+          dividends: 26,
+          stock_splits: 0,
+          rights_issues: 3,
+          mergers: 1
+        },
+        {
+          month: '2024-11-01',
+          dividends: 19,
+          stock_splits: 2,
+          rights_issues: 0,
+          mergers: 0
+        },
+        {
+          month: '2024-12-01',
+          dividends: 28,
+          stock_splits: 1,
+          rights_issues: 1,
+          mergers: 2
+        },
+        {
+          month: '2025-01-01',
+          dividends: 24,
+          stock_splits: 3,
+          rights_issues: 2,
+          mergers: 1
+        },
+        {
+          month: '2025-02-01',
+          dividends: 21,
+          stock_splits: 1,
+          rights_issues: 1,
+          mergers: 0
+        },
+        {
+          month: '2025-03-01',
+          dividends: 30,
+          stock_splits: 2,
+          rights_issues: 2,
+          mergers: 2
+        }
+      ],
+      
+      // Upcoming corporate actions
+      upcoming_actions: [
+        {
+          action_id: 'CA-34521',
+          action_type: 'Dividend',
+          security_name: 'Apple Inc.',
+          isin: 'US0378331005',
+          cusip: '037833100',
+          exchange: 'NASDAQ',
+          action_date: '2025-03-15',
+          record_date: '2025-03-08',
+          payment_date: '2025-03-20',
+          value: 450000,
+          status: 'Pending',
+          client_impact: 'Medium',
+          description: 'Quarterly cash dividend of $0.24 per share.',
+          elections: [
+            { client_id: 'C-7842', election_type: 'Cash', status: 'Pending' },
+            { client_id: 'C-8953', election_type: 'Cash', status: 'Completed' }
+          ]
+        },
+        {
+          action_id: 'CA-34522',
+          action_type: 'Stock Split',
+          security_name: 'Tesla, Inc.',
+          isin: 'US88160R1014',
+          cusip: '88160R101',
+          exchange: 'NASDAQ',
+          action_date: '2025-03-25',
+          record_date: '2025-03-18',
+          payment_date: '2025-03-30',
+          value: null,
+          status: 'Pending',
+          client_impact: 'High',
+          description: '3-for-1 stock split to make stock ownership more accessible.',
+          elections: null
+        },
+        {
+          action_id: 'CA-34523',
+          action_type: 'Rights Issue',
+          security_name: 'Bank of America Corp',
+          isin: 'US0605051046',
+          cusip: '060505104',
+          exchange: 'NYSE',
+          action_date: '2025-04-05',
+          record_date: '2025-03-29',
+          payment_date: '2025-04-10',
+          value: 875000,
+          status: 'Pending',
+          client_impact: 'High',
+          description: 'Rights issue offering 1 new share for every 8 shares held at a discount price of $32 per share.',
+          elections: [
+            { client_id: 'C-7842', election_type: 'Exercise', status: 'Pending' },
+            { client_id: 'C-8953', election_type: 'Sell Rights', status: 'Pending' },
+            { client_id: 'C-9214', election_type: 'Exercise', status: 'Pending' }
+          ]
+        },
+        {
+          action_id: 'CA-34524',
+          action_type: 'Merger',
+          security_name: 'Salesforce, Inc.',
+          isin: 'US79466L3024',
+          cusip: '79466L302',
+          exchange: 'NYSE',
+          action_date: '2025-04-15',
+          record_date: '2025-04-08',
+          payment_date: '2025-04-20',
+          value: 1250000,
+          status: 'Announced',
+          client_impact: 'High',
+          description: 'Merger with Slack Technologies. Shareholders will receive 0.8 shares of the new entity for each share held.',
+          elections: [
+            { client_id: 'C-7321', election_type: 'Accept', status: 'Pending' },
+            { client_id: 'C-8742', election_type: 'Accept', status: 'Pending' },
+            { client_id: 'C-9153', election_type: 'Undecided', status: 'Pending' }
+          ]
+        },
+        {
+          action_id: 'CA-34525',
+          action_type: 'Dividend',
+          security_name: 'Microsoft Corporation',
+          isin: 'US5949181045',
+          cusip: '594918104',
+          exchange: 'NASDAQ',
+          action_date: '2025-03-18',
+          record_date: '2025-03-11',
+          payment_date: '2025-03-23',
+          value: 625000,
+          status: 'Pending',
+          client_impact: 'Low',
+          description: 'Quarterly cash dividend of $0.68 per share.',
+          elections: [
+            { client_id: 'C-7521', election_type: 'Cash', status: 'Completed' },
+            { client_id: 'C-8351', election_type: 'Cash', status: 'Completed' }
+          ]
+        },
+        {
+          action_id: 'CA-34526',
+          action_type: 'Dividend',
+          security_name: 'Johnson & Johnson',
+          isin: 'US4781601046',
+          cusip: '478160104',
+          exchange: 'NYSE',
+          action_date: '2025-03-22',
+          record_date: '2025-03-15',
+          payment_date: '2025-03-27',
+          value: 325000,
+          status: 'Pending',
+          client_impact: 'Low',
+          description: 'Quarterly cash dividend of $1.19 per share.',
+          elections: [
+            { client_id: 'C-7842', election_type: 'Cash', status: 'Pending' }
+          ]
+        },
+        {
+          action_id: 'CA-34527',
+          action_type: 'Tender Offer',
+          security_name: 'Adobe Inc.',
+          isin: 'US00724F1012',
+          cusip: '00724F101',
+          exchange: 'NASDAQ',
+          action_date: '2025-04-10',
+          record_date: '2025-04-03',
+          payment_date: '2025-04-15',
+          value: 1750000,
+          status: 'Announced',
+          client_impact: 'Medium',
+          description: 'Tender offer to repurchase up to 10% of outstanding shares at a 12% premium to market price.',
+          elections: [
+            { client_id: 'C-7912', election_type: 'Tender', status: 'Pending' },
+            { client_id: 'C-8624', election_type: 'Do Not Tender', status: 'Completed' },
+            { client_id: 'C-9341', election_type: 'Tender', status: 'Pending' }
+          ]
+        }
+      ],
+      
+      // Recent actions
+      recent_actions: [
+        {
+          action_id: 'CA-34510',
+          action_type: 'Dividend',
+          security_name: 'Procter & Gamble Co',
+          isin: 'US7427181091',
+          cusip: '742718109',
+          exchange: 'NYSE',
+          action_date: '2025-02-15',
+          record_date: '2025-02-08',
+          payment_date: '2025-02-20',
+          value: 385000,
+          status: 'Completed',
+          client_impact: 'Low',
+          description: 'Quarterly cash dividend of $0.94 per share.',
+          elections: null
+        },
+        {
+          action_id: 'CA-34511',
+          action_type: 'Dividend',
+          security_name: 'Coca-Cola Company',
+          isin: 'US1912161007',
+          cusip: '191216100',
+          exchange: 'NYSE',
+          action_date: '2025-02-18',
+          record_date: '2025-02-11',
+          payment_date: '2025-02-23',
+          value: 275000,
+          status: 'Completed',
+          client_impact: 'Low',
+          description: 'Quarterly cash dividend of $0.46 per share.',
+          elections: null
+        },
+        {
+          action_id: 'CA-34512',
+          action_type: 'Stock Split',
+          security_name: 'Nvidia Corporation',
+          isin: 'US67066G1040',
+          cusip: '67066G104',
+          exchange: 'NASDAQ',
+          action_date: '2025-02-10',
+          record_date: '2025-02-03',
+          payment_date: '2025-02-15',
+          value: null,
+          status: 'Completed',
+          client_impact: 'Medium',
+          description: '4-for-1 stock split to make stock ownership more accessible.',
+          elections: null
+        },
+        {
+          action_id: 'CA-34513',
+          action_type: 'Merger',
+          security_name: 'LinkedIn Corp',
+          isin: 'US53578A1088',
+          cusip: '53578A108',
+          exchange: 'NYSE',
+          action_date: '2025-01-25',
+          record_date: '2025-01-18',
+          payment_date: '2025-01-30',
+          value: 980000,
+          status: 'Completed',
+          client_impact: 'High',
+          description: 'Merger with Microsoft Corporation. Shareholders received $196 in cash per share.',
+          elections: null
+        },
+        {
+          action_id: 'CA-34514',
+          action_type: 'Rights Issue',
+          security_name: 'Wells Fargo & Co',
+          isin: 'US9497461015',
+          cusip: '949746101',
+          exchange: 'NYSE',
+          action_date: '2025-02-05',
+          record_date: '2025-01-29',
+          payment_date: '2025-02-10',
+          value: 725000,
+          status: 'Completed',
+          client_impact: 'Medium',
+          description: 'Rights issue offering 1 new share for every 10 shares held at a discount price of $35 per share.',
+          elections: null
+        }
+      ]
     }
   };
   

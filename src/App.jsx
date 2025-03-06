@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
+import CorporateActions from './components/CorporateActions';
 import './assets/styles.css';
 
 const App = () => {
@@ -14,7 +15,6 @@ const App = () => {
 
   const handlePageChange = (pageId) => {
     setActivePage(pageId);
-    // In a real application, this would load different page components
     console.log(`Navigating to page: ${pageId}`);
   };
 
@@ -53,10 +53,12 @@ const App = () => {
   }, []);
 
   const renderPage = () => {
-    // For now, we only have the Dashboard component
-    // In a real application, this would switch between different page components
+    // Switch between different page components based on activePage
     switch (activePage) {
       case 'dashboard':
+        return <Dashboard />;
+      case 'corporate-actions':
+        return <CorporateActions />;
       default:
         return <Dashboard />;
     }
