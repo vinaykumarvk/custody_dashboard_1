@@ -17,6 +17,18 @@ const API_ENDPOINTS = {
     'api/corporate_actions/index',
     'api/corporate_actions.json',
     'api/corporate_actions'
+  ],
+  trades: [
+    'api/trades/index.json',
+    'api/trades/index',
+    'api/trades.json',
+    'api/trades'
+  ],
+  settlements: [
+    'api/settlements/index.json',
+    'api/settlements/index',
+    'api/settlements.json',
+    'api/settlements'
   ]
 };
 

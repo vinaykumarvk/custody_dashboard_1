@@ -3,6 +3,8 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import CorporateActions from './components/CorporateActions';
+import Trades from './components/Trades';
+import Settlements from './components/Settlements';
 import './assets/styles.css';
 
 const App = () => {
@@ -57,6 +59,10 @@ const App = () => {
     switch (activePage) {
       case 'dashboard':
         return <Dashboard />;
+      case 'trades':
+        return <Trades />;
+      case 'settlements':
+        return <Settlements />;
       case 'corporate-actions':
         return <CorporateActions />;
       default:
