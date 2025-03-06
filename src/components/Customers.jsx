@@ -3,6 +3,7 @@ import { fetchData } from '../services/api';
 import Chart from 'chart.js/auto';
 import { Line, Pie, Bar } from 'react-chartjs-2';
 import { formatNumber, formatCurrency, formatPercentage, formatDate, getStatusColor } from '../utils';
+import MetricCard from './MetricCard';
 
 const Customers = () => {
   const [data, setData] = useState(null);
@@ -146,55 +147,43 @@ const Customers = () => {
         </div>
       </div>
       
-      <div className="metrics-summary">
-        <div className="row">
-          <div className="col-md-3">
-            <div className="summary-card">
-              <div className="card-icon">
-                <i className="fas fa-users"></i>
-              </div>
-              <div className="card-info">
-                <h2>{formatNumber(data.total_customers)}</h2>
-                <p>Total Customers</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="col-md-3">
-            <div className="summary-card">
-              <div className="card-icon">
-                <i className="fas fa-user-check"></i>
-              </div>
-              <div className="card-info">
-                <h2>{formatNumber(data.active_customers)}</h2>
-                <p>Active Customers</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="col-md-3">
-            <div className="summary-card">
-              <div className="card-icon">
-                <i className="fas fa-user-plus"></i>
-              </div>
-              <div className="card-info">
-                <h2>{formatNumber(data.new_customers_mtd)}</h2>
-                <p>New Customers (MTD)</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="col-md-3">
-            <div className="summary-card">
-              <div className="card-icon">
-                <i className="fas fa-layer-group"></i>
-              </div>
-              <div className="card-info">
-                <h2>{formatNumber(data.total_accounts)}</h2>
-                <p>Total Accounts</p>
-              </div>
-            </div>
-          </div>
+      {/* Metrics summary */}
+      <div className="row">
+        <div className="col-md-3">
+          <MetricCard 
+            title="Total Customers" 
+            value={formatNumber(data.total_customers)}
+            subtitle="All time"
+            icon="users"
+            color="#007C75"
+          />
+        </div>
+        <div className="col-md-3">
+          <MetricCard 
+            title="Active Customers" 
+            value={formatNumber(data.active_customers)}
+            subtitle={`${Math.round((data.active_customers / data.total_customers) * 100)}% of total`}
+            icon="user-check"
+            color="#28A745"
+          />
+        </div>
+        <div className="col-md-3">
+          <MetricCard 
+            title="New Customers (MTD)" 
+            value={formatNumber(data.new_customers_mtd)}
+            subtitle="Month to date"
+            icon="user-plus"
+            color="#17A2B8"
+          />
+        </div>
+        <div className="col-md-3">
+          <MetricCard 
+            title="Total Accounts" 
+            value={formatNumber(data.total_accounts)}
+            subtitle="All accounts"
+            icon="layer-group"
+            color="#6C757D"
+          />
         </div>
       </div>
       

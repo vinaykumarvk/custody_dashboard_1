@@ -3,6 +3,7 @@ import { fetchData } from '../services/api';
 import Chart from 'chart.js/auto';
 import { Line, Pie, Bar } from 'react-chartjs-2';
 import { formatNumber, formatCurrency, formatPercentage, formatDate } from '../utils';
+import MetricCard from './MetricCard';
 
 const Income = () => {
   const [data, setData] = useState(null);
@@ -146,55 +147,45 @@ const Income = () => {
         </div>
       </div>
       
-      <div className="metrics-summary">
-        <div className="row">
-          <div className="col-md-3">
-            <div className="summary-card">
-              <div className="card-icon">
-                <i className="fas fa-chart-line"></i>
-              </div>
-              <div className="card-info">
-                <h2>{formatCurrency(data.total_income_ytd)}</h2>
-                <p>Total Income YTD</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="col-md-3">
-            <div className="summary-card">
-              <div className="card-icon">
-                <i className="fas fa-money-bill-wave"></i>
-              </div>
-              <div className="card-info">
-                <h2>{formatCurrency(data.total_income_mtd)}</h2>
-                <p>Income MTD</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="col-md-3">
-            <div className="summary-card">
-              <div className="card-icon">
-                <i className="fas fa-percentage"></i>
-              </div>
-              <div className="card-info">
-                <h2>{formatPercentage(data.income_growth_yoy)}</h2>
-                <p>YoY Growth</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="col-md-3">
-            <div className="summary-card">
-              <div className="card-icon">
-                <i className="fas fa-file-invoice-dollar"></i>
-              </div>
-              <div className="card-info">
-                <h2>{formatCurrency(data.fees_outstanding)}</h2>
-                <p>Outstanding Fees</p>
-              </div>
-            </div>
-          </div>
+      {/* Metrics summary */}
+      <div className="row">
+        <div className="col-md-3">
+          <MetricCard 
+            title="Total Income YTD" 
+            value={formatCurrency(data.total_income_ytd)}
+            subtitle="Year to date"
+            icon="chart-line"
+            color="#007C75"
+            valueClassName={data.total_income_ytd > 1000000 ? 'smaller-value' : ''}
+          />
+        </div>
+        <div className="col-md-3">
+          <MetricCard 
+            title="Income MTD" 
+            value={formatCurrency(data.total_income_mtd)}
+            subtitle="Month to date"
+            icon="money-bill-wave"
+            color="#28A745"
+          />
+        </div>
+        <div className="col-md-3">
+          <MetricCard 
+            title="YoY Growth" 
+            value={formatPercentage(data.income_growth_yoy)}
+            subtitle="Year over year growth"
+            icon="percentage"
+            color="#17A2B8"
+          />
+        </div>
+        <div className="col-md-3">
+          <MetricCard 
+            title="Outstanding Fees" 
+            value={formatCurrency(data.fees_outstanding)}
+            subtitle="Pending collection"
+            icon="file-invoice-dollar"
+            color="#FFC107"
+            valueClassName={data.fees_outstanding > 1000000 ? 'smaller-value' : ''}
+          />
         </div>
       </div>
       
