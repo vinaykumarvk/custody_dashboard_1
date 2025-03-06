@@ -287,7 +287,7 @@ const Trades = () => {
         </div>
         
         <div className="col-md-4">
-          <div className="card mb-4">
+          <div className="card mb-5">
             <div className="card-header">
               <h2>Asset Class Breakdown</h2>
             </div>
@@ -308,7 +308,7 @@ const Trades = () => {
                     }
                   }
                 }}
-                height="140px"
+                height="200px"
               />
             </div>
           </div>
@@ -334,7 +334,7 @@ const Trades = () => {
                     }
                   }
                 }}
-                height="140px"
+                height="200px"
               />
             </div>
           </div>
