@@ -34,32 +34,10 @@ export const formatCurrency = (value, currency = 'USD') => {
     value = parseFloat(value);
   }
   
-  // Handle different currencies
-  let symbol = '$';
-  let position = 'before';
-  
-  switch (currency) {
-    case 'EUR':
-      symbol = '€';
-      position = 'after';
-      break;
-    case 'GBP':
-      symbol = '£';
-      break;
-    case 'JPY':
-      symbol = '¥';
-      break;
-    // Add more currencies as needed
-  }
-  
-  // Format with thousand separators and two decimal places
-  const formattedValue = value.toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
-  
-  // Return formatted currency value
-  return position === 'before' ? `${symbol}${formattedValue}` : `${formattedValue} ${symbol}`;
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
 };
 
 /**
@@ -76,12 +54,11 @@ export const formatPercentage = (value, decimals = 1) => {
     value = parseFloat(value);
   }
   
-  // Convert to percentage and format
-  const percentage = value * 100;
-  return percentage.toLocaleString('en-US', {
+  return value.toLocaleString('en-US', {
+    style: 'percent',
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals
-  }) + '%';
+  });
 };
 
 /**
@@ -93,27 +70,29 @@ export const formatPercentage = (value, decimals = 1) => {
 export const formatDate = (date, format = 'medium') => {
   if (!date) return '-';
   
-  // Convert string to Date object if needed
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const dateObj = new Date(date);
   
-  // Define format options
-  let options;
   switch (format) {
     case 'short':
-      options = { month: 'numeric', day: 'numeric', year: '2-digit' };
-      break;
-    case 'medium':
-      options = { month: 'short', day: 'numeric', year: 'numeric' };
-      break;
+      return dateObj.toLocaleDateString('en-US');
     case 'long':
-      options = { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-      break;
+      return dateObj.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    case 'time':
+      return dateObj.toLocaleTimeString('en-US');
+    case 'datetime':
+      return dateObj.toLocaleString('en-US');
     default:
-      options = { month: 'short', day: 'numeric', year: 'numeric' };
+      return dateObj.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
   }
-  
-  // Return formatted date
-  return dateObj.toLocaleDateString('en-US', options);
 };
 
 /**
@@ -123,28 +102,24 @@ export const formatDate = (date, format = 'medium') => {
  */
 export const getStatusColor = (status) => {
   switch (status?.toLowerCase()) {
-    case 'active':
+    case 'complete':
     case 'completed':
-    case 'approved':
     case 'success':
-      return '#28a745'; // Green
+    case 'active':
+    case 'approved':
+      return '#28A745'; // Success green
     case 'pending':
     case 'in progress':
-    case 'processing':
+    case 'waiting':
     case 'review':
-      return '#ffc107'; // Yellow
-    case 'inactive':
+      return '#FFC107'; // Warning yellow
     case 'failed':
-    case 'rejected':
     case 'error':
-      return '#dc3545'; // Red
-    case 'warning':
-      return '#fd7e14'; // Orange
-    case 'neutral':
-    case 'onboarding':
-      return '#6c757d'; // Gray
+    case 'rejected':
+    case 'cancelled':
+      return '#DC3545'; // Danger red
     default:
-      return '#6c757d'; // Default gray
+      return '#6C757D'; // Secondary gray
   }
 };
 
@@ -155,131 +130,117 @@ export const getStatusColor = (status) => {
  * @returns {object} Chart configuration
  */
 export const generateChartConfig = (type, customConfig = {}) => {
-  // Default colors palette
+  // Default colors for Smart Bank
   const colors = [
-    '#28a745', // Primary green
-    '#17a2b8', // Info blue
-    '#6610f2', // Purple
-    '#fd7e14', // Orange
-    '#e83e8c', // Pink
-    '#6f42c1', // Indigo
-    '#20c997', // Teal
-    '#ffc107', // Yellow
+    '#007C75', // Primary green
+    '#009E94', // Light green
+    '#006560', // Dark green
+    '#17A2B8', // Info blue
+    '#FFC107', // Warning yellow
+    '#DC3545', // Danger red
+    '#6C757D', // Gray
+    '#28A745', // Success green
   ];
   
-  // Base configuration for all charts
+  // Base configuration with Smart Bank styling
   const baseConfig = {
-    maintainAspectRatio: false,
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: true,
-        position: 'right',
+        position: 'bottom',
         labels: {
-          boxWidth: 12,
-          padding: 15,
+          usePointStyle: true,
+          padding: 20,
           font: {
-            size: 11
+            family: "'Roboto', sans-serif",
+            size: 12
           }
         }
       },
       tooltip: {
-        enabled: true,
         backgroundColor: 'rgba(0, 0, 0, 0.7)',
         titleFont: {
-          size: 12
+          family: "'Roboto', sans-serif",
+          size: 14
         },
         bodyFont: {
-          size: 11
+          family: "'Roboto', sans-serif",
+          size: 13
         },
         padding: 10,
-        cornerRadius: 3
+        cornerRadius: 4,
+        displayColors: true
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          font: {
+            family: "'Roboto', sans-serif",
+            size: 12
+          }
+        }
+      },
+      y: {
+        grid: {
+          borderDash: [2, 2],
+          drawBorder: false
+        },
+        ticks: {
+          font: {
+            family: "'Roboto', sans-serif",
+            size: 12
+          }
+        }
       }
     }
   };
   
-  // Type-specific configurations
-  let typeConfig = {};
+  // Specific configurations based on chart type
+  const typeSpecificConfig = {};
   
-  switch (type) {
-    case 'line':
-      typeConfig = {
-        elements: {
-          line: {
-            tension: 0.1,
-            borderWidth: 2
-          },
-          point: {
-            radius: 2,
-            hitRadius: 6,
-            hoverRadius: 4
-          }
-        },
-        scales: {
-          x: {
-            grid: {
-              display: false
-            }
-          },
-          y: {
-            beginAtZero: true,
-            grid: {
-              color: 'rgba(0, 0, 0, 0.05)'
-            }
-          }
-        }
-      };
-      break;
-    case 'bar':
-      typeConfig = {
-        elements: {
-          bar: {
-            borderWidth: 0
-          }
-        },
-        scales: {
-          x: {
-            grid: {
-              display: false
-            }
-          },
-          y: {
-            beginAtZero: true,
-            grid: {
-              color: 'rgba(0, 0, 0, 0.05)'
-            }
-          }
-        }
-      };
-      break;
-    case 'pie':
-    case 'doughnut':
-      typeConfig = {
-        cutout: type === 'doughnut' ? '60%' : 0,
-        plugins: {
-          legend: {
-            position: 'right'
-          }
-        }
-      };
-      break;
-    // Add more chart types as needed
+  if (type === 'line') {
+    typeSpecificConfig.elements = {
+      line: {
+        tension: 0.3,
+        borderWidth: 2
+      },
+      point: {
+        radius: 3,
+        hitRadius: 10,
+        hoverRadius: 5
+      }
+    };
+  } else if (type === 'bar') {
+    typeSpecificConfig.barPercentage = 0.7;
+    typeSpecificConfig.categoryPercentage = 0.8;
+  } else if (type === 'pie' || type === 'doughnut') {
+    typeSpecificConfig.cutout = type === 'doughnut' ? '70%' : 0;
+    // Remove scales for pie/doughnut charts
+    delete baseConfig.scales;
   }
   
   // Merge configurations
   return {
+    type,
     ...baseConfig,
-    ...typeConfig,
+    ...typeSpecificConfig,
     ...customConfig,
-    // Add default colors if datasets are provided without colors
+    // Apply Smart Bank colors if datasets don't have custom colors
     data: customConfig.data ? {
       ...customConfig.data,
       datasets: customConfig.data.datasets.map((dataset, index) => ({
         ...dataset,
-        backgroundColor: dataset.backgroundColor || colors[index % colors.length],
+        backgroundColor: dataset.backgroundColor || (
+          type === 'line' ? 'rgba(0, 124, 117, 0.1)' : colors[index % colors.length]
+        ),
         borderColor: dataset.borderColor || colors[index % colors.length]
       }))
-    } : undefined
+    } : {}
   };
 };
 
@@ -308,473 +269,124 @@ export const mockApiCall = (endpoint, options = {}) => {
  * @returns {object} Mock data
  */
 const getMockData = (endpoint) => {
-  // Map corporate_actions to corporateActions if needed
-  if (endpoint === 'corporate_actions') {
-    endpoint = 'corporateActions';
-  }
-  
   const mockData = {
-    'corporateActions': {
-      total_actions: 1875,
-      pending_actions: 342,
-      completed_actions: 1421,
-      failed_actions: 112,
-      dividend_actions: 723,
-      stock_split_actions: 245,
-      rights_issue_actions: 187,
-      merger_actions: 129,
-      
-      // Actions by status
-      actions_by_status: [
-        { status: 'Completed', count: 1421 },
-        { status: 'Pending', count: 342 },
-        { status: 'Failed', count: 112 }
-      ],
-      
-      // Actions by type
-      actions_by_type: [
-        { type: 'Dividend', count: 723 },
-        { type: 'Stock Split', count: 245 },
-        { type: 'Rights Issue', count: 187 },
-        { type: 'Merger', count: 129 },
-        { type: 'Spinoff', count: 94 },
-        { type: 'Acquisition', count: 82 },
-        { type: 'Other', count: 415 }
-      ],
-      
-      // Recent actions
-      recent_actions: [
-        {
-          action_id: 'CA-45678',
-          security_name: 'Apple Inc.',
-          security_id: 'AAPL',
-          type: 'Dividend',
-          announcement_date: '2025-02-20',
-          record_date: '2025-03-10',
-          payment_date: '2025-03-15',
-          status: 'Pending',
-          amount: 0.24,
-          currency: 'USD',
-          description: 'Quarterly dividend payment',
-          affected_accounts: 342,
-          total_value: 2457650,
-          processor: 'Sarah Williams',
-          notes: 'Standard quarterly dividend processing'
-        },
-        {
-          action_id: 'CA-45679',
-          security_name: 'Tesla, Inc.',
-          security_id: 'TSLA',
-          type: 'Stock Split',
-          announcement_date: '2025-02-15',
-          record_date: '2025-03-05',
-          payment_date: '2025-03-08',
-          status: 'Completed',
-          split_ratio: '3:1',
-          description: '3-for-1 stock split',
-          affected_accounts: 198,
-          processor: 'James Wilson',
-          notes: 'Stock split completed successfully'
-        },
-        {
-          action_id: 'CA-45680',
-          security_name: 'JP Morgan Chase',
-          security_id: 'JPM',
-          type: 'Dividend',
-          announcement_date: '2025-02-22',
-          record_date: '2025-03-12',
-          payment_date: '2025-03-18',
-          status: 'Pending',
-          amount: 1.15,
-          currency: 'USD',
-          description: 'Quarterly dividend payment',
-          affected_accounts: 287,
-          total_value: 1854320,
-          processor: 'Michael Chen',
-          notes: 'Dividend announced, pending record date'
-        },
-        {
-          action_id: 'CA-45681',
-          security_name: 'Microsoft Corp',
-          security_id: 'MSFT',
-          type: 'Dividend',
-          announcement_date: '2025-02-18',
-          record_date: '2025-03-08',
-          payment_date: '2025-03-14',
-          status: 'Pending',
-          amount: 0.68,
-          currency: 'USD',
-          description: 'Quarterly dividend payment',
-          affected_accounts: 312,
-          total_value: 2967450,
-          processor: 'Emma Davies',
-          notes: 'Verifying eligible positions'
-        },
-        {
-          action_id: 'CA-45682',
-          security_name: 'Amazon.com Inc.',
-          security_id: 'AMZN',
-          type: 'Stock Split',
-          announcement_date: '2025-02-10',
-          record_date: '2025-03-01',
-          payment_date: '2025-03-05',
-          status: 'Completed',
-          split_ratio: '20:1',
-          description: '20-for-1 stock split',
-          affected_accounts: 276,
-          processor: 'Thomas Johnson',
-          notes: 'Stock split completed successfully'
-        },
-        {
-          action_id: 'CA-45683',
-          security_name: 'Exxon Mobil Corp',
-          security_id: 'XOM',
-          type: 'Dividend',
-          announcement_date: '2025-02-25',
-          record_date: '2025-03-15',
-          payment_date: '2025-03-22',
-          status: 'Announced',
-          amount: 0.95,
-          currency: 'USD',
-          description: 'Quarterly dividend payment',
-          affected_accounts: 234,
-          total_value: 1456780,
-          processor: 'Robert Johnson',
-          notes: 'Announcement received, pending processing'
-        }
-      ],
-      
-      // Actions timeline
-      actions_timeline: [
-        { date: '2025-02-01', total_actions: 45, completed: 28, pending: 14, failed: 3 },
-        { date: '2025-02-05', total_actions: 58, completed: 32, pending: 21, failed: 5 },
-        { date: '2025-02-10', total_actions: 67, completed: 39, pending: 23, failed: 5 },
-        { date: '2025-02-15', total_actions: 72, completed: 45, pending: 20, failed: 7 },
-        { date: '2025-02-20', total_actions: 83, completed: 52, pending: 24, failed: 7 },
-        { date: '2025-02-25', total_actions: 89, completed: 58, pending: 26, failed: 5 },
-        { date: '2025-03-01', total_actions: 94, completed: 63, pending: 27, failed: 4 }
-      ]
-    },
-    'settlements': {
-      total_settlements: 7824,
-      pending_settlements: 643,
-      failed_settlements: 84,
-      success_rate: 0.96,
-      settlement_volume: 1453298760,
-      average_settlement_time: 1.4,
-      
-      // Settlements by status
-      settlements_by_status: [
-        { status: 'Completed', count: 7097 },
-        { status: 'Pending', count: 643 },
-        { status: 'Failed', count: 84 }
-      ],
-      
-      // Settlements by type
-      settlements_by_type: [
-        { type: 'DVP', count: 5865 },
-        { type: 'FOP', count: 1432 },
-        { type: 'Internal', count: 527 }
-      ],
-      
-      // Settlements by currency
-      settlements_by_currency: [
-        { currency: 'USD', count: 4512 },
-        { currency: 'EUR', count: 1623 },
-        { currency: 'GBP', count: 834 },
-        { currency: 'JPY', count: 423 },
-        { currency: 'Other', count: 432 }
-      ],
-      
-      // Recent settlements
-      recent_settlements: [
-        {
-          settlement_id: 'S-34567',
-          trade_id: 'T-78945',
-          client_name: 'BlackRock Inc.',
-          client_id: 'C-54321',
-          security_name: 'Apple Inc.',
-          security_id: 'AAPL',
-          settlement_date: '2025-03-03',
-          amount: 1253125,
-          currency: 'USD',
-          status: 'Completed',
-          type: 'DVP',
-          counterparty: 'Morgan Stanley',
-          location: 'DTC',
-          account: 'A-1234',
-          processor: 'Jane Smith',
-          notes: 'Standard settlement completed'
-        },
-        {
-          settlement_id: 'S-34568',
-          trade_id: 'T-78946',
-          client_name: 'Vanguard Group',
-          client_id: 'C-54322',
-          security_name: 'Microsoft Corp',
-          security_id: 'MSFT',
-          settlement_date: '2025-03-03',
-          amount: 978038.77,
-          currency: 'USD',
-          status: 'Completed',
-          type: 'DVP',
-          counterparty: 'Goldman Sachs',
-          location: 'DTC',
-          account: 'A-2234',
-          processor: 'Michael Brown',
-          notes: 'Settlement completed on time'
-        },
-        {
-          settlement_id: 'S-34569',
-          trade_id: 'T-78950',
-          client_name: 'State Street Corp',
-          client_id: 'C-54323',
-          security_name: 'Alphabet Inc.',
-          security_id: 'GOOGL',
-          settlement_date: '2025-03-04',
-          amount: 1880685.98,
-          currency: 'USD',
-          status: 'Pending',
-          type: 'DVP',
-          counterparty: 'UBS',
-          location: 'DTC',
-          account: 'A-3234',
-          processor: 'David Lee',
-          notes: 'Awaiting confirmation from counterparty'
-        },
-        {
-          settlement_id: 'S-34570',
-          trade_id: 'T-78953',
-          client_name: 'Fidelity Investments',
-          client_id: 'C-54324',
-          security_name: 'Amazon.com Inc.',
-          security_id: 'AMZN',
-          settlement_date: '2025-03-04',
-          amount: 2155373,
-          currency: 'USD',
-          status: 'Pending',
-          type: 'DVP',
-          counterparty: 'JP Morgan',
-          location: 'DTC',
-          account: 'A-4234',
-          processor: 'Patricia Wilson',
-          notes: 'Waiting for client funds'
-        },
-        {
-          settlement_id: 'S-34571',
-          trade_id: 'T-78957',
-          client_name: 'JP Morgan Asset Management',
-          client_id: 'C-54325',
-          security_name: 'Tesla, Inc.',
-          security_id: 'TSLA',
-          settlement_date: '2025-03-04',
-          amount: 1560086.02,
-          currency: 'USD',
-          status: 'Failed',
-          type: 'DVP',
-          counterparty: 'Citigroup',
-          location: 'DTC',
-          account: 'A-5234',
-          processor: 'Steven Garcia',
-          notes: 'Settlement failed due to insufficient shares'
-        },
-        {
-          settlement_id: 'S-34572',
-          trade_id: 'T-78960',
-          client_name: 'UBS Asset Management',
-          client_id: 'C-54326',
-          security_name: 'Facebook Inc.',
-          security_id: 'FB',
-          settlement_date: '2025-03-05',
-          amount: 706752.47,
-          currency: 'USD',
-          status: 'Pending',
-          type: 'DVP',
-          counterparty: 'Bank of America',
-          location: 'DTC',
-          account: 'A-6234',
-          processor: 'Richard Taylor',
-          notes: 'Settlement in process'
-        }
-      ],
-      
-      // Settlement timeline
-      settlement_timeline: [
-        { date: '2025-02-01', total: 245, completed: 230, pending: 12, failed: 3 },
-        { date: '2025-02-05', total: 268, completed: 249, pending: 15, failed: 4 },
-        { date: '2025-02-10', total: 274, completed: 258, pending: 13, failed: 3 },
-        { date: '2025-02-15', total: 262, completed: 248, pending: 11, failed: 3 },
-        { date: '2025-02-20', total: 289, completed: 270, pending: 14, failed: 5 },
-        { date: '2025-02-25', total: 295, completed: 279, pending: 12, failed: 4 },
-        { date: '2025-03-01', total: 304, completed: 285, pending: 15, failed: 4 }
-      ]
-    },
     'customers': {
       total_customers: 19632,
-      active_customers: 16584,
+      active_customers: 17254,
+      inactive_customers: 2378,
       new_customers_mtd: 436,
-      total_accounts: 34579,
-      customers_monthly: [
-        { date: '2024-03-31', total_customers: 1230, new_customers: 3419 },
-        { date: '2024-04-30', total_customers: 2955, new_customers: 3357 },
-        { date: '2024-05-31', total_customers: 4920, new_customers: 1965 },
-        { date: '2024-06-30', total_customers: 6921, new_customers: 2001 },
-        { date: '2024-07-31', total_customers: 8823, new_customers: 1902 },
-        { date: '2024-08-31', total_customers: 10678, new_customers: 1855 },
-        { date: '2024-09-30', total_customers: 12452, new_customers: 1774 },
-        { date: '2024-10-31', total_customers: 14196, new_customers: 1744 },
-        { date: '2024-11-30', total_customers: 15922, new_customers: 1726 },
-        { date: '2024-12-31', total_customers: 17548, new_customers: 1626 },
-        { date: '2025-01-31', total_customers: 18701, new_customers: 1153 },
-        { date: '2025-02-28', total_customers: 19196, new_customers: 495 },
-        { date: '2025-03-31', total_customers: 19632, new_customers: 436 }
-      ],
+      new_customers_ytd: 3097,
+      total_accounts: 34257,
+      active_accounts: 29478,
+      kyc_pending: 184,
+      onboarding_in_progress: 342,
+      
+      // Customer segments data
       customer_segments: [
-        { segment: 'Institutional', count: 7854, percentage: 0.40 },
-        { segment: 'Corporate', count: 5889, percentage: 0.30 },
-        { segment: 'Wealth Management', count: 3927, percentage: 0.20 },
-        { segment: 'Retail', count: 1962, percentage: 0.10 }
+        { segment: 'Institutional', count: 8835, percentage: 0.45 },
+        { segment: 'Corporate', count: 5890, percentage: 0.30 },
+        { segment: 'Wealth Management', count: 3926, percentage: 0.20 },
+        { segment: 'Retail', count: 981, percentage: 0.05 }
       ],
-      customers_by_type: [
-        { type: 'Institutional', count: 7854 },
-        { type: 'Corporate', count: 5889 },
-        { type: 'Wealth Management', count: 3927 },
-        { type: 'Retail', count: 1962 }
-      ],
+      
+      // Customer by region data
       customers_by_region: [
-        { region: 'North America', count: 8835 },
-        { region: 'Europe', count: 5890 },
+        { region: 'North America', count: 9816 },
+        { region: 'Europe', count: 5889 },
         { region: 'Asia Pacific', count: 2945 },
-        { region: 'Middle East', count: 982 },
-        { region: 'Latin America', count: 980 }
+        { region: 'Middle East', count: 589 },
+        { region: 'Latin America', count: 393 }
       ],
+      
+      // Customer growth data
+      customers_monthly: [
+        { date: '2024-03-31', total_customers: 1230, new_customers: 1230 },
+        { date: '2024-04-30', total_customers: 2955, new_customers: 1725 },
+        { date: '2024-05-31', total_customers: 4514, new_customers: 1559 },
+        { date: '2024-06-30', total_customers: 5886, new_customers: 1372 },
+        { date: '2024-07-31', total_customers: 7578, new_customers: 1692 },
+        { date: '2024-08-31', total_customers: 9396, new_customers: 1818 },
+        { date: '2024-09-30', total_customers: 11047, new_customers: 1651 },
+        { date: '2024-10-31', total_customers: 13018, new_customers: 1971 },
+        { date: '2024-11-30', total_customers: 14759, new_customers: 1741 },
+        { date: '2024-12-31', total_customers: 16462, new_customers: 1703 },
+        { date: '2025-01-31', total_customers: 18009, new_customers: 1547 },
+        { date: '2025-02-28', total_customers: 19407, new_customers: 1398 },
+        { date: '2025-03-31', total_customers: 19632, new_customers: 225 }
+      ],
+      
+      // Recent customers
       recent_customers: [
         {
-          customer_id: 'C-12345',
-          name: 'BlackRock Inc.',
+          customer_id: 'C-87543',
+          name: 'Platinum Asset Management',
           type: 'Institutional',
+          date_onboarded: '2025-03-01',
           country: 'United States',
-          date_onboarded: '2024-04-15',
-          accounts: 12,
-          status: 'Active'
-        },
-        {
-          customer_id: 'C-12346',
-          name: 'Vanguard Group',
-          type: 'Institutional',
-          country: 'United States',
-          date_onboarded: '2024-04-22',
-          accounts: 10,
-          status: 'Active'
-        },
-        {
-          customer_id: 'C-12347',
-          name: 'Goldman Sachs Asset Management',
-          type: 'Institutional',
-          country: 'United States',
-          date_onboarded: '2024-05-03',
-          accounts: 8,
-          status: 'Active'
-        },
-        {
-          customer_id: 'C-12348',
-          name: 'JP Morgan Asset Management',
-          type: 'Institutional',
-          country: 'United States',
-          date_onboarded: '2024-05-10',
-          accounts: 9,
-          status: 'Active'
-        },
-        {
-          customer_id: 'C-12349',
-          name: 'Fidelity Investments',
-          type: 'Institutional',
-          country: 'United States',
-          date_onboarded: '2024-05-17',
-          accounts: 7,
-          status: 'Active'
-        }
-      ],
-      top_customers: [
-        {
-          customer_id: 'C-12345',
-          name: 'BlackRock Inc.',
-          type: 'Institutional',
-          date_onboarded: '2024-04-15',
-          country: 'United States',
-          accounts: 12,
+          accounts: 4,
           status: 'Active',
-          relationship_manager: 'Robert Johnson',
-          aum: 1200000000,
-          contact_name: 'Michael Smith',
-          contact_email: 'michael.smith@blackrock.com',
-          contact_phone: '+1-212-555-1234'
+          relationship_manager: 'Sarah Wilson',
+          aum: 425000000,
+          contact_name: 'Michael Thompson',
+          contact_email: 'michael.thompson@platinum-am.com',
+          contact_phone: '+1-212-555-7890'
         },
         {
-          customer_id: 'C-12346',
-          name: 'Vanguard Group',
-          type: 'Institutional',
-          date_onboarded: '2024-04-22',
-          country: 'United States',
-          accounts: 10,
-          status: 'Active',
-          relationship_manager: 'Sarah Williams',
-          aum: 950000000,
-          contact_name: 'Jennifer Davis',
-          contact_email: 'jennifer.davis@vanguard.com',
-          contact_phone: '+1-610-555-5678'
-        },
-        {
-          customer_id: 'C-12347',
-          name: 'Goldman Sachs Asset Management',
-          type: 'Institutional',
-          date_onboarded: '2024-05-03',
-          country: 'United States',
-          accounts: 8,
-          status: 'Active',
-          relationship_manager: 'James Wilson',
-          aum: 780000000,
-          contact_name: 'David Brown',
-          contact_email: 'david.brown@gs.com',
-          contact_phone: '+1-212-555-9012'
-        },
-        {
-          customer_id: 'C-12348',
-          name: 'HSBC Global Asset Management',
-          type: 'Institutional',
-          date_onboarded: '2024-05-15',
+          customer_id: 'C-87544',
+          name: 'Global Securities Corp',
+          type: 'Corporate',
+          date_onboarded: '2025-03-01',
           country: 'United Kingdom',
-          accounts: 7,
+          accounts: 2,
           status: 'Active',
-          relationship_manager: 'Emma Davies',
-          aum: 650000000,
-          contact_name: 'Richard Wilson',
-          contact_email: 'richard.wilson@hsbc.com',
-          contact_phone: '+44-20-555-3456'
+          relationship_manager: 'James Roberts',
+          aum: 125000000,
+          contact_name: 'Emma Davies',
+          contact_email: 'emma.davies@globalsec.com',
+          contact_phone: '+44-20-5555-1234'
         },
         {
-          customer_id: 'C-12349',
-          name: 'UBS Asset Management',
+          customer_id: 'C-87545',
+          name: 'Pacific Wealth Advisors',
+          type: 'Wealth Management',
+          date_onboarded: '2025-03-02',
+          country: 'Singapore',
+          accounts: 8,
+          status: 'Pending',
+          relationship_manager: 'Daniel Chen',
+          aum: 85000000,
+          contact_name: 'Sophia Tan',
+          contact_email: 'sophia.tan@pacificwealth.com',
+          contact_phone: '+65-6555-9876'
+        },
+        {
+          customer_id: 'C-87546',
+          name: 'Europa Investment Partners',
           type: 'Institutional',
-          date_onboarded: '2024-05-28',
-          country: 'Switzerland',
-          accounts: 6,
+          date_onboarded: '2025-03-02',
+          country: 'Germany',
+          accounts: 3,
           status: 'Active',
-          relationship_manager: 'Michael Chen',
-          aum: 520000000,
-          contact_name: 'Thomas Mueller',
-          contact_email: 'thomas.mueller@ubs.com',
-          contact_phone: '+41-44-555-7890'
+          relationship_manager: 'Laura Schmidt',
+          aum: 310000000,
+          contact_name: 'Hans Mueller',
+          contact_email: 'hans.mueller@europainvest.com',
+          contact_phone: '+49-30-5555-4321'
+        },
+        {
+          customer_id: 'C-87547',
+          name: 'Alpha Retirement Solutions',
+          type: 'Corporate',
+          date_onboarded: '2025-03-03',
+          country: 'Australia',
+          accounts: 5,
+          status: 'Active',
+          relationship_manager: 'Thomas Johnson',
+          aum: 175000000,
+          contact_name: 'Jessica White',
+          contact_email: 'jessica.white@alpharetire.com',
+          contact_phone: '+61-2-5555-7654'
         }
-      ],
-      recent_activities: [
-        { timestamp: '2025-03-31T10:15:22', user: 'Robert Johnson', action: 'Created new customer account: Horizon Investments Ltd.', ip_address: '192.168.1.15' },
-        { timestamp: '2025-03-31T10:00:15', user: 'Sarah Williams', action: 'Updated customer details: Goldman Sachs Asset Management', ip_address: '192.168.1.22' },
-        { timestamp: '2025-03-31T09:45:30', user: 'Emma Davies', action: 'Approved new account opening: AllianceBernstein LP', ip_address: '192.168.1.18' },
-        { timestamp: '2025-03-31T09:30:15', user: 'Michael Chen', action: 'Generated customer report: UBS Asset Management', ip_address: '192.168.1.25' },
-        { timestamp: '2025-03-31T09:15:45', user: 'James Wilson', action: 'Added new contact for: BlackRock Inc.', ip_address: '192.168.1.30' },
-        { timestamp: '2025-03-31T09:00:30', user: 'System', action: 'Sent onboarding documents to: Wellington Management Company', ip_address: '10.0.0.15' },
-        { timestamp: '2025-03-31T08:45:15', user: 'David Lee', action: 'Scheduled customer meeting: Fidelity Investments', ip_address: '192.168.1.35' }
       ]
     },
     'income': {
@@ -785,6 +397,7 @@ const getMockData = (endpoint) => {
       average_fee_per_customer: 1654,
       income_growth_yoy: 0.17,
       
+      // Income by service type
       income_by_service: [
         { service: 'Custody Fees', amount: 17843621, percentage: 0.55 },
         { service: 'Trading Commissions', amount: 8114692, percentage: 0.25 },
@@ -792,6 +405,7 @@ const getMockData = (endpoint) => {
         { service: 'Other Services', amount: 3254576, percentage: 0.10 }
       ],
       
+      // Income by region
       income_by_region: [
         { region: 'North America', amount: 16229382 },
         { region: 'Europe', amount: 8114691 },
@@ -800,6 +414,7 @@ const getMockData = (endpoint) => {
         { region: 'Latin America', amount: 1622939 }
       ],
       
+      // Monthly income history
       income_monthly: [
         { date: '2024-03-31', total_income: 967982, new_income: 967982 },
         { date: '2024-04-30', total_income: 1986532, new_income: 1018550 },
@@ -816,6 +431,7 @@ const getMockData = (endpoint) => {
         { date: '2025-03-31', total_income: 32458765, new_income: 3457892 }
       ],
       
+      // Top revenue customers
       top_customers: [
         {
           customer_id: 'C-54321',
@@ -870,6 +486,7 @@ const getMockData = (endpoint) => {
       scheduled_reports: 176,
       favorite_reports: 8,
       
+      // Report categories
       report_categories: [
         { category: 'Compliance', count: 12 },
         { category: 'Performance', count: 9 },
@@ -878,6 +495,7 @@ const getMockData = (endpoint) => {
         { category: 'Corporate Actions', count: 6 }
       ],
       
+      // Recent reports
       recent_reports: [
         {
           report_id: 'R-34567',
@@ -931,7 +549,8 @@ const getMockData = (endpoint) => {
         }
       ],
       
-      scheduled_report_list: [
+      // Scheduled reports
+      scheduled_reports: [
         {
           schedule_id: 'S-23456',
           report_name: 'Daily Trade Summary',
@@ -991,6 +610,7 @@ const getMockData = (endpoint) => {
         dashboard_layout: 'Standard'
       },
       
+      // System settings
       system_settings: {
         maintenance_mode: false,
         system_version: '2.5.1',
@@ -1000,6 +620,7 @@ const getMockData = (endpoint) => {
         last_update: '2025-02-28T01:30:00'
       },
       
+      // User roles and permissions
       user_roles: [
         {
           role_name: 'Administrator',
@@ -1035,6 +656,7 @@ const getMockData = (endpoint) => {
       trades_buy: 4821,
       trades_sell: 3914,
       
+      // Recent trades data
       recent_trades: [
         {
           trade_id: 'T-78945',
@@ -1206,6 +828,7 @@ const getMockData = (endpoint) => {
         }
       ],
       
+      // Trade by asset class
       trade_by_asset_class: [
         { asset_class: 'Equities', value: 5247 },
         { asset_class: 'Fixed Income', value: 2145 },
@@ -1213,94 +836,598 @@ const getMockData = (endpoint) => {
         { asset_class: 'Derivatives', value: 561 }
       ],
       
+      // Trade volume history
       volume_history: [
         { date: '2025-02-01', volume: 54325000 },
         { date: '2025-02-03', volume: 58741000 },
         { date: '2025-02-05', volume: 61230000 },
         { date: '2025-02-07', volume: 59845000 },
         { date: '2025-02-09', volume: 57621000 },
-        { date: '2025-02-11', volume: 62345000 },
-        { date: '2025-02-13', volume: 67812000 },
-        { date: '2025-02-15', volume: 71435000 },
-        { date: '2025-02-17', volume: 68945000 },
-        { date: '2025-02-19', volume: 72134000 },
-        { date: '2025-02-21', volume: 75648000 },
-        { date: '2025-02-23', volume: 77821000 },
-        { date: '2025-02-25', volume: 82347000 },
-        { date: '2025-02-27', volume: 85632000 },
-        { date: '2025-03-01', volume: 89457000 },
-        { date: '2025-03-03', volume: 92786000 }
+        { date: '2025-02-11', volume: 60125000 },
+        { date: '2025-02-13', volume: 63420000 },
+        { date: '2025-02-15', volume: 65740000 },
+        { date: '2025-02-17', volume: 62350000 },
+        { date: '2025-02-19', volume: 59845000 },
+        { date: '2025-02-21', volume: 61250000 },
+        { date: '2025-02-23', volume: 63710000 },
+        { date: '2025-02-25', volume: 60254000 },
+        { date: '2025-02-27', volume: 58630000 },
+        { date: '2025-03-01', volume: 61745000 },
+        { date: '2025-03-03', volume: 65320000 }
       ]
     },
-    'dashboard': {
-      custody_assets: 458692145000,
-      custody_assets_growth: 0.08,
-      total_accounts: 34579,
-      active_accounts: 29827,
-      total_customers: 19632,
-      total_open_events: 3467,
+    'settlements': {
+      total_settlements: 7634,
+      settlement_volume: 1687543200,
+      avg_settlement_time: 24.5,
+      fails_rate: 0.03,
+      completed_settlements: 6952,
+      pending_settlements: 589,
+      failed_settlements: 93,
+      pending_value: 832456000,
       
-      revenue_mtd: 3457892,
-      revenue_ytd: 32458765,
-      revenue_growth: 0.14,
-      
-      total_trades: 8735,
-      completed_trades: 7824,
-      pending_trades: 643,
-      processing_trades: 184,
-      failed_trades: 84,
-      
-      total_corporate_actions: 1875,
-      
-      // Trade history data for charts
-      trade_monthly: [
-        { date: '2025-01-01', trade_volume: 145000000, total_trades: 710 },
-        { date: '2025-01-15', trade_volume: 168000000, total_trades: 754 },
-        { date: '2025-02-01', trade_volume: 152000000, total_trades: 684 },
-        { date: '2025-02-15', trade_volume: 195000000, total_trades: 812 },
-        { date: '2025-03-01', trade_volume: 205000000, total_trades: 842 }
-      ],
-      pending_corporate_actions: 342,
-      
-      system_status: {
-        overall: 'Operational',
-        trading: 'Operational',
-        settlement: 'Operational',
-        reporting: 'Degraded Performance',
-        api: 'Operational'
-      },
-      
-      events_today: [
+      // Recent settlements
+      recent_settlements: [
         {
-          time: '09:00',
-          event: 'Daily Trade Settlement Process'
+          settlement_id: 'S-45321',
+          trade_id: 'T-78945',
+          date: '2025-03-03T14:30:00',
+          trade_date: '2025-03-01T14:32:17',
+          client_name: 'BlackRock Inc.',
+          client_id: 'C-54321',
+          security_name: 'Apple Inc.',
+          isin: 'US0378331005',
+          amount: 1250000,
+          fees: 3125,
+          currency: 'USD',
+          status: 'Completed',
+          settlement_method: 'DvP',
+          depository: 'DTC',
+          account_id: 'A-1234',
+          settlement_instructions: 'Standard settlement instructions applied.',
+          notes: 'Settled on time with no issues.'
         },
         {
-          time: '10:30',
-          event: 'Corporate Actions Deadline: Stock Split (Apple Inc.)'
+          settlement_id: 'S-45322',
+          trade_id: 'T-78946',
+          date: '2025-03-03T15:15:00',
+          trade_date: '2025-03-01T15:47:38',
+          client_name: 'Vanguard Group',
+          client_id: 'C-54322',
+          security_name: 'Microsoft Corp',
+          isin: 'US5949181045',
+          amount: 980490,
+          fees: 2451.23,
+          currency: 'USD',
+          status: 'Completed',
+          settlement_method: 'DvP',
+          depository: 'DTC',
+          account_id: 'A-2234',
+          settlement_instructions: 'Standard settlement instructions applied.',
+          notes: 'Settled on time with no issues.'
         },
         {
-          time: '13:00',
-          event: 'System Maintenance: Reporting Module'
+          settlement_id: 'S-45323',
+          trade_id: 'T-78950',
+          date: '2025-03-04T10:00:00',
+          trade_date: '2025-03-02T09:15:22',
+          client_name: 'State Street Corp',
+          client_id: 'C-54323',
+          security_name: 'Alphabet Inc.',
+          isin: 'US02079K3059',
+          amount: 1875996,
+          fees: 4689.99,
+          currency: 'USD',
+          status: 'Pending',
+          settlement_method: 'DvP',
+          depository: 'DTC',
+          account_id: 'A-3234',
+          settlement_instructions: 'Standard settlement instructions to be applied.',
+          notes: 'Awaiting confirmation from counterparty.'
         },
         {
-          time: '15:45',
-          event: 'End of Day Processing Starts'
+          settlement_id: 'S-45324',
+          trade_id: 'T-78953',
+          date: '2025-03-04T11:00:00',
+          trade_date: '2025-03-02T10:28:45',
+          client_name: 'Fidelity Investments',
+          client_id: 'C-54324',
+          security_name: 'Amazon.com Inc.',
+          isin: 'US0231351067',
+          amount: 2149998,
+          fees: 5375,
+          currency: 'USD',
+          status: 'Pending',
+          settlement_method: 'DvP',
+          depository: 'DTC',
+          account_id: 'A-4234',
+          settlement_instructions: 'Standard settlement instructions to be applied.',
+          notes: 'Large settlement amount requires additional verification.'
+        },
+        {
+          settlement_id: 'S-45325',
+          trade_id: 'T-78957',
+          date: '2025-03-04T12:00:00',
+          trade_date: '2025-03-02T13:42:19',
+          client_name: 'JP Morgan Asset Management',
+          client_id: 'C-54325',
+          security_name: 'Tesla, Inc.',
+          isin: 'US88160R1014',
+          amount: 1563996,
+          fees: 3909.98,
+          currency: 'USD',
+          status: 'Failed',
+          settlement_method: 'DvP',
+          depository: 'DTC',
+          account_id: 'A-5234',
+          settlement_instructions: 'Standard settlement instructions applied.',
+          notes: 'Settlement failed due to insufficient securities in client account.',
+          failure_reason: 'Insufficient securities in the client account for delivery.'
+        },
+        {
+          settlement_id: 'S-45326',
+          trade_id: 'T-78960',
+          date: '2025-03-05T09:30:00',
+          trade_date: '2025-03-03T08:22:34',
+          client_name: 'UBS Asset Management',
+          client_id: 'C-54326',
+          security_name: 'Facebook Inc.',
+          isin: 'US30303M1027',
+          amount: 704990,
+          fees: 1762.47,
+          currency: 'USD',
+          status: 'Pending',
+          settlement_method: 'DvP',
+          depository: 'DTC',
+          account_id: 'A-6234',
+          settlement_instructions: 'Standard settlement instructions to be applied.',
+          notes: 'Waiting for settlement date.'
         }
       ],
       
-      recent_activities: [
-        { timestamp: '2025-03-04T09:32:15', user: 'System', event_type: 'Settlement', description: 'Daily settlement process completed successfully', ip_address: '10.0.0.10' },
-        { timestamp: '2025-03-04T09:15:22', user: 'Robert Johnson', event_type: 'Corporate Action', description: 'Approved dividend payment: Microsoft Corp', ip_address: '192.168.1.15' },
-        { timestamp: '2025-03-04T08:47:53', user: 'Sarah Williams', event_type: 'Trade', description: 'Resolved trade settlement failure: ID T-78901', ip_address: '192.168.1.22' },
-        { timestamp: '2025-03-04T08:30:41', user: 'James Wilson', event_type: 'Customer', description: 'Updated KYC information: BlackRock Inc.', ip_address: '192.168.1.30' },
-        { timestamp: '2025-03-04T08:15:19', user: 'System', event_type: 'Security', description: 'Updated security profiles for 235 instruments', ip_address: '10.0.0.15' },
-        { timestamp: '2025-03-31T09:00:45', user: 'System', event_type: 'API', description: 'API key API-001 usage: GET /api/clients', ip_address: '10.0.0.25' },
-        { timestamp: '2025-03-31T08:45:23', user: 'Smart Bank Admin', event_type: 'Login', description: 'Successful login', ip_address: '192.168.1.10' }
+      // Settlement by currency
+      settlement_by_currency: [
+        { currency: 'USD', value: 5218 },
+        { currency: 'EUR', value: 1254 },
+        { currency: 'GBP', value: 632 },
+        { currency: 'JPY', value: 324 },
+        { currency: 'CHF', value: 145 },
+        { currency: 'Other', value: 61 }
+      ],
+      
+      // Settlement history
+      settlement_history: [
+        { date: '2025-02-01', completed: 243, failed: 4, pending: 21 },
+        { date: '2025-02-03', completed: 257, failed: 5, pending: 18 },
+        { date: '2025-02-05', completed: 271, failed: 3, pending: 15 },
+        { date: '2025-02-07', completed: 264, failed: 6, pending: 19 },
+        { date: '2025-02-09', completed: 254, failed: 4, pending: 22 },
+        { date: '2025-02-11', completed: 268, failed: 2, pending: 20 },
+        { date: '2025-02-13', completed: 280, failed: 5, pending: 17 },
+        { date: '2025-02-15', completed: 291, failed: 4, pending: 14 },
+        { date: '2025-02-17', completed: 276, failed: 6, pending: 18 },
+        { date: '2025-02-19', completed: 264, failed: 5, pending: 21 },
+        { date: '2025-02-21', completed: 271, failed: 3, pending: 19 },
+        { date: '2025-02-23', completed: 282, failed: 4, pending: 16 },
+        { date: '2025-02-25', completed: 267, failed: 5, pending: 20 },
+        { date: '2025-02-27', completed: 259, failed: 3, pending: 22 },
+        { date: '2025-03-01', completed: 273, failed: 4, pending: 18 },
+        { date: '2025-03-03', completed: 289, failed: 5, pending: 16 }
+      ]
+    },
+    'dashboard': {
+      totalCustomers: 2843,
+      activeCustomers: 2157,
+      totalAccounts: 5429,
+      totalTrades: 16847,
+      tradingVolume: 2547893421,
+      pendingTrades: 237,
+      openEvents: 89,
+      corporateActions: {
+        mandatory: 34,
+        voluntary: 12
+      },
+      dealProcessing: {
+        completed: 1458,
+        pending: 237,
+        failed: 43
+      },
+      customerSegments: [
+        { label: 'Institutional', value: 45 },
+        { label: 'Corporate', value: 30 },
+        { label: 'Retail', value: 25 }
+      ],
+      tradesByAssetClass: [
+        { label: 'Equities', value: 8254 },
+        { label: 'Fixed Income', value: 5321 },
+        { label: 'Derivatives', value: 2173 },
+        { label: 'FX', value: 1099 }
+      ],
+      monthlyIncome: 14587932,
+      incomeByService: [
+        { label: 'Custody Fees', value: 7843621 },
+        { label: 'Trading Commissions', value: 3541298 },
+        { label: 'Corporate Action Fees', value: 1986754 },
+        { label: 'Other Services', value: 1216259 }
+      ],
+      recentTrades: [
+        {
+          id: 'T-78945',
+          customer: 'BlackRock Inc.',
+          type: 'Buy',
+          asset: 'AAPL',
+          amount: 1250000,
+          status: 'Completed',
+          date: '2025-03-01T14:32:17'
+        },
+        {
+          id: 'T-78946',
+          customer: 'Vanguard Group',
+          type: 'Sell',
+          asset: 'MSFT',
+          amount: 980500,
+          status: 'Completed',
+          date: '2025-03-01T15:47:38'
+        },
+        {
+          id: 'T-78950',
+          customer: 'State Street Corp',
+          type: 'Buy',
+          asset: 'GOOGL',
+          amount: 1876000,
+          status: 'Pending',
+          date: '2025-03-02T09:15:22'
+        },
+        {
+          id: 'T-78953',
+          customer: 'Fidelity Investments',
+          type: 'Buy',
+          asset: 'AMZN',
+          amount: 2150000,
+          status: 'Completed',
+          date: '2025-03-02T10:28:45'
+        },
+        {
+          id: 'T-78957',
+          customer: 'JP Morgan Asset Management',
+          type: 'Sell',
+          asset: 'TSLA',
+          amount: 1564000,
+          status: 'Failed',
+          date: '2025-03-02T13:42:19'
+        }
+      ],
+      // Historical data for time-series charts
+      tradingVolumeHistory: [
+        { date: '2025-02-01', value: 2147483647 },
+        { date: '2025-02-08', value: 2247689254 },
+        { date: '2025-02-15', value: 2349876543 },
+        { date: '2025-02-22', value: 2198765432 },
+        { date: '2025-03-01', value: 2547893421 }
+      ],
+      tradeCountHistory: [
+        { date: '2025-02-01', value: 15243 },
+        { date: '2025-02-08', value: 15876 },
+        { date: '2025-02-15', value: 16234 },
+        { date: '2025-02-22', value: 15987 },
+        { date: '2025-03-01', value: 16847 }
+      ]
+    },
+    'corporate_actions': {
+      total_upcoming: 46,
+      high_priority: 8,
+      pending_elections: 12,
+      total_value: 3827500,
+      
+      // Monthly history of corporate actions
+      monthly_history: [
+        {
+          month: '2024-04-01',
+          dividends: 18,
+          stock_splits: 2,
+          rights_issues: 1,
+          mergers: 0
+        },
+        {
+          month: '2024-05-01',
+          dividends: 23,
+          stock_splits: 0,
+          rights_issues: 2,
+          mergers: 1
+        },
+        {
+          month: '2024-06-01',
+          dividends: 20,
+          stock_splits: 1,
+          rights_issues: 0,
+          mergers: 1
+        },
+        {
+          month: '2024-07-01',
+          dividends: 25,
+          stock_splits: 3,
+          rights_issues: 1,
+          mergers: 0
+        },
+        {
+          month: '2024-08-01',
+          dividends: 22,
+          stock_splits: 2,
+          rights_issues: 2,
+          mergers: 2
+        },
+        {
+          month: '2024-09-01',
+          dividends: 24,
+          stock_splits: 1,
+          rights_issues: 1,
+          mergers: 1
+        },
+        {
+          month: '2024-10-01',
+          dividends: 26,
+          stock_splits: 0,
+          rights_issues: 3,
+          mergers: 1
+        },
+        {
+          month: '2024-11-01',
+          dividends: 19,
+          stock_splits: 2,
+          rights_issues: 0,
+          mergers: 0
+        },
+        {
+          month: '2024-12-01',
+          dividends: 28,
+          stock_splits: 1,
+          rights_issues: 1,
+          mergers: 2
+        },
+        {
+          month: '2025-01-01',
+          dividends: 24,
+          stock_splits: 3,
+          rights_issues: 2,
+          mergers: 1
+        },
+        {
+          month: '2025-02-01',
+          dividends: 21,
+          stock_splits: 1,
+          rights_issues: 1,
+          mergers: 0
+        },
+        {
+          month: '2025-03-01',
+          dividends: 30,
+          stock_splits: 2,
+          rights_issues: 2,
+          mergers: 2
+        }
+      ],
+      
+      // Upcoming corporate actions
+      upcoming_actions: [
+        {
+          action_id: 'CA-34521',
+          action_type: 'Dividend',
+          security_name: 'Apple Inc.',
+          isin: 'US0378331005',
+          cusip: '037833100',
+          exchange: 'NASDAQ',
+          action_date: '2025-03-15',
+          record_date: '2025-03-08',
+          payment_date: '2025-03-20',
+          value: 450000,
+          status: 'Pending',
+          client_impact: 'Medium',
+          description: 'Quarterly cash dividend of $0.24 per share.',
+          elections: [
+            { client_id: 'C-7842', election_type: 'Cash', status: 'Pending' },
+            { client_id: 'C-8953', election_type: 'Cash', status: 'Completed' }
+          ]
+        },
+        {
+          action_id: 'CA-34522',
+          action_type: 'Stock Split',
+          security_name: 'Tesla, Inc.',
+          isin: 'US88160R1014',
+          cusip: '88160R101',
+          exchange: 'NASDAQ',
+          action_date: '2025-03-25',
+          record_date: '2025-03-18',
+          payment_date: '2025-03-30',
+          value: null,
+          status: 'Pending',
+          client_impact: 'High',
+          description: '3-for-1 stock split to make stock ownership more accessible.',
+          elections: null
+        },
+        {
+          action_id: 'CA-34523',
+          action_type: 'Rights Issue',
+          security_name: 'Bank of America Corp',
+          isin: 'US0605051046',
+          cusip: '060505104',
+          exchange: 'NYSE',
+          action_date: '2025-04-05',
+          record_date: '2025-03-29',
+          payment_date: '2025-04-10',
+          value: 875000,
+          status: 'Pending',
+          client_impact: 'High',
+          description: 'Rights issue offering 1 new share for every 8 shares held at a discount price of $32 per share.',
+          elections: [
+            { client_id: 'C-7842', election_type: 'Exercise', status: 'Pending' },
+            { client_id: 'C-8953', election_type: 'Sell Rights', status: 'Pending' },
+            { client_id: 'C-9214', election_type: 'Exercise', status: 'Pending' }
+          ]
+        },
+        {
+          action_id: 'CA-34524',
+          action_type: 'Merger',
+          security_name: 'Salesforce, Inc.',
+          isin: 'US79466L3024',
+          cusip: '79466L302',
+          exchange: 'NYSE',
+          action_date: '2025-04-15',
+          record_date: '2025-04-08',
+          payment_date: '2025-04-20',
+          value: 1250000,
+          status: 'Announced',
+          client_impact: 'High',
+          description: 'Merger with Slack Technologies. Shareholders will receive 0.8 shares of the new entity for each share held.',
+          elections: [
+            { client_id: 'C-7321', election_type: 'Accept', status: 'Pending' },
+            { client_id: 'C-8742', election_type: 'Accept', status: 'Pending' },
+            { client_id: 'C-9153', election_type: 'Undecided', status: 'Pending' }
+          ]
+        },
+        {
+          action_id: 'CA-34525',
+          action_type: 'Dividend',
+          security_name: 'Microsoft Corporation',
+          isin: 'US5949181045',
+          cusip: '594918104',
+          exchange: 'NASDAQ',
+          action_date: '2025-03-18',
+          record_date: '2025-03-11',
+          payment_date: '2025-03-23',
+          value: 625000,
+          status: 'Pending',
+          client_impact: 'Low',
+          description: 'Quarterly cash dividend of $0.68 per share.',
+          elections: [
+            { client_id: 'C-7521', election_type: 'Cash', status: 'Completed' },
+            { client_id: 'C-8351', election_type: 'Cash', status: 'Completed' }
+          ]
+        },
+        {
+          action_id: 'CA-34526',
+          action_type: 'Dividend',
+          security_name: 'Johnson & Johnson',
+          isin: 'US4781601046',
+          cusip: '478160104',
+          exchange: 'NYSE',
+          action_date: '2025-03-22',
+          record_date: '2025-03-15',
+          payment_date: '2025-03-27',
+          value: 325000,
+          status: 'Pending',
+          client_impact: 'Low',
+          description: 'Quarterly cash dividend of $1.19 per share.',
+          elections: [
+            { client_id: 'C-7842', election_type: 'Cash', status: 'Pending' }
+          ]
+        },
+        {
+          action_id: 'CA-34527',
+          action_type: 'Tender Offer',
+          security_name: 'Adobe Inc.',
+          isin: 'US00724F1012',
+          cusip: '00724F101',
+          exchange: 'NASDAQ',
+          action_date: '2025-04-10',
+          record_date: '2025-04-03',
+          payment_date: '2025-04-15',
+          value: 1750000,
+          status: 'Announced',
+          client_impact: 'Medium',
+          description: 'Tender offer to repurchase up to 10% of outstanding shares at a 12% premium to market price.',
+          elections: [
+            { client_id: 'C-7912', election_type: 'Tender', status: 'Pending' },
+            { client_id: 'C-8624', election_type: 'Do Not Tender', status: 'Completed' },
+            { client_id: 'C-9341', election_type: 'Tender', status: 'Pending' }
+          ]
+        }
+      ],
+      
+      // Recent actions
+      recent_actions: [
+        {
+          action_id: 'CA-34510',
+          action_type: 'Dividend',
+          security_name: 'Procter & Gamble Co',
+          isin: 'US7427181091',
+          cusip: '742718109',
+          exchange: 'NYSE',
+          action_date: '2025-02-15',
+          record_date: '2025-02-08',
+          payment_date: '2025-02-20',
+          value: 385000,
+          status: 'Completed',
+          client_impact: 'Low',
+          description: 'Quarterly cash dividend of $0.94 per share.',
+          elections: null
+        },
+        {
+          action_id: 'CA-34511',
+          action_type: 'Dividend',
+          security_name: 'Coca-Cola Company',
+          isin: 'US1912161007',
+          cusip: '191216100',
+          exchange: 'NYSE',
+          action_date: '2025-02-18',
+          record_date: '2025-02-11',
+          payment_date: '2025-02-23',
+          value: 275000,
+          status: 'Completed',
+          client_impact: 'Low',
+          description: 'Quarterly cash dividend of $0.46 per share.',
+          elections: null
+        },
+        {
+          action_id: 'CA-34512',
+          action_type: 'Stock Split',
+          security_name: 'Nvidia Corporation',
+          isin: 'US67066G1040',
+          cusip: '67066G104',
+          exchange: 'NASDAQ',
+          action_date: '2025-02-10',
+          record_date: '2025-02-03',
+          payment_date: '2025-02-15',
+          value: null,
+          status: 'Completed',
+          client_impact: 'Medium',
+          description: '4-for-1 stock split to make stock ownership more accessible.',
+          elections: null
+        },
+        {
+          action_id: 'CA-34513',
+          action_type: 'Merger',
+          security_name: 'LinkedIn Corp',
+          isin: 'US53578A1088',
+          cusip: '53578A108',
+          exchange: 'NYSE',
+          action_date: '2025-01-25',
+          record_date: '2025-01-18',
+          payment_date: '2025-01-30',
+          value: 980000,
+          status: 'Completed',
+          client_impact: 'High',
+          description: 'Merger with Microsoft Corporation. Shareholders received $196 in cash per share.',
+          elections: null
+        },
+        {
+          action_id: 'CA-34514',
+          action_type: 'Rights Issue',
+          security_name: 'Wells Fargo & Co',
+          isin: 'US9497461015',
+          cusip: '949746101',
+          exchange: 'NYSE',
+          action_date: '2025-02-05',
+          record_date: '2025-01-29',
+          payment_date: '2025-02-10',
+          value: 725000,
+          status: 'Completed',
+          client_impact: 'Medium',
+          description: 'Rights issue offering 1 new share for every 10 shares held at a discount price of $35 per share.',
+          elections: null
+        }
       ]
     }
   };
   
-  // Return the requested data or an empty object if not found
   return mockData[endpoint] || {};
 };
