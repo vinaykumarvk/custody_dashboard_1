@@ -1235,44 +1235,6 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadsDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-// Create a function to validate file types
-const fileFilter = (req, file, cb) => {
-  // Accept JSON and CSV files
-  if (file.mimetype === 'application/json' || 
-      file.mimetype === 'text/csv' || 
-      file.originalname.endsWith('.json') || 
-      file.originalname.endsWith('.csv')) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only JSON and CSV files are allowed'), false);
-  }
-};
-
-const upload = multer({ 
-  storage: storage, 
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB max file size
-  }
-});
-
 // API endpoint for uploading data
 app.post('/api/upload', upload.single('file'), async (req, res) => {
   try {
@@ -1665,6 +1627,18 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+// Initialize the database first
+initializeDatabase().then(() => {
+  // Only start server if not in init-only mode
+  if (!isInitMode) {
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  } else {
+    console.log('Database initialization complete. Exiting...');
+    process.exit(0);
+  }
+}).catch(err => {
+  console.error('Failed to initialize database:', err);
+  process.exit(1);
 });
