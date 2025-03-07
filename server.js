@@ -3,6 +3,7 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const path = require('path');
 
 // Load environment variables
 dotenv.config();
