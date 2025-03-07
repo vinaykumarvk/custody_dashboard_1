@@ -102,7 +102,7 @@ const DataUpload = () => {
       if (response.ok) {
         setUploadStatus({
           status: 'success',
-          message: 'File uploaded successfully!'
+          message: result.message || 'File uploaded successfully!'
         });
         clearFile();
         
@@ -267,13 +267,13 @@ const DataUpload = () => {
                       {uploadedDatasets && uploadedDatasets.length > 0 ? (
                         uploadedDatasets.map((dataset, index) => (
                           <tr key={index}>
-                            <td>{dataset.filename}</td>
+                            <td>{dataset.file_name}</td>
                             <td>{dataset.file_type}</td>
                             <td>{formatFileSize(dataset.file_size)}</td>
                             <td>{new Date(dataset.upload_date).toLocaleString()}</td>
                             <td>
-                              <span className={`status status-${dataset.status.toLowerCase()}`}>
-                                {dataset.status}
+                              <span className={`status status-${(dataset.status || 'Processed').toLowerCase()}`}>
+                                {dataset.status || 'Processed'}
                               </span>
                             </td>
                             <td>
@@ -284,6 +284,46 @@ const DataUpload = () => {
                                   onClick={() => window.open(`/api/download/${dataset.id}`, '_blank')}
                                 >
                                   <i className="fas fa-download"></i>
+                                </button>
+                                <button 
+                                  className="action-icon" 
+                                  title="Apply to Dashboard"
+                                  onClick={async () => {
+                                    if (window.confirm('Apply this data to the dashboard? This may update existing records.')) {
+                                      try {
+                                        setIsUploading(true); // Reuse the loading state
+                                        const response = await fetch(`/api/uploads/${dataset.id}/apply`, {
+                                          method: 'POST',
+                                          headers: {
+                                            'Content-Type': 'application/json'
+                                          },
+                                          body: JSON.stringify({ sections: [] }) // Apply all sections
+                                        });
+                                        
+                                        if (response.ok) {
+                                          const result = await response.json();
+                                          setUploadStatus({
+                                            status: 'success',
+                                            message: `Data successfully applied to dashboard. ${result.affected_records} records updated.`
+                                          });
+                                          fetchUploadedDatasets();
+                                        } else {
+                                          const error = await response.json();
+                                          throw new Error(error.message || 'Failed to apply data');
+                                        }
+                                      } catch (error) {
+                                        console.error('Error applying data:', error);
+                                        setUploadStatus({
+                                          status: 'error',
+                                          message: `Failed to apply data: ${error.message}`
+                                        });
+                                      } finally {
+                                        setIsUploading(false);
+                                      }
+                                    }
+                                  }}
+                                >
+                                  <i className="fas fa-sync-alt"></i>
                                 </button>
                                 <button 
                                   className="action-icon" 

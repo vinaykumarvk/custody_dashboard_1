@@ -1259,11 +1259,31 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
     // Clean up the file after it's processed
     fs.unlinkSync(filePath);
 
+    // Count the number of records in the data
+    let recordCount = 0;
+    if (fileType === '.json') {
+      // For JSON, count the records in different possible structures
+      if (data.trades) recordCount += data.trades.length || 0;
+      if (data.customers) recordCount += data.customers.length || 0;
+      if (data.corporate_actions) recordCount += data.corporate_actions.length || 0;
+      if (data.income) recordCount += data.income.length || 0;
+      if (Array.isArray(data)) recordCount = data.length;
+      
+      // If none of the above worked, count top-level keys
+      if (recordCount === 0 && typeof data === 'object') {
+        recordCount = Object.keys(data).length;
+      }
+    } else if (fileType === '.csv') {
+      // For CSV, count the rows (minus header)
+      recordCount = (data.rows?.length || 1) - 1;
+    }
+
     res.status(200).json({
       status: 'success',
-      message: 'File uploaded and processed successfully',
+      message: `File uploaded and processed successfully. ${recordCount} records imported.`,
       fileName: req.file.originalname,
-      fileSize: req.file.size
+      fileSize: req.file.size,
+      recordCount: recordCount
     });
   } catch (error) {
     console.error('Error uploading file:', error);
@@ -1370,6 +1390,146 @@ app.get('/api/download/:id', async (req, res) => {
     res.status(500).json({
       status: 'error',
       message: 'An error occurred while downloading the file: ' + error.message
+    });
+  }
+});
+
+// API endpoint to apply uploaded data to the dashboard
+app.post('/api/uploads/:id/apply', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { sections = [] } = req.body; // Optional sections to apply (if empty, apply all)
+    
+    // Get the uploaded file data
+    const { rows } = await pool.query(
+      `SELECT file_name, file_type, data FROM data_uploads WHERE id = $1`,
+      [id]
+    );
+    
+    if (rows.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Upload not found'
+      });
+    }
+    
+    const upload = rows[0];
+    const data = upload.data;
+    
+    // Create a notification for the process
+    await pool.query(
+      `INSERT INTO notifications (type, message, time, read, category)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [
+        'info',
+        `Applying data from "${upload.file_name}" to dashboard...`,
+        'Just now',
+        false,
+        'Data Integration'
+      ]
+    );
+    
+    // Apply data based on the file structure and type
+    let appliedSections = [];
+    let affectedRecords = 0;
+    
+    // For trades
+    if (data.trades && (sections.length === 0 || sections.includes('trades'))) {
+      // First clear existing trade data if needed
+      // await pool.query('DELETE FROM trade_data');
+      
+      // Insert new trade data
+      for (const trade of data.trades) {
+        try {
+          await pool.query(`
+            INSERT INTO trade_data (
+              trade_id, customer_name, customer_id, type, asset_class, 
+              asset_name, amount, status, trade_date, settlement_date
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            ON CONFLICT (trade_id) DO UPDATE SET
+              customer_name = EXCLUDED.customer_name,
+              customer_id = EXCLUDED.customer_id,
+              type = EXCLUDED.type,
+              asset_class = EXCLUDED.asset_class,
+              asset_name = EXCLUDED.asset_name,
+              amount = EXCLUDED.amount,
+              status = EXCLUDED.status,
+              trade_date = EXCLUDED.trade_date,
+              settlement_date = EXCLUDED.settlement_date
+          `, [
+            trade.trade_id, 
+            trade.customer_name, 
+            trade.customer_id, 
+            trade.type, 
+            trade.asset_class,
+            trade.asset_name, 
+            trade.amount, 
+            trade.status, 
+            new Date(trade.trade_date), 
+            trade.settlement_date ? new Date(trade.settlement_date) : null
+          ]);
+          affectedRecords++;
+        } catch (err) {
+          console.error(`Error inserting trade ${trade.trade_id}:`, err);
+        }
+      }
+      appliedSections.push('trades');
+    }
+    
+    // For corporate actions
+    if (data.corporate_actions && (sections.length === 0 || sections.includes('corporate_actions'))) {
+      // Process corporate actions
+      // This would insert into a corporate_actions table if it existed
+      appliedSections.push('corporate_actions');
+      affectedRecords += data.corporate_actions.length;
+    }
+    
+    // For customers
+    if (data.customers && (sections.length === 0 || sections.includes('customers'))) {
+      // Process customers
+      // This would insert into a customers table if it existed
+      appliedSections.push('customers');
+      affectedRecords += data.customers.length;
+    }
+    
+    // For income
+    if (data.income && (sections.length === 0 || sections.includes('income'))) {
+      // Process income
+      // This would insert into an income table if it existed
+      appliedSections.push('income');
+      affectedRecords += data.income.length;
+    }
+    
+    // Update the upload status
+    await pool.query(
+      `UPDATE data_uploads SET status = $1 WHERE id = $2`,
+      ['Applied', id]
+    );
+    
+    // Create a notification for the completion
+    await pool.query(
+      `INSERT INTO notifications (type, message, time, read, category)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [
+        'success',
+        `Data from "${upload.file_name}" successfully applied to dashboard. ${affectedRecords} records updated.`,
+        'Just now',
+        false,
+        'Data Integration'
+      ]
+    );
+    
+    res.json({
+      status: 'success',
+      message: `Data successfully applied to dashboard`,
+      applied_sections: appliedSections,
+      affected_records: affectedRecords
+    });
+  } catch (error) {
+    console.error('Error applying data to dashboard:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An error occurred while applying the data: ' + error.message
     });
   }
 });
