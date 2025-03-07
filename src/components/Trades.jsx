@@ -450,11 +450,11 @@ const Trades = () => {
                   </div>
                   <div className="detail-row">
                     <div className="detail-label">Date:</div>
-                    <div className="detail-value">{formatDate(selectedTrade.date, 'long')}</div>
+                    <div className="detail-value">{formatDate(selectedTrade.trade_date, 'long')}</div>
                   </div>
                   <div className="detail-row">
                     <div className="detail-label">Type:</div>
-                    <div className="detail-value">{selectedTrade.trade_type}</div>
+                    <div className="detail-value">{selectedTrade.type}</div>
                   </div>
                   <div className="detail-row">
                     <div className="detail-label">Status:</div>
@@ -525,42 +525,34 @@ const Trades = () => {
               
               <div className="detail-grid-2col mt-3">
                 <div className="detail-section">
-                  <h3>Security Information</h3>
+                  <h3>Asset Information</h3>
                   <div className="detail-row">
-                    <div className="detail-label">Security Name:</div>
-                    <div className="detail-value">{selectedTrade.security_name}</div>
+                    <div className="detail-label">Asset Name:</div>
+                    <div className="detail-value">{selectedTrade.asset_name}</div>
                   </div>
                   <div className="detail-row">
-                    <div className="detail-label">Symbol:</div>
-                    <div className="detail-value">{selectedTrade.security_id}</div>
+                    <div className="detail-label">Asset Class:</div>
+                    <div className="detail-value">{selectedTrade.asset_class}</div>
                   </div>
                   <div className="detail-row">
-                    <div className="detail-label">ISIN:</div>
-                    <div className="detail-value">{selectedTrade.isin}</div>
-                  </div>
-                  <div className="detail-row">
-                    <div className="detail-label">CUSIP:</div>
-                    <div className="detail-value">{selectedTrade.cusip}</div>
+                    <div className="detail-label">Amount:</div>
+                    <div className="detail-value">{formatCurrency(selectedTrade.amount)}</div>
                   </div>
                 </div>
                 
                 <div className="detail-section">
-                  <h3>Client Information</h3>
+                  <h3>Customer Information</h3>
                   <div className="detail-row">
-                    <div className="detail-label">Client Name:</div>
-                    <div className="detail-value">{selectedTrade.client_name}</div>
+                    <div className="detail-label">Customer Name:</div>
+                    <div className="detail-value">{selectedTrade.customer_name}</div>
                   </div>
                   <div className="detail-row">
-                    <div className="detail-label">Client ID:</div>
-                    <div className="detail-value">{selectedTrade.client_id}</div>
+                    <div className="detail-label">Customer ID:</div>
+                    <div className="detail-value">{selectedTrade.customer_id}</div>
                   </div>
                   <div className="detail-row">
-                    <div className="detail-label">Account ID:</div>
-                    <div className="detail-value">{selectedTrade.account_id}</div>
-                  </div>
-                  <div className="detail-row">
-                    <div className="detail-label">Relationship Manager:</div>
-                    <div className="detail-value">{selectedTrade.relationship_manager}</div>
+                    <div className="detail-label">Created At:</div>
+                    <div className="detail-value">{formatDate(selectedTrade.created_at, 'long')}</div>
                   </div>
                 </div>
               </div>
