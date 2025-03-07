@@ -15,6 +15,18 @@ name = "Project"
 mode = "parallel"
 author = "agent"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Backend"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Dashboard"
+
+[[workflows.workflow]]
+name = "Backend"
+author = "agent"
+
 [workflows.workflow.metadata]
 agentRequireRestartOnSave = false
 
@@ -23,8 +35,23 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node start-dev.js"
-waitForPort = 5000
+args = "node server.js"
+waitForPort = 3000
+
+[[workflows.workflow]]
+name = "Dashboard"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node start-frontend.js"
+waitForPort = 8080
 
 [[ports]]
 localPort = 3000
@@ -37,3 +64,7 @@ externalPort = 80
 [[ports]]
 localPort = 8000
 externalPort = 8000
+
+[[ports]]
+localPort = 8080
+externalPort = 8080

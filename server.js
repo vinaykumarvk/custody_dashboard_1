@@ -1627,59 +1627,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Initialize database tables
-const initializeDatabase = async () => {
-  try {
-    // Check if tables exist, create them if they don't
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS notifications (
-        id SERIAL PRIMARY KEY,
-        type VARCHAR(50) NOT NULL,
-        message TEXT NOT NULL,
-        time VARCHAR(100) NOT NULL,
-        read BOOLEAN DEFAULT false,
-        category VARCHAR(100),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS data_uploads (
-        id SERIAL PRIMARY KEY,
-        file_name VARCHAR(255) NOT NULL,
-        file_size INTEGER NOT NULL,
-        file_type VARCHAR(50) NOT NULL,
-        data JSONB,
-        metadata JSONB,
-        status VARCHAR(50) DEFAULT 'Pending',
-        upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS trade_data (
-        id SERIAL PRIMARY KEY,
-        trade_id VARCHAR(50) UNIQUE NOT NULL,
-        customer_name VARCHAR(255),
-        customer_id VARCHAR(50),
-        type VARCHAR(50),
-        asset_class VARCHAR(50),
-        asset_name VARCHAR(255),
-        amount NUMERIC(20, 2),
-        status VARCHAR(50),
-        trade_date TIMESTAMP,
-        settlement_date TIMESTAMP,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
-    console.log('Database initialized successfully');
-    return true;
-  } catch (error) {
-    console.error('Error initializing database:', error);
-    throw error;
-  }
-};
+// Use the existing initializeDatabase function
 
 // Initialize the database first, then start the server
 initializeDatabase().then(() => {
