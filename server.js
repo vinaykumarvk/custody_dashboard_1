@@ -10,15 +10,9 @@ const fs = require('fs');
 // Load environment variables
 dotenv.config();
 
-// Check for initialization mode
-const isInitMode = process.argv.includes('--init-db-only') || process.env.INIT_DB_ONLY === 'true';
-if (isInitMode) {
-  console.log('Running in database initialization mode only');
-}
-
 // Create Express app
 const app = express();
-const port = isInitMode ? 0 : (process.env.PORT || 3000);
+const port = process.env.PORT || 3000;
 
 // CORS configuration for cross-origin requests
 const corsOptions = {
@@ -33,43 +27,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Add custom middleware for logging first
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-  next();
-});
-
-// Define API routes middleware BEFORE static files
-app.use('/api', (req, res, next) => {
-  console.log(`API Request: ${req.method} ${req.url}`);
-  next();
-});
-
-// Configure uploads directory
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-  console.log('Created uploads directory');
-}
-
-// Set up file upload storage with Multer
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, uploadsDir);
-  },
-  filename: function(req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    cb(null, 'file-' + uniqueSuffix + ext);
-  }
-});
-
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
-});
-
-// Serve static files from the public directory AFTER defining API routes
+// Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Add specific route for bundle.js
@@ -77,9 +35,10 @@ app.get('/bundle.js', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'bundle.js'));
 });
 
-// Add a default route to serve index.html
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Add custom middleware for logging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
 });
 
 
@@ -584,29 +543,8 @@ const generateTradeData = async () => {
         `);
         console.log('Added status column to data_uploads table');
       }
-      
-      // Check if processed column exists, and add it if it doesn't
-      const processedColumnCheck = await pool.query(`
-        SELECT column_name FROM information_schema.columns 
-        WHERE table_name = 'data_uploads' AND column_name = 'processed'
-      `);
-      
-      // If the column doesn't exist, add it
-      if (processedColumnCheck.rows.length === 0) {
-        await pool.query(`
-          ALTER TABLE data_uploads 
-          ADD COLUMN processed BOOLEAN DEFAULT FALSE
-        `);
-        console.log('Added processed column to data_uploads table');
-      }
-      
-      // Add a unique index on trade_id in trade_data table for more efficient ON CONFLICT operations
-      await pool.query(`
-        CREATE UNIQUE INDEX IF NOT EXISTS trade_data_trade_id_idx ON trade_data (trade_id)
-      `);
-      console.log('Added unique index on trade_id');
     } catch (error) {
-      console.error('Error checking/adding columns and indexes:', error);
+      console.error('Error checking/adding status column:', error);
     }
 
     console.log('Trade tables created');
@@ -695,31 +633,6 @@ initializeDatabase().then(() => {
 });
 
 // API Routes
-
-// Define dedicated upload routes first - these need to be defined before other routes
-// GET uploads list route
-app.get('/api/uploads', async (req, res) => {
-  console.log('Processing /api/uploads GET request'); // Explicit debug log
-  try {
-    const { rows } = await pool.query(
-      `SELECT id, file_name, file_size, file_type, upload_date, status, 
-       (data IS NOT NULL) as has_data
-       FROM data_uploads
-       ORDER BY upload_date DESC`
-    );
-    
-    res.json({
-      status: 'success',
-      uploads: rows
-    });
-  } catch (error) {
-    console.error('Error fetching uploads:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'An error occurred while fetching uploads: ' + error.message
-    });
-  }
-});
 
 // Health check endpoint
 app.get('/api/health', async (req, res) => {
@@ -1240,6 +1153,44 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadsDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+// Create a function to validate file types
+const fileFilter = (req, file, cb) => {
+  // Accept JSON and CSV files
+  if (file.mimetype === 'application/json' || 
+      file.mimetype === 'text/csv' || 
+      file.originalname.endsWith('.json') || 
+      file.originalname.endsWith('.csv')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only JSON and CSV files are allowed'), false);
+  }
+};
+
+const upload = multer({ 
+  storage: storage, 
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB max file size
+  }
+});
+
 // API endpoint for uploading data
 app.post('/api/upload', upload.single('file'), async (req, res) => {
   try {
@@ -1308,31 +1259,11 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
     // Clean up the file after it's processed
     fs.unlinkSync(filePath);
 
-    // Count the number of records in the data
-    let recordCount = 0;
-    if (fileType === '.json') {
-      // For JSON, count the records in different possible structures
-      if (data.trades) recordCount += data.trades.length || 0;
-      if (data.customers) recordCount += data.customers.length || 0;
-      if (data.corporate_actions) recordCount += data.corporate_actions.length || 0;
-      if (data.income) recordCount += data.income.length || 0;
-      if (Array.isArray(data)) recordCount = data.length;
-      
-      // If none of the above worked, count top-level keys
-      if (recordCount === 0 && typeof data === 'object') {
-        recordCount = Object.keys(data).length;
-      }
-    } else if (fileType === '.csv') {
-      // For CSV, count the rows (minus header)
-      recordCount = (data.rows?.length || 1) - 1;
-    }
-
     res.status(200).json({
       status: 'success',
-      message: `File uploaded and processed successfully. ${recordCount} records imported.`,
+      message: 'File uploaded and processed successfully',
       fileName: req.file.originalname,
-      fileSize: req.file.size,
-      recordCount: recordCount
+      fileSize: req.file.size
     });
   } catch (error) {
     console.error('Error uploading file:', error);
@@ -1443,146 +1374,6 @@ app.get('/api/download/:id', async (req, res) => {
   }
 });
 
-// API endpoint to apply uploaded data to the dashboard
-app.post('/api/uploads/:id/apply', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { sections = [] } = req.body; // Optional sections to apply (if empty, apply all)
-    
-    // Get the uploaded file data
-    const { rows } = await pool.query(
-      `SELECT file_name, file_type, data FROM data_uploads WHERE id = $1`,
-      [id]
-    );
-    
-    if (rows.length === 0) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'Upload not found'
-      });
-    }
-    
-    const upload = rows[0];
-    const data = upload.data;
-    
-    // Create a notification for the process
-    await pool.query(
-      `INSERT INTO notifications (type, message, time, read, category)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [
-        'info',
-        `Applying data from "${upload.file_name}" to dashboard...`,
-        'Just now',
-        false,
-        'Data Integration'
-      ]
-    );
-    
-    // Apply data based on the file structure and type
-    let appliedSections = [];
-    let affectedRecords = 0;
-    
-    // For trades
-    if (data.trades && (sections.length === 0 || sections.includes('trades'))) {
-      // First clear existing trade data if needed
-      // await pool.query('DELETE FROM trade_data');
-      
-      // Insert new trade data
-      for (const trade of data.trades) {
-        try {
-          await pool.query(`
-            INSERT INTO trade_data (
-              trade_id, customer_name, customer_id, type, asset_class, 
-              asset_name, amount, status, trade_date, settlement_date
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-            ON CONFLICT (trade_id) DO UPDATE SET
-              customer_name = EXCLUDED.customer_name,
-              customer_id = EXCLUDED.customer_id,
-              type = EXCLUDED.type,
-              asset_class = EXCLUDED.asset_class,
-              asset_name = EXCLUDED.asset_name,
-              amount = EXCLUDED.amount,
-              status = EXCLUDED.status,
-              trade_date = EXCLUDED.trade_date,
-              settlement_date = EXCLUDED.settlement_date
-          `, [
-            trade.trade_id, 
-            trade.customer_name, 
-            trade.customer_id, 
-            trade.type, 
-            trade.asset_class,
-            trade.asset_name, 
-            trade.amount, 
-            trade.status, 
-            new Date(trade.trade_date), 
-            trade.settlement_date ? new Date(trade.settlement_date) : null
-          ]);
-          affectedRecords++;
-        } catch (err) {
-          console.error(`Error inserting trade ${trade.trade_id}:`, err);
-        }
-      }
-      appliedSections.push('trades');
-    }
-    
-    // For corporate actions
-    if (data.corporate_actions && (sections.length === 0 || sections.includes('corporate_actions'))) {
-      // Process corporate actions
-      // This would insert into a corporate_actions table if it existed
-      appliedSections.push('corporate_actions');
-      affectedRecords += data.corporate_actions.length;
-    }
-    
-    // For customers
-    if (data.customers && (sections.length === 0 || sections.includes('customers'))) {
-      // Process customers
-      // This would insert into a customers table if it existed
-      appliedSections.push('customers');
-      affectedRecords += data.customers.length;
-    }
-    
-    // For income
-    if (data.income && (sections.length === 0 || sections.includes('income'))) {
-      // Process income
-      // This would insert into an income table if it existed
-      appliedSections.push('income');
-      affectedRecords += data.income.length;
-    }
-    
-    // Update the upload status
-    await pool.query(
-      `UPDATE data_uploads SET status = $1 WHERE id = $2`,
-      ['Applied', id]
-    );
-    
-    // Create a notification for the completion
-    await pool.query(
-      `INSERT INTO notifications (type, message, time, read, category)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [
-        'success',
-        `Data from "${upload.file_name}" successfully applied to dashboard. ${affectedRecords} records updated.`,
-        'Just now',
-        false,
-        'Data Integration'
-      ]
-    );
-    
-    res.json({
-      status: 'success',
-      message: `Data successfully applied to dashboard`,
-      applied_sections: appliedSections,
-      affected_records: affectedRecords
-    });
-  } catch (error) {
-    console.error('Error applying data to dashboard:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'An error occurred while applying the data: ' + error.message
-    });
-  }
-});
-
 // API endpoint to delete an uploaded file
 app.delete('/api/upload/:id', async (req, res) => {
   try {
@@ -1632,14 +1423,6 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Use the existing initializeDatabase function
-
-// Initialize the database first, then start the server
-initializeDatabase().then(() => {
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });
-}).catch(err => {
-  console.error('Failed to initialize database:', err);
-  process.exit(1);
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
