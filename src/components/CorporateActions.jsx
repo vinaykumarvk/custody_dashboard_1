@@ -62,17 +62,23 @@ const CorporateActions = () => {
     );
   }
 
+  // Safely handle actions array and filter
+  const actions = data.actions || [];
+  const upcoming_actions = data.upcoming_actions || [];
+  
   // Filter actions based on selected filter
   const filteredActions = filter === 'all' 
-    ? data.actions 
-    : data.actions.filter(action => action.action_type === filter);
+    ? actions 
+    : actions.filter(action => action.action_type === filter);
 
   // Prepare data for charts
+  // Safely handle potentially missing data
+  const actionTypes = data.action_types || [];
   const actionTypesPieChart = {
-    labels: data.action_types.map(item => item.type),
+    labels: actionTypes.map(item => item.type),
     datasets: [
       {
-        data: data.action_types.map(item => item.count),
+        data: actionTypes.map(item => item.count),
         backgroundColor: [
           '#007C75',  // Primary green
           '#009E94',  // Light green
@@ -89,12 +95,14 @@ const CorporateActions = () => {
     ]
   };
 
+  // Safely handle potentially missing status breakdown data
+  const statusBreakdown = data.status_breakdown || [];
   const statusBarChart = {
-    labels: data.status_breakdown.map(item => item.status),
+    labels: statusBreakdown.map(item => item.status),
     datasets: [
       {
         label: 'Corporate Actions by Status',
-        data: data.status_breakdown.map(item => item.count),
+        data: statusBreakdown.map(item => item.count),
         backgroundColor: '#007C75',
       }
     ]
@@ -230,14 +238,14 @@ const CorporateActions = () => {
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Total Actions" 
-            value={formatNumber(data.total_actions, false)} 
+            value={formatNumber(data.total_actions || 0, false)} 
             icon="bullhorn"
           />
         </div>
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Upcoming Actions" 
-            value={formatNumber(data.upcoming_count, false)} 
+            value={formatNumber(data.upcoming_count || 0, false)} 
             icon="calendar-alt"
             color="#FFC107"
           />
@@ -245,7 +253,7 @@ const CorporateActions = () => {
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Completed Actions" 
-            value={formatNumber(data.status_breakdown.find(s => s.status === 'Completed')?.count || 0, false)} 
+            value={formatNumber(statusBreakdown.find(s => s.status === 'Completed')?.count || 0, false)} 
             icon="check-circle"
             color="#28A745"
           />
@@ -253,7 +261,7 @@ const CorporateActions = () => {
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Pending Actions" 
-            value={formatNumber(data.status_breakdown.find(s => s.status === 'Pending')?.count || 0, false)} 
+            value={formatNumber(statusBreakdown.find(s => s.status === 'Pending')?.count || 0, false)} 
             icon="exclamation-circle"
             color="#DC3545"
           />
@@ -325,7 +333,7 @@ const CorporateActions = () => {
         </div>
         <div className="card-body">
           <DataTable 
-            data={data.upcoming_actions}
+            data={upcoming_actions}
             columns={upcomingColumns}
             onRowClick={handleRowClick}
             emptyMessage="No upcoming corporate actions"
@@ -341,7 +349,7 @@ const CorporateActions = () => {
             <label htmlFor="actionTypeFilter" className="me-2">Filter by type:</label>
             <select id="actionTypeFilter" className="form-select" onChange={handleFilterChange} value={filter}>
               <option value="all">All types</option>
-              {data.action_types.map(type => (
+              {actionTypes.map(type => (
                 <option key={type.type} value={type.type}>{type.type}</option>
               ))}
             </select>
