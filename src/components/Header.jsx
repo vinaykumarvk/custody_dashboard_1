@@ -41,16 +41,18 @@ const Header = ({ userName = 'Smart Bank Admin', toggleSidebar, sidebarOpen }) =
     getNotifications();
   }, []);
   
-  // Count unread notifications
-  const unreadCount = notifications.filter(n => !n.read).length;
+  // Count unread notifications - ensure notifications is an array
+  const unreadCount = Array.isArray(notifications) ? notifications.filter(n => !n.read).length : 0;
   
   // Mark notification as read
   const markAsRead = async (id) => {
     try {
       await markNotificationAsRead(id);
-      setNotifications(notifications.map(notification => 
-        notification.id === id ? { ...notification, read: true } : notification
-      ));
+      if (Array.isArray(notifications)) {
+        setNotifications(notifications.map(notification => 
+          notification.id === id ? { ...notification, read: true } : notification
+        ));
+      }
     } catch (error) {
       console.error('Error marking notification as read:', error);
     }
@@ -60,7 +62,9 @@ const Header = ({ userName = 'Smart Bank Admin', toggleSidebar, sidebarOpen }) =
   const markAllAsRead = async () => {
     try {
       await markAllNotificationsAsRead();
-      setNotifications(notifications.map(notification => ({ ...notification, read: true })));
+      if (Array.isArray(notifications)) {
+        setNotifications(notifications.map(notification => ({ ...notification, read: true })));
+      }
     } catch (error) {
       console.error('Error marking all notifications as read:', error);
     }
@@ -162,7 +166,7 @@ const Header = ({ userName = 'Smart Bank Admin', toggleSidebar, sidebarOpen }) =
                 <button className="btn-text" onClick={markAllAsRead}>Mark all as read</button>
               </div>
               <div className="notifications-list">
-                {notifications.slice(0, 5).map(notification => (
+                {Array.isArray(notifications) && notifications.slice(0, 5).map(notification => (
                   <div key={notification.id} className={`notification-item ${notification.read ? 'read' : 'unread'}`}>
                     <div className="notification-icon" style={{ color: getNotificationColor(notification.type) }}>
                       <i className={`fas ${getNotificationIcon(notification.type)}`}></i>
@@ -216,7 +220,7 @@ const Header = ({ userName = 'Smart Bank Admin', toggleSidebar, sidebarOpen }) =
               </div>
               
               <div className="notifications-list">
-                {notifications.map(notification => (
+                {Array.isArray(notifications) && notifications.map(notification => (
                   <div key={notification.id} className={`notification-item ${notification.read ? 'read' : 'unread'}`}>
                     <div className="notification-icon" style={{ color: getNotificationColor(notification.type) }}>
                       <i className={`fas ${getNotificationIcon(notification.type)}`}></i>
