@@ -543,8 +543,29 @@ const generateTradeData = async () => {
         `);
         console.log('Added status column to data_uploads table');
       }
+      
+      // Check if processed column exists, and add it if it doesn't
+      const processedColumnCheck = await pool.query(`
+        SELECT column_name FROM information_schema.columns 
+        WHERE table_name = 'data_uploads' AND column_name = 'processed'
+      `);
+      
+      // If the column doesn't exist, add it
+      if (processedColumnCheck.rows.length === 0) {
+        await pool.query(`
+          ALTER TABLE data_uploads 
+          ADD COLUMN processed BOOLEAN DEFAULT FALSE
+        `);
+        console.log('Added processed column to data_uploads table');
+      }
+      
+      // Add a unique index on trade_id in trade_data table for more efficient ON CONFLICT operations
+      await pool.query(`
+        CREATE UNIQUE INDEX IF NOT EXISTS trade_data_trade_id_idx ON trade_data (trade_id)
+      `);
+      console.log('Added unique index on trade_id');
     } catch (error) {
-      console.error('Error checking/adding status column:', error);
+      console.error('Error checking/adding columns and indexes:', error);
     }
 
     console.log('Trade tables created');
