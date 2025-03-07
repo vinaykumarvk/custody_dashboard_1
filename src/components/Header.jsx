@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 
-const Header = ({ userName = 'Smart Bank Admin', toggleSidebar, sidebarOpen }) => {
+const Header = ({ 
+  userName = 'Smart Bank Admin', 
+  toggleSidebar, 
+  sidebarOpen, 
+  compactView, 
+  toggleCompactView 
+}) => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
@@ -186,6 +192,14 @@ const Header = ({ userName = 'Smart Bank Admin', toggleSidebar, sidebarOpen }) =
         <div className="search-box">
           <i className="fas fa-search"></i>
           <input type="text" placeholder="Search..." />
+        </div>
+
+        {/* Display Settings */}
+        <div className="display-settings" title={compactView ? "Switch to Standard View" : "Switch to Compact View"}>
+          <button className="display-toggle" onClick={toggleCompactView}>
+            <i className={`fas ${compactView ? 'fa-expand' : 'fa-compress'}`}></i>
+            <span className="display-text">{compactView ? 'Standard' : 'Compact'}</span>
+          </button>
         </div>
         
         {/* Notifications dropdown */}

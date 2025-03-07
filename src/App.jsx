@@ -14,9 +14,14 @@ import './assets/styles.css';
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activePage, setActivePage] = useState('dashboard');
+  const [compactView, setCompactView] = useState(false);
   
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+  
+  const toggleCompactView = () => {
+    setCompactView(!compactView);
   };
 
   const handlePageChange = (pageId) => {
@@ -83,11 +88,13 @@ const App = () => {
   };
 
   return (
-    <div className={`app-container ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`} data-react-root="true">
+    <div className={`app-container ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'} ${compactView ? 'compact-view' : ''}`} data-react-root="true">
       <Header 
         userName="Smart Bank Admin" 
         toggleSidebar={toggleSidebar} 
         sidebarOpen={sidebarOpen}
+        compactView={compactView}
+        toggleCompactView={toggleCompactView}
       />
       
       <div className="app-content">
@@ -96,6 +103,7 @@ const App = () => {
           onClose={toggleSidebar}
           activePage={activePage}
           onPageChange={handlePageChange}
+          compactView={compactView}
         />
         
         <main className="main-content">
