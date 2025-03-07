@@ -34,6 +34,39 @@ async function startServers() {
     process.exit(1);
   }
   
+  console.log('Starting development environment...');
+  
+  // First, create uploads directory if it doesn't exist
+  const uploadsDir = path.join(__dirname, 'uploads');
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+    console.log('Created uploads directory at:', uploadsDir);
+  }
+  
+  // Check if database tables exist and create if needed
+  try {
+    // This runs the server script to initialize the database
+    console.log('Checking database schema...');
+    const initProcess = spawn('node', ['server.js', '--init-db-only'], {
+      stdio: 'inherit',
+      env: { ...process.env, INIT_DB_ONLY: 'true', PORT: '0' }
+    });
+    
+    // Wait for initialization to complete
+    await new Promise((resolve) => {
+      initProcess.on('exit', (code) => {
+        if (code === 0) {
+          console.log('Database initialization completed');
+        } else {
+          console.warn('Database initialization completed with warnings');
+        }
+        resolve();
+      });
+    });
+  } catch (error) {
+    console.error('Error during database initialization:', error);
+  }
+  
   console.log('Starting API server...');
   
   // Start Express API server - use PORT instead of SERVER_PORT to match server.js
@@ -42,8 +75,14 @@ async function startServers() {
     env: { ...process.env, PORT: '3000' }
   });
   
-  // Wait for API server to initialize properly
-  await wait(2000);
+  // Handle API server errors
+  apiServer.on('error', (error) => {
+    console.error('Error starting API server:', error);
+  });
+  
+  // Wait for API server to initialize properly (doubled wait time)
+  console.log('Waiting for API server to initialize...');
+  await wait(4000);
   
   console.log('Starting frontend server...');
   
@@ -51,6 +90,11 @@ async function startServers() {
   const webpackServer = spawn('npx', ['webpack', 'serve', '--mode', 'development', '--host', '0.0.0.0', '--port', '5000', '--hot'], {
     stdio: 'inherit',
     env: { ...process.env, NODE_ENV: 'development' }
+  });
+  
+  // Handle frontend server errors
+  webpackServer.on('error', (error) => {
+    console.error('Error starting frontend server:', error);
   });
   
   // Handle process termination
@@ -61,9 +105,28 @@ async function startServers() {
     process.exit(0);
   });
   
+  // Handle unexpected termination
+  apiServer.on('exit', (code) => {
+    if (code !== 0 && code !== null) {
+      console.error(`API server exited with code ${code}`);
+      console.log('Shutting down all servers...');
+      webpackServer.kill();
+      process.exit(1);
+    }
+  });
+  
+  webpackServer.on('exit', (code) => {
+    if (code !== 0 && code !== null) {
+      console.error(`Frontend server exited with code ${code}`);
+      console.log('Shutting down all servers...');
+      apiServer.kill();
+      process.exit(1);
+    }
+  });
+  
   console.log('Development servers started:');
-  console.log('- API server running on port 3000');
-  console.log('- Frontend server running on port 5000');
+  console.log('- API server running on http://localhost:3000');
+  console.log('- Frontend server running on http://localhost:5000');
 }
 
 // Start the servers

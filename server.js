@@ -10,9 +10,15 @@ const fs = require('fs');
 // Load environment variables
 dotenv.config();
 
+// Check for initialization mode
+const isInitMode = process.argv.includes('--init-db-only') || process.env.INIT_DB_ONLY === 'true';
+if (isInitMode) {
+  console.log('Running in database initialization mode only');
+}
+
 // Create Express app
 const app = express();
-const port = process.env.PORT || 3000;
+const port = isInitMode ? 0 : (process.env.PORT || 3000);
 
 // CORS configuration for cross-origin requests
 const corsOptions = {
