@@ -463,8 +463,128 @@ const populateSampleData = async () => {
   }
 };
 
+// Generate trade data for the database
+const generateTradeData = async () => {
+  try {
+    // Check if we already have trade data
+    const { rows } = await pool.query('SELECT COUNT(*) FROM trade_data');
+    if (parseInt(rows[0].count) > 0) {
+      return; // Skip if data already exists
+    }
+
+    // Create trade_data table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS trade_data (
+        id SERIAL PRIMARY KEY,
+        trade_id VARCHAR(10) NOT NULL,
+        customer_name VARCHAR(100) NOT NULL,
+        customer_id VARCHAR(10) NOT NULL,
+        type VARCHAR(10) NOT NULL,
+        asset_class VARCHAR(50) NOT NULL,
+        asset_name VARCHAR(100) NOT NULL,
+        amount DECIMAL(15,2) NOT NULL,
+        status VARCHAR(20) NOT NULL,
+        trade_date TIMESTAMP NOT NULL,
+        settlement_date TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Create trade_monthly table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS trade_monthly (
+        id SERIAL PRIMARY KEY,
+        date DATE NOT NULL,
+        total_trades INTEGER NOT NULL,
+        trade_volume DECIMAL(15,2) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    console.log('Trade tables created');
+    
+    // Generate monthly trade data
+    const months = 13;
+    const startDate = new Date('2024-03-01');
+    
+    for (let i = 0; i < months; i++) {
+      const date = new Date(startDate);
+      date.setMonth(date.getMonth() + i);
+      
+      // Increasing trade volume over time
+      const baseVolume = 10000000;
+      const growth = 1 + (i * 0.15);
+      const tradeVolume = baseVolume * growth;
+      
+      // Increasing trades count over time
+      const baseTrades = 5000;
+      const tradeGrowth = 1 + (i * 0.12);
+      const totalTrades = Math.round(baseTrades * tradeGrowth);
+      
+      await pool.query(`
+        INSERT INTO trade_monthly (date, total_trades, trade_volume)
+        VALUES ($1, $2, $3)
+      `, [
+        date.toISOString().split('T')[0],
+        totalTrades,
+        tradeVolume
+      ]);
+    }
+    console.log('Monthly trade data generated');
+    
+    // Generate individual trade data
+    const tradeTypes = ['Buy', 'Sell'];
+    const assetClasses = ['Equity', 'Fixed Income', 'Fund', 'FX', 'Commodity'];
+    const assetNames = {
+      'Equity': ['AAPL', 'MSFT', 'AMZN', 'GOOGL', 'FB', 'TSLA', 'BRK.A', 'V', 'JPM', 'JNJ'],
+      'Fixed Income': ['US Treasury', 'Corporate Bond', 'Municipal Bond', 'High Yield', 'Mortgage-Backed'],
+      'Fund': ['Vanguard 500', 'Fidelity Growth', 'BlackRock Global', 'State Street ETF', 'PIMCO Income'],
+      'FX': ['EUR/USD', 'USD/JPY', 'GBP/USD', 'USD/CHF', 'USD/CAD'],
+      'Commodity': ['Gold', 'Silver', 'Crude Oil', 'Natural Gas', 'Corn']
+    };
+    const statuses = ['Completed', 'Pending', 'Processing', 'Failed', 'Cancelled'];
+    const customerNames = ['BlackRock', 'Vanguard', 'Fidelity', 'State Street', 'JPMorgan', 'Goldman Sachs', 'Morgan Stanley', 'BNY Mellon', 'PIMCO', 'Capital Group'];
+    
+    const numTrades = 100;
+    for (let i = 0; i < numTrades; i++) {
+      const tradeId = `T-${100000 + i}`;
+      const customerId = `C-${10000 + Math.floor(Math.random() * 100)}`;
+      const customerName = customerNames[Math.floor(Math.random() * customerNames.length)];
+      const type = tradeTypes[Math.floor(Math.random() * tradeTypes.length)];
+      const assetClass = assetClasses[Math.floor(Math.random() * assetClasses.length)];
+      const assetName = assetNames[assetClass][Math.floor(Math.random() * assetNames[assetClass].length)];
+      const amount = Math.round(10000 + Math.random() * 990000) / 100;
+      const status = statuses[Math.floor(Math.random() * statuses.length)];
+      
+      // Random date within the last 30 days
+      const tradeDate = new Date();
+      tradeDate.setDate(tradeDate.getDate() - Math.floor(Math.random() * 30));
+      
+      // Settlement date is 2 business days after trade date for completed trades
+      const settlementDate = status === 'Completed' ? 
+        new Date(tradeDate.getTime() + (2 * 24 * 60 * 60 * 1000)) : null;
+      
+      await pool.query(`
+        INSERT INTO trade_data (
+          trade_id, customer_name, customer_id, type, asset_class, 
+          asset_name, amount, status, trade_date, settlement_date
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      `, [
+        tradeId, customerName, customerId, type, assetClass,
+        assetName, amount, status, tradeDate, settlementDate
+      ]);
+    }
+    console.log('Individual trade data generated');
+    
+  } catch (error) {
+    console.error('Error generating trade data:', error);
+  }
+};
+
 // Initialize database
-initializeDatabase();
+initializeDatabase().then(() => {
+  generateTradeData();
+});
 
 // API Routes
 
@@ -547,6 +667,59 @@ app.get('/api/dashboard', async (req, res) => {
       ORDER BY date
     `, ['income']);
     
+    // Get monthly trade data
+    let tradeMonthlyData = [];
+    try {
+      const tradeMonthlyResult = await pool.query(`
+        SELECT date, total_trades, trade_volume 
+        FROM trade_monthly 
+        ORDER BY date
+      `);
+      tradeMonthlyData = tradeMonthlyResult.rows;
+    } catch (err) {
+      console.log('Trade monthly data not available yet');
+    }
+    
+    // Get trade statistics
+    let tradeStats = {
+      total_trades: 0,
+      pending_trades: 0,
+      total_volume: 0,
+      trades_by_asset: []
+    };
+    
+    try {
+      // Get total trade count
+      const totalTradesResult = await pool.query(`SELECT COUNT(*) FROM trade_data`);
+      tradeStats.total_trades = parseInt(totalTradesResult.rows[0].count);
+      
+      // Get pending trades count
+      const pendingTradesResult = await pool.query(`
+        SELECT COUNT(*) FROM trade_data WHERE status = 'Pending'
+      `);
+      tradeStats.pending_trades = parseInt(pendingTradesResult.rows[0].count);
+      
+      // Get total trade volume
+      const volumeResult = await pool.query(`
+        SELECT SUM(amount) as total_volume FROM trade_data
+      `);
+      tradeStats.total_volume = parseFloat(volumeResult.rows[0].total_volume) || 0;
+      
+      // Get trades by asset class
+      const assetClassResult = await pool.query(`
+        SELECT asset_class, COUNT(*) as count 
+        FROM trade_data 
+        GROUP BY asset_class
+      `);
+      
+      tradeStats.trades_by_asset = assetClassResult.rows.map(row => ({
+        label: row.asset_class,
+        value: parseInt(row.count)
+      }));
+    } catch (err) {
+      console.log('Trade statistics not available yet');
+    }
+    
     // Get reports data
     const reportsResult = await pool.query('SELECT * FROM reports');
     
@@ -611,6 +784,11 @@ app.get('/api/dashboard', async (req, res) => {
       active_customers: metrics.active_customers || 0,
       monthly_growth: metrics.monthly_growth || 0,
       total_income: metrics.total_income || 0,
+      total_trades: tradeStats.total_trades,
+      pending_trades: tradeStats.pending_trades,
+      trading_volume: tradeStats.total_volume,
+      trade_monthly: tradeMonthlyData,
+      trades_by_asset: tradeStats.trades_by_asset,
       customers_monthly: customerMonthlyData,
       income_monthly: incomeMonthlyData,
       available_reports: reportsResult.rows.length,
@@ -666,6 +844,260 @@ app.get('/api/dashboard', async (req, res) => {
   } catch (error) {
     console.error('Error fetching dashboard data:', error);
     res.status(500).json({ error: 'Failed to fetch dashboard data' });
+  }
+});
+
+// Get trades data
+app.get('/api/trades', async (req, res) => {
+  try {
+    // Get query parameters
+    const { limit = 50, offset = 0, status, assetClass, customerId, sortBy = 'trade_date', sortOrder = 'desc' } = req.query;
+    
+    // Build query conditionally based on filters
+    let query = 'SELECT * FROM trade_data WHERE 1=1';
+    const queryParams = [];
+    let paramIndex = 1;
+    
+    if (status) {
+      query += ` AND status = $${paramIndex}`;
+      queryParams.push(status);
+      paramIndex++;
+    }
+    
+    if (assetClass) {
+      query += ` AND asset_class = $${paramIndex}`;
+      queryParams.push(assetClass);
+      paramIndex++;
+    }
+    
+    if (customerId) {
+      query += ` AND customer_id = $${paramIndex}`;
+      queryParams.push(customerId);
+      paramIndex++;
+    }
+    
+    // Add sorting
+    const allowedSortFields = ['trade_id', 'customer_name', 'type', 'asset_class', 'amount', 'status', 'trade_date'];
+    const allowedSortOrders = ['asc', 'desc'];
+    
+    const actualSortBy = allowedSortFields.includes(sortBy) ? sortBy : 'trade_date';
+    const actualSortOrder = allowedSortOrders.includes(sortOrder.toLowerCase()) ? sortOrder : 'desc';
+    
+    query += ` ORDER BY ${actualSortBy} ${actualSortOrder.toUpperCase()}`;
+    
+    // Add pagination
+    query += ` LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+    queryParams.push(parseInt(limit), parseInt(offset));
+    
+    // Get total count for pagination
+    const countQuery = `SELECT COUNT(*) FROM trade_data WHERE 1=1`;
+    const countResult = await pool.query(countQuery);
+    const totalCount = parseInt(countResult.rows[0].count);
+    
+    // Execute the main query
+    const result = await pool.query(query, queryParams);
+    
+    // Get aggregated statistics
+    const statsQuery = `
+      SELECT 
+        COUNT(*) as total_trades,
+        SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) as completed_trades,
+        SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) as pending_trades,
+        SUM(CASE WHEN status = 'Processing' THEN 1 ELSE 0 END) as processing_trades,
+        SUM(amount) as total_volume
+      FROM trade_data
+    `;
+    const statsResult = await pool.query(statsQuery);
+    const stats = statsResult.rows[0];
+    
+    // Get asset class breakdown
+    const assetClassQuery = `
+      SELECT asset_class, COUNT(*) as count, SUM(amount) as volume
+      FROM trade_data
+      GROUP BY asset_class
+      ORDER BY count DESC
+    `;
+    const assetClassResult = await pool.query(assetClassQuery);
+    
+    // Build the response
+    const response = {
+      trades: result.rows,
+      pagination: {
+        total: totalCount,
+        limit: parseInt(limit),
+        offset: parseInt(offset),
+        pages: Math.ceil(totalCount / parseInt(limit))
+      },
+      stats: {
+        total_trades: parseInt(stats.total_trades) || 0,
+        completed_trades: parseInt(stats.completed_trades) || 0,
+        pending_trades: parseInt(stats.pending_trades) || 0,
+        processing_trades: parseInt(stats.processing_trades) || 0,
+        total_volume: parseFloat(stats.total_volume) || 0
+      },
+      asset_classes: assetClassResult.rows.map(row => ({
+        label: row.asset_class,
+        count: parseInt(row.count),
+        volume: parseFloat(row.volume)
+      }))
+    };
+    
+    res.json(response);
+  } catch (error) {
+    console.error('Error fetching trades data:', error);
+    res.status(500).json({ error: 'Failed to fetch trades data' });
+  }
+});
+
+// Get corporate actions data
+app.get('/api/corporate_actions', async (req, res) => {
+  try {
+    // Create corporate_actions table if it doesn't exist
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS corporate_actions (
+        id SERIAL PRIMARY KEY,
+        action_id VARCHAR(10) NOT NULL,
+        security_id VARCHAR(20) NOT NULL,
+        security_name VARCHAR(100) NOT NULL,
+        action_type VARCHAR(50) NOT NULL,
+        announcement_date TIMESTAMP NOT NULL,
+        record_date TIMESTAMP,
+        payment_date TIMESTAMP,
+        status VARCHAR(20) NOT NULL,
+        description TEXT,
+        impact_value DECIMAL(15,4),
+        currency VARCHAR(3) DEFAULT 'USD',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Check if we need to populate sample data
+    const { rows } = await pool.query('SELECT COUNT(*) FROM corporate_actions');
+    if (parseInt(rows[0].count) === 0) {
+      // Generate sample corporate actions
+      const actionTypes = [
+        'Dividend', 'Stock Split', 'Merger', 'Acquisition', 'Spinoff', 
+        'Rights Issue', 'Bonus Issue', 'Name Change', 'Tender Offer'
+      ];
+      
+      const securityNames = [
+        'Apple Inc.', 'Microsoft Corporation', 'Amazon.com, Inc.', 'Alphabet Inc.', 
+        'Facebook, Inc.', 'Tesla, Inc.', 'Berkshire Hathaway', 'Visa Inc.', 
+        'JPMorgan Chase & Co.', 'Johnson & Johnson'
+      ];
+      
+      const statuses = ['Announced', 'Pending', 'Completed', 'Cancelled'];
+      
+      // Insert 50 sample corporate actions
+      for (let i = 0; i < 20; i++) {
+        const actionId = `CA-${10000 + i}`;
+        const securityId = `SEC-${1000 + Math.floor(Math.random() * 100)}`;
+        const securityIndex = Math.floor(Math.random() * securityNames.length);
+        const securityName = securityNames[securityIndex];
+        const actionType = actionTypes[Math.floor(Math.random() * actionTypes.length)];
+        
+        // Random dates within the last 90 days for announcement
+        const announcementDate = new Date();
+        announcementDate.setDate(announcementDate.getDate() - Math.floor(Math.random() * 90));
+        
+        // Record date is typically 10-15 days after announcement
+        const recordDate = new Date(announcementDate);
+        recordDate.setDate(recordDate.getDate() + 10 + Math.floor(Math.random() * 5));
+        
+        // Payment date is typically 5-10 days after record date
+        const paymentDate = new Date(recordDate);
+        paymentDate.setDate(paymentDate.getDate() + 5 + Math.floor(Math.random() * 5));
+        
+        const status = statuses[Math.floor(Math.random() * statuses.length)];
+        
+        let description = '';
+        let impactValue = null;
+        
+        // Generate description and impact value based on action type
+        if (actionType === 'Dividend') {
+          const dividendAmount = (0.1 + Math.random() * 2.9).toFixed(2);
+          description = `${securityName} announced a cash dividend of $${dividendAmount} per share.`;
+          impactValue = dividendAmount;
+        } else if (actionType === 'Stock Split') {
+          const ratio = [2, 3, 4, 5, 10][Math.floor(Math.random() * 5)];
+          description = `${securityName} announced a ${ratio}:1 stock split.`;
+          impactValue = ratio;
+        } else if (actionType === 'Merger' || actionType === 'Acquisition') {
+          const company = securityNames[Math.floor(Math.random() * securityNames.length)];
+          description = `${securityName} to be ${actionType === 'Merger' ? 'merged with' : 'acquired by'} ${company}.`;
+        } else {
+          description = `${securityName} announced a ${actionType.toLowerCase()}.`;
+        }
+        
+        await pool.query(`
+          INSERT INTO corporate_actions (
+            action_id, security_id, security_name, action_type, 
+            announcement_date, record_date, payment_date, 
+            status, description, impact_value, currency
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        `, [
+          actionId, securityId, securityName, actionType,
+          announcementDate, recordDate, paymentDate,
+          status, description, impactValue, 'USD'
+        ]);
+      }
+      
+      console.log('Corporate actions sample data generated');
+    }
+    
+    // Get all corporate actions
+    const actionsResult = await pool.query(`
+      SELECT * FROM corporate_actions 
+      ORDER BY announcement_date DESC
+    `);
+    
+    // Get upcoming actions (next 30 days)
+    const thirtyDaysFromNow = new Date();
+    thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+    
+    const upcomingActionsResult = await pool.query(`
+      SELECT * FROM corporate_actions 
+      WHERE record_date > CURRENT_TIMESTAMP 
+      AND record_date < $1
+      ORDER BY record_date ASC
+    `, [thirtyDaysFromNow]);
+    
+    // Get action types and their counts
+    const typesResult = await pool.query(`
+      SELECT action_type, COUNT(*) as count
+      FROM corporate_actions
+      GROUP BY action_type
+      ORDER BY count DESC
+    `);
+    
+    // Get status breakdown
+    const statusResult = await pool.query(`
+      SELECT status, COUNT(*) as count
+      FROM corporate_actions
+      GROUP BY status
+      ORDER BY count DESC
+    `);
+    
+    // Build the response
+    const response = {
+      actions: actionsResult.rows,
+      upcoming_actions: upcomingActionsResult.rows,
+      action_types: typesResult.rows.map(row => ({
+        type: row.action_type,
+        count: parseInt(row.count)
+      })),
+      status_breakdown: statusResult.rows.map(row => ({
+        status: row.status,
+        count: parseInt(row.count)
+      })),
+      total_actions: actionsResult.rows.length,
+      upcoming_count: upcomingActionsResult.rows.length
+    };
+    
+    res.json(response);
+  } catch (error) {
+    console.error('Error fetching corporate actions data:', error);
+    res.status(500).json({ error: 'Failed to fetch corporate actions data' });
   }
 });
 

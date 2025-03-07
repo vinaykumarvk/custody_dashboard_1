@@ -103,49 +103,66 @@ const Dashboard = () => {
       { label: 'PORTFOLIO', value: 4100 }
     ];
     
-    // Mock trade data for now
-    const mockTradeMonthly = apiData.customers_monthly?.map((item, index) => {
-      const date = new Date(item.date);
-      return {
-        date: date,
-        trade_volume: 500000 + (index * 50000),
-        total_trades: 1000 + (index * 100)
-      };
-    }) || [];
+    // Use real trade data if available, otherwise generate mock data
+    let tradeMonthlyData = [];
+    if (apiData.trade_monthly && apiData.trade_monthly.length > 0) {
+      tradeMonthlyData = apiData.trade_monthly;
+    } else {
+      // Mock trade data as fallback
+      tradeMonthlyData = apiData.customers_monthly?.map((item, index) => {
+        const date = new Date(item.date);
+        return {
+          date: date.toISOString().split('T')[0],
+          total_trades: 1000 + (index * 100),
+          trade_volume: 500000 + (index * 50000)
+        };
+      }) || [];
+    }
     
-    // Extract trade data
-    const tradingVolumeHistory = mockTradeMonthly.map(item => ({
-      date: item.date,
-      value: item.trade_volume
+    // Extract trade data for charts
+    const tradingVolumeHistory = tradeMonthlyData.map(item => ({
+      date: new Date(item.date),
+      value: parseFloat(item.trade_volume)
     }));
     
-    const tradeCountHistory = mockTradeMonthly.map(item => ({
-      date: item.date,
-      value: item.total_trades
+    const tradeCountHistory = tradeMonthlyData.map(item => ({
+      date: new Date(item.date),
+      value: parseInt(item.total_trades)
     }));
     
-    // Create asset class breakdown
-    const tradesByAssetClass = [
-      { label: 'Equities', value: 45 },
-      { label: 'Fixed Income', value: 30 },
-      { label: 'FX', value: 15 },
-      { label: 'Funds', value: 10 }
-    ];
+    // Use real asset class breakdown if available
+    let tradesByAssetClass = [];
+    if (apiData.trades_by_asset && apiData.trades_by_asset.length > 0) {
+      tradesByAssetClass = apiData.trades_by_asset;
+    } else {
+      // Fallback mock data
+      tradesByAssetClass = [
+        { label: 'Equity', value: 45 },
+        { label: 'Fixed Income', value: 30 },
+        { label: 'FX', value: 15 },
+        { label: 'Fund', value: 10 }
+      ];
+    }
     
-    // Mock recent trades
+    // Get total trades and trading volume from API
+    const totalTrades = apiData.total_trades || 
+      tradeMonthlyData.reduce((sum, item) => sum + parseInt(item.total_trades), 0);
+      
+    const tradingVolume = apiData.trading_volume || 
+      tradeMonthlyData.reduce((sum, item) => sum + parseFloat(item.trade_volume), 0);
+    
+    const pendingTrades = apiData.pending_trades || Math.round(totalTrades * 0.05);
+    
+    // Mock recent trades - in a real implementation, this would come from the API
     const recentTrades = Array(10).fill(0).map((_, i) => ({
-      id: `T-${1000 + i}`,
-      customer: `Customer ${i + 1}`,
+      id: `T-${100000 + i}`,
+      customer: ['BlackRock', 'Vanguard', 'Fidelity', 'State Street', 'JPMorgan'][i % 5],
       type: i % 2 === 0 ? 'Buy' : 'Sell',
-      asset: ['Equity', 'Bond', 'Fund', 'FX'][i % 4],
-      amount: 10000 + (i * 1000),
-      status: ['Completed', 'Pending', 'Processing'][i % 3],
+      asset: ['Equity', 'Fixed Income', 'Fund', 'FX', 'Commodity'][i % 5],
+      amount: 10000 + (i * 10000),
+      status: ['Completed', 'Pending', 'Processing', 'Failed', 'Cancelled'][i % 5],
       date: new Date(Date.now() - (i * 86400000)).toISOString()
     }));
-    
-    // Calculate derived metrics
-    const totalTrades = mockTradeMonthly.reduce((sum, item) => sum + item.total_trades, 0);
-    const tradingVolume = mockTradeMonthly.reduce((sum, item) => sum + item.trade_volume, 0);
     
     // Return processed data
     return {
@@ -154,7 +171,7 @@ const Dashboard = () => {
       totalAccounts: Math.round(totalCustomers * 1.5),
       totalTrades: totalTrades,
       tradingVolume: tradingVolume,
-      pendingTrades: Math.round(totalTrades * 0.05),
+      pendingTrades: pendingTrades,
       openEvents: 15,
       corporateActions: 12,
       dealProcessing: 8,
