@@ -1260,28 +1260,97 @@ app.get('*', (req, res) => {
 });
 
 // API endpoint for uploading data
-app.post('/api/upload', upload.single('file'), async (req, res) => {
-  try {
+app.post('/api/upload', (req, res, next) => {
+  // Use Multer middleware with custom error handling
+  upload.single('file')(req, res, (err) => {
+    if (err) {
+      // Handle Multer-specific errors
+      if (err instanceof multer.MulterError) {
+        // A Multer error occurred during upload
+        if (err.code === 'LIMIT_FILE_SIZE') {
+          return res.status(400).json({
+            status: 'error',
+            message: 'File size exceeds the 10MB limit.'
+          });
+        }
+        return res.status(400).json({
+          status: 'error',
+          message: `Upload error: ${err.message}`
+        });
+      } else {
+        // This is likely the file filter error
+        return res.status(400).json({
+          status: 'error',
+          message: err.message || 'Invalid file type. Only JSON and CSV files are allowed.'
+        });
+      }
+    }
+    
+    // If we get here and there's no file, it's a client error
     if (!req.file) {
       return res.status(400).json({ 
         status: 'error', 
-        message: 'No file uploaded or invalid file type. Only JSON and CSV files are allowed.'
+        message: 'No file uploaded. Please select a file to upload.'
       });
     }
+    
+    // Continue with the rest of the handler
+    next();
+  });
+}, async (req, res) => {
+  try {
 
     const filePath = req.file.path;
     const fileType = path.extname(req.file.originalname).toLowerCase();
     let data;
 
     // Read and parse the file based on its type
-    if (fileType === '.json') {
+    try {
       const fileContent = fs.readFileSync(filePath, 'utf8');
-      data = JSON.parse(fileContent);
-    } else if (fileType === '.csv') {
-      // For CSV files, we'll read the content and store it for now
-      // In a future update, we'll implement proper CSV parsing
-      const fileContent = fs.readFileSync(filePath, 'utf8');
-      data = { rows: fileContent.split('\n').map(line => line.split(',')) };
+      
+      if (fileType === '.json') {
+        try {
+          data = JSON.parse(fileContent);
+        } catch (jsonError) {
+          // Clean up the file since we couldn't parse it
+          fs.unlinkSync(filePath);
+          return res.status(400).json({
+            status: 'error',
+            message: 'Invalid JSON format: ' + jsonError.message
+          });
+        }
+      } else if (fileType === '.csv') {
+        // For CSV files, we'll do basic validation and store it
+        // Check if the file has content and appears to be CSV format
+        if (!fileContent || fileContent.trim().length === 0) {
+          fs.unlinkSync(filePath);
+          return res.status(400).json({
+            status: 'error',
+            message: 'CSV file is empty.'
+          });
+        }
+        
+        // Simple CSV validation - check if it has rows and columns
+        const rows = fileContent.split('\n').filter(line => line.trim().length > 0);
+        if (rows.length === 0) {
+          fs.unlinkSync(filePath);
+          return res.status(400).json({
+            status: 'error',
+            message: 'CSV file has no valid rows.'
+          });
+        }
+        
+        data = { rows: rows.map(line => line.split(',')) };
+      }
+    } catch (fileError) {
+      // Handle file reading errors
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+      return res.status(500).json({
+        status: 'error',
+        message: 'Error reading uploaded file: ' + fileError.message
+      });
     }
 
     // Validate data structure
@@ -1355,6 +1424,17 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
     });
   } catch (error) {
     console.error('Error uploading file:', error);
+    
+    // Clean up any temporary file if it exists
+    if (req.file && req.file.path && fs.existsSync(req.file.path)) {
+      try {
+        fs.unlinkSync(req.file.path);
+        console.log(`Cleaned up temporary file: ${req.file.path}`);
+      } catch (cleanupError) {
+        console.error('Error cleaning up temporary file:', cleanupError);
+      }
+    }
+    
     res.status(500).json({
       status: 'error',
       message: 'An error occurred while processing the upload: ' + error.message
