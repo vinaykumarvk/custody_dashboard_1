@@ -35,6 +35,12 @@ app.get('/bundle.js', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'bundle.js'));
 });
 
+// Define API routes before static assets to ensure they take precedence
+app.use('/api', (req, res, next) => {
+  console.log(`API Request: ${req.method} ${req.url}`);
+  next();
+});
+
 // Add custom middleware for logging
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
