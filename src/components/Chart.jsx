@@ -1,64 +1,72 @@
-import React from 'react';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-} from 'chart.js';
-import { Line, Bar, Pie, Doughnut } from 'react-chartjs-2';
-import { generateChartConfig } from '../utils';
+import React, { useRef, useEffect } from 'react';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title } from 'chart.js';
+import { Bar, Pie, Line } from 'react-chartjs-2';
 
-// Register ChartJS components
+// Register Chart.js components
 ChartJS.register(
+  ArcElement, 
+  Tooltip, 
+  Legend, 
   CategoryScale,
   LinearScale,
+  BarElement,
   PointElement,
   LineElement,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
+  Title
 );
 
-const ChartComponent = ({ type, data, options, height = '100%' }) => {
-  // Generate chart config with Smart Bank styling
-  const chartConfig = generateChartConfig(type, { data, ...options });
-  
-  // Render appropriate chart based on type
+const Chart = ({ type, data, options, height = '300px' }) => {
+  const chartRef = useRef(null);
+
+  // Default options with Smart Bank styling
+  const defaultOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          font: {
+            family: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+            size: 12
+          },
+          color: '#333'
+        }
+      }
+    }
+  };
+
+  // Merge default options with provided options
+  const mergedOptions = {
+    ...defaultOptions,
+    ...options
+  };
+
+  // Set height style for the container
+  const containerStyle = {
+    height: height,
+    width: '100%'
+  };
+
+  // Render the appropriate chart type
   const renderChart = () => {
-    const chartProps = {
-      data: chartConfig.data,
-      options: chartConfig.options || {}
-    };
-    
     switch (type.toLowerCase()) {
-      case 'line':
-        return <Line data={chartProps.data} options={chartProps.options} />;
       case 'bar':
-        return <Bar data={chartProps.data} options={chartProps.options} />;
+        return <Bar data={data} options={mergedOptions} />;
       case 'pie':
-        return <Pie data={chartProps.data} options={chartProps.options} />;
-      case 'doughnut':
-        return <Doughnut data={chartProps.data} options={chartProps.options} />;
+        return <Pie data={data} options={mergedOptions} />;
+      case 'line':
+        return <Line data={data} options={mergedOptions} />;
       default:
-        return <Line data={chartProps.data} options={chartProps.options} />;
+        return <div className="alert alert-warning">Unsupported chart type: {type}</div>;
     }
   };
 
   return (
-    <div className="chart-container" style={{ height }}>
+    <div className="chart-container" style={containerStyle}>
       {renderChart()}
     </div>
   );
 };
 
-export default ChartComponent;
+export default Chart;
