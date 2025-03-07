@@ -27,24 +27,24 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Serve static files from the public directory
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Add specific route for bundle.js
-app.get('/bundle.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'bundle.js'));
+// Add custom middleware for logging first
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
 });
 
-// Define API routes before static assets to ensure they take precedence
+// Define API routes middleware BEFORE static files
 app.use('/api', (req, res, next) => {
   console.log(`API Request: ${req.method} ${req.url}`);
   next();
 });
 
-// Add custom middleware for logging
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-  next();
+// Serve static files from the public directory AFTER defining API routes
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Add specific route for bundle.js
+app.get('/bundle.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'bundle.js'));
 });
 
 
