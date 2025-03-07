@@ -513,6 +513,20 @@ const generateTradeData = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    
+    // Create data_uploads table for storing uploaded files
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS data_uploads (
+        id SERIAL PRIMARY KEY,
+        file_name VARCHAR(255) NOT NULL,
+        file_size INTEGER NOT NULL,
+        file_type VARCHAR(50) NOT NULL,
+        data JSONB,
+        metadata JSONB,
+        status VARCHAR(50) DEFAULT 'processed',
+        upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
 
     console.log('Trade tables created');
     
@@ -1246,7 +1260,8 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
 app.get('/api/uploads', async (req, res) => {
   try {
     const { rows } = await pool.query(
-      `SELECT id, file_name, file_size, file_type, upload_date, processed
+      `SELECT id, file_name, file_size, file_type, upload_date, status, 
+       (data IS NOT NULL) as has_data
        FROM data_uploads
        ORDER BY upload_date DESC`
     );
@@ -1289,6 +1304,85 @@ app.get('/api/uploads/:id', async (req, res) => {
     res.status(500).json({
       status: 'error',
       message: 'An error occurred while fetching the upload: ' + error.message
+    });
+  }
+});
+
+// API endpoint to download a file
+app.get('/api/download/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rows } = await pool.query(
+      `SELECT file_name, file_type, data FROM data_uploads WHERE id = $1`,
+      [id]
+    );
+    
+    if (rows.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'File not found'
+      });
+    }
+    
+    const upload = rows[0];
+    
+    // Set appropriate headers based on file type
+    if (upload.file_type === 'json') {
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', `attachment; filename=${upload.file_name}`);
+      res.send(JSON.stringify(upload.data, null, 2));
+    } else if (upload.file_type === 'csv') {
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename=${upload.file_name}`);
+      res.send(upload.data);
+    } else {
+      res.status(400).json({
+        status: 'error',
+        message: 'Unsupported file type for download'
+      });
+    }
+  } catch (error) {
+    console.error('Error downloading file:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An error occurred while downloading the file: ' + error.message
+    });
+  }
+});
+
+// API endpoint to delete an uploaded file
+app.delete('/api/upload/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // First check if the file exists
+    const checkResult = await pool.query(
+      `SELECT id FROM data_uploads WHERE id = $1`,
+      [id]
+    );
+    
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'File not found'
+      });
+    }
+    
+    // Delete the file from the database
+    await pool.query(
+      `DELETE FROM data_uploads WHERE id = $1`,
+      [id]
+    );
+    
+    res.json({
+      status: 'success',
+      message: 'File deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An error occurred while deleting the file: ' + error.message
     });
   }
 });
