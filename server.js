@@ -28,6 +28,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Add specific route for bundle.js
+app.get('/bundle.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'bundle.js'));
+});
+
 // Add custom middleware for logging
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
@@ -1114,6 +1119,17 @@ app.get('*', (req, res) => {
 });
 
 // Start the server
+// Add fallback route for client-side routing (SPA)
+app.get('*', (req, res) => {
+  // Exclude API routes from the fallback
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
+  }
+  
+  // For all other routes, serve the index.html file
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
