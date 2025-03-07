@@ -77,6 +77,11 @@ app.get('/bundle.js', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'bundle.js'));
 });
 
+// Add a default route to serve index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 
 
 // Create PostgreSQL connection pool
