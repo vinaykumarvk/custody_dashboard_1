@@ -4,6 +4,8 @@ const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
 
 // Load environment variables
 dotenv.config();
