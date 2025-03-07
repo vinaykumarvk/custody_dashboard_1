@@ -1120,6 +1120,179 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadsDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+// Create a function to validate file types
+const fileFilter = (req, file, cb) => {
+  // Accept JSON and CSV files
+  if (file.mimetype === 'application/json' || 
+      file.mimetype === 'text/csv' || 
+      file.originalname.endsWith('.json') || 
+      file.originalname.endsWith('.csv')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only JSON and CSV files are allowed'), false);
+  }
+};
+
+const upload = multer({ 
+  storage: storage, 
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB max file size
+  }
+});
+
+// API endpoint for uploading data
+app.post('/api/upload', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ 
+        status: 'error', 
+        message: 'No file uploaded or invalid file type. Only JSON and CSV files are allowed.'
+      });
+    }
+
+    const filePath = req.file.path;
+    const fileType = path.extname(req.file.originalname).toLowerCase();
+    let data;
+
+    // Read and parse the file based on its type
+    if (fileType === '.json') {
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      data = JSON.parse(fileContent);
+    } else if (fileType === '.csv') {
+      // For now, we'll return an error for CSV files
+      // In a future update, we'll implement CSV parsing
+      return res.status(400).json({
+        status: 'error',
+        message: 'CSV parsing is not yet implemented. Please upload a JSON file.'
+      });
+    }
+
+    // Validate data structure
+    if (!data || typeof data !== 'object') {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid data format. Please check the file structure.'
+      });
+    }
+
+    // Store in database
+    await pool.query(
+      `INSERT INTO data_uploads (file_name, file_size, file_type, data, metadata)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id`,
+      [
+        req.file.originalname,
+        req.file.size,
+        req.file.mimetype,
+        JSON.stringify(data),
+        JSON.stringify({
+          uploaded_at: new Date(),
+          filename: req.file.filename,
+          original_name: req.file.originalname
+        })
+      ]
+    );
+
+    // Generate a notification for the upload
+    await pool.query(
+      `INSERT INTO notifications (type, message, time, read, category)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [
+        'success',
+        `File "${req.file.originalname}" successfully uploaded and processed`,
+        'Just now',
+        false,
+        'Data Uploads'
+      ]
+    );
+
+    // Clean up the file after it's processed
+    fs.unlinkSync(filePath);
+
+    res.status(200).json({
+      status: 'success',
+      message: 'File uploaded and processed successfully',
+      fileName: req.file.originalname,
+      fileSize: req.file.size
+    });
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An error occurred while processing the upload: ' + error.message
+    });
+  }
+});
+
+// API endpoint to get a list of uploaded data files
+app.get('/api/uploads', async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT id, file_name, file_size, file_type, upload_date, processed
+       FROM data_uploads
+       ORDER BY upload_date DESC`
+    );
+    
+    res.json({
+      status: 'success',
+      uploads: rows
+    });
+  } catch (error) {
+    console.error('Error fetching uploads:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An error occurred while fetching uploads: ' + error.message
+    });
+  }
+});
+
+// API endpoint to get a specific uploaded file by ID
+app.get('/api/uploads/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rows } = await pool.query(
+      `SELECT * FROM data_uploads WHERE id = $1`,
+      [id]
+    );
+    
+    if (rows.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Upload not found'
+      });
+    }
+    
+    res.json({
+      status: 'success',
+      upload: rows[0]
+    });
+  } catch (error) {
+    console.error('Error fetching upload:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An error occurred while fetching the upload: ' + error.message
+    });
+  }
+});
+
 // Start the server
 // Add fallback route for client-side routing (SPA)
 app.get('*', (req, res) => {

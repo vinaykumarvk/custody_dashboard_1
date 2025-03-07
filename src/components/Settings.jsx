@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchData } from '../services/api';
 import { formatDate } from '../utils';
+import DataUpload from './DataUpload';
 
 const Settings = () => {
   const [data, setData] = useState(null);
@@ -93,6 +94,9 @@ const Settings = () => {
                     </li>
                     <li className={activeTab === 'audit' ? 'active' : ''} onClick={() => setActiveTab('audit')}>
                       <i className="fas fa-history"></i> Audit Log
+                    </li>
+                    <li className={activeTab === 'data-upload' ? 'active' : ''} onClick={() => setActiveTab('data-upload')}>
+                      <i className="fas fa-upload"></i> Data Upload
                     </li>
                   </ul>
                 </div>
@@ -318,7 +322,11 @@ const Settings = () => {
               </div>
             )}
             
-            {activeTab !== 'user' && activeTab !== 'system' && activeTab !== 'roles' && (
+            {activeTab === 'data-upload' && (
+              <DataUpload />
+            )}
+            
+            {activeTab !== 'user' && activeTab !== 'system' && activeTab !== 'roles' && activeTab !== 'data-upload' && (
               <div className="card mb-4">
                 <div className="card-header">
                   <h2>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Settings</h2>
