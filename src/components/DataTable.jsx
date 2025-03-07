@@ -87,6 +87,7 @@ const DataTable = ({
     
     if (column.type === 'status') {
       const statusClasses = {
+        // Standard capitalized format
         'Completed': 'success',
         'Pending': 'warning',
         'Cancelled': 'danger',
@@ -94,7 +95,19 @@ const DataTable = ({
         'Inactive': 'secondary',
         'In Progress': 'info',
         'Overdue': 'danger',
-        'Announced': 'info'
+        'Announced': 'info',
+        'Processing': 'info',
+        'Failed': 'danger',
+        
+        // API lowercase format
+        'completed': 'success',
+        'pending': 'warning',
+        'cancelled': 'danger',
+        'active': 'success',
+        'inactive': 'secondary',
+        'in_progress': 'info',
+        'processing': 'info',
+        'failed': 'danger'
       };
       
       const badgeClass = statusClasses[value] || 'primary';
