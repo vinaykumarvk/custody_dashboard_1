@@ -90,8 +90,11 @@ const Dashboard = () => {
    * Process API data into the format expected by the dashboard component
    */
   const processApiData = (apiData) => {
-    // Extract summary metrics
-    const summary = apiData.summary || {};
+    // Extract metrics directly from API response
+    const totalCustomers = apiData.total_customers || 0;
+    const activeCustomers = apiData.active_customers || 0;
+    const monthlyGrowth = parseFloat(apiData.monthly_growth) || 0;
+    const totalIncome = parseFloat(apiData.total_income) || 0;
     
     // Extract and transform customer data
     const customerSegments = [
@@ -100,13 +103,23 @@ const Dashboard = () => {
       { label: 'PORTFOLIO', value: 4100 }
     ];
     
+    // Mock trade data for now
+    const mockTradeMonthly = apiData.customers_monthly?.map((item, index) => {
+      const date = new Date(item.date);
+      return {
+        date: date,
+        trade_volume: 500000 + (index * 50000),
+        total_trades: 1000 + (index * 100)
+      };
+    }) || [];
+    
     // Extract trade data
-    const tradingVolumeHistory = apiData.trade_monthly.map(item => ({
+    const tradingVolumeHistory = mockTradeMonthly.map(item => ({
       date: item.date,
       value: item.trade_volume
     }));
     
-    const tradeCountHistory = apiData.trade_monthly.map(item => ({
+    const tradeCountHistory = mockTradeMonthly.map(item => ({
       date: item.date,
       value: item.total_trades
     }));
@@ -130,18 +143,22 @@ const Dashboard = () => {
       date: new Date(Date.now() - (i * 86400000)).toISOString()
     }));
     
+    // Calculate derived metrics
+    const totalTrades = mockTradeMonthly.reduce((sum, item) => sum + item.total_trades, 0);
+    const tradingVolume = mockTradeMonthly.reduce((sum, item) => sum + item.trade_volume, 0);
+    
     // Return processed data
     return {
-      totalCustomers: summary.total_customers || 0,
-      activeCustomers: Math.round(summary.total_customers * 0.8) || 0,
-      totalAccounts: summary.total_customers * 1.5 || 0,
-      totalTrades: summary.total_trades || 0,
-      tradingVolume: summary.total_trades * 1000 || 0,
-      pendingTrades: Math.round(summary.total_trades * 0.05) || 0,
-      openEvents: summary.open_events || 0,
+      totalCustomers: totalCustomers,
+      activeCustomers: activeCustomers,
+      totalAccounts: Math.round(totalCustomers * 1.5),
+      totalTrades: totalTrades,
+      tradingVolume: tradingVolume,
+      pendingTrades: Math.round(totalTrades * 0.05),
+      openEvents: 15,
       corporateActions: 12,
       dealProcessing: 8,
-      monthlyIncome: summary.total_income || 0,
+      monthlyIncome: totalIncome,
       incomeByService: [],
       customerSegments,
       tradesByAssetClass,
