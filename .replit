@@ -5,7 +5,7 @@ channel = "stable-24_05"
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["sh", "-c", "npx webpack serve --mode development --host 0.0.0.0 --port 5000"]
+run = ["sh", "-c", "node start-dev.js"]
 
 [workflows]
 runButton = "Project"
@@ -31,8 +31,12 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npx webpack serve --mode development --host 0.0.0.0 --port 5000"
+args = "node start-dev.js"
 waitForPort = 5000
+
+[[ports]]
+localPort = 3000
+externalPort = 3000
 
 [[ports]]
 localPort = 5000

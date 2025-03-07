@@ -1,107 +1,69 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { fetchData, markNotificationAsRead, markAllNotificationsAsRead } from '../services/api';
 
 const Header = ({ userName = 'Smart Bank Admin', toggleSidebar, sidebarOpen }) => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
   
-  // Sample notifications data
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: 'warning',
-      message: 'Settlement deadline approaching for T-78950',
-      time: '10 minutes ago',
-      read: false,
-      category: 'Settlements'
-    },
-    {
-      id: 2,
-      type: 'info',
-      message: 'New corporate action announced for AAPL',
-      time: '30 minutes ago',
-      read: false,
-      category: 'Corporate Actions'
-    },
-    {
-      id: 3,
-      type: 'success',
-      message: 'Trade T-78946 successfully settled',
-      time: '1 hour ago',
-      read: false,
-      category: 'Trades'
-    },
-    {
-      id: 4,
-      type: 'info',
-      message: 'Client statement generated for BlackRock Inc.',
-      time: '2 hours ago',
-      read: true,
-      category: 'Reports'
-    },
-    {
-      id: 5,
-      type: 'warning',
-      message: 'System maintenance scheduled for tonight 22:00-23:00 UTC',
-      time: '3 hours ago',
-      read: true,
-      category: 'System'
-    },
-    {
-      id: 6,
-      type: 'info',
-      message: 'New income posted for Fidelity account',
-      time: '4 hours ago',
-      read: true,
-      category: 'Income'
-    },
-    {
-      id: 7,
-      type: 'warning',
-      message: 'Upcoming corporate action for MSFT requires attention',
-      time: '5 hours ago',
-      read: true,
-      category: 'Corporate Actions'
-    },
-    {
-      id: 8,
-      type: 'success',
-      message: 'Customer onboarding completed for JP Morgan',
-      time: '7 hours ago',
-      read: true,
-      category: 'Customers'
-    },
-    {
-      id: 9,
-      type: 'info',
-      message: 'Scheduled reports successfully generated',
-      time: '1 day ago',
-      read: true,
-      category: 'Reports'
-    },
-    {
-      id: 10,
-      type: 'success',
-      message: 'System backup completed successfully',
-      time: '1 day ago',
-      read: true,
-      category: 'System'
-    }
-  ]);
+  // Load notifications from API
+  useEffect(() => {
+    const getNotifications = async () => {
+      setLoading(true);
+      try {
+        const data = await fetchData('notifications');
+        // Ensure we're getting an array
+        if (Array.isArray(data)) {
+          setNotifications(data);
+        } else {
+          console.warn('Notifications API did not return an array:', data);
+          // Use fallback data from mock API
+          const mockData = await import('../utils').then(module => module.mockApiCall('notifications'));
+          setNotifications(Array.isArray(mockData) ? mockData : []);
+        }
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+        // Use fallback data from mock API
+        try {
+          const mockData = await import('../utils').then(module => module.mockApiCall('notifications'));
+          setNotifications(Array.isArray(mockData) ? mockData : []);
+        } catch (mockError) {
+          console.error('Failed to load mock notifications data:', mockError);
+          setNotifications([]);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    getNotifications();
+  }, []);
   
   // Count unread notifications
   const unreadCount = notifications.filter(n => !n.read).length;
   
   // Mark notification as read
-  const markAsRead = (id) => {
-    setNotifications(notifications.map(notification => 
-      notification.id === id ? { ...notification, read: true } : notification
-    ));
+  const markAsRead = async (id) => {
+    try {
+      await markNotificationAsRead(id);
+      setNotifications(notifications.map(notification => 
+        notification.id === id ? { ...notification, read: true } : notification
+      ));
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
   };
   
   // Mark all notifications as read
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(notification => ({ ...notification, read: true })));
+  const markAllAsRead = async () => {
+    try {
+      await markAllNotificationsAsRead();
+      setNotifications(notifications.map(notification => ({ ...notification, read: true })));
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+    }
   };
   
   // Toggle user dropdown
