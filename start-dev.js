@@ -8,8 +8,9 @@ const apiServer = spawn('node', ['server.js'], {
 });
 
 // Start the React frontend
-const webpackServer = spawn('npx', ['webpack', 'serve', '--mode', 'development', '--host', '0.0.0.0', '--port', '5000'], {
-  stdio: 'inherit'
+const webpackServer = spawn('npx', ['webpack', 'serve', '--mode', 'development', '--host', '0.0.0.0', '--port', '5000', '--open', '--hot'], {
+  stdio: 'inherit',
+  env: { ...process.env, NODE_ENV: 'development' }
 });
 
 // Handle process termination
