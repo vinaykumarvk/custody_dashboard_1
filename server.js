@@ -467,6 +467,29 @@ const populateSampleData = async () => {
 initializeDatabase();
 
 // API Routes
+
+// Health check endpoint
+app.get('/api/health', async (req, res) => {
+  try {
+    // Check database connection
+    await pool.query('SELECT 1');
+    res.status(200).json({ 
+      status: 'healthy',
+      database: 'connected', 
+      message: 'API is operational',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Health check failed:', error);
+    res.status(500).json({ 
+      status: 'unhealthy',
+      database: 'disconnected', 
+      message: 'API is experiencing issues',
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // Get all notifications
 app.get('/api/notifications', async (req, res) => {
   try {

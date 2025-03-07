@@ -30,8 +30,12 @@ export const checkApiHealth = async () => {
   // Otherwise, make a new health check request
   try {
     const response = await fetch(`${API_BASE_URL}/health?v=${now}`);
-    apiStatus.isConnected = response.ok;
+    const data = await response.json();
+    
+    apiStatus.isConnected = response.ok && data.status === 'healthy';
     apiStatus.lastCheck = now;
+    
+    console.log(`API health check: ${apiStatus.isConnected ? 'connected' : 'disconnected'}`);
     return apiStatus.isConnected;
   } catch (error) {
     console.warn('API health check failed:', error);
@@ -103,6 +107,15 @@ export const fetchData = async (resourceType) => {
  * @returns {Promise<Object>} - Promise that resolves to the API response
  */
 export const markNotificationAsRead = async (id) => {
+  // Check if API is available first
+  const isApiAvailable = await checkApiHealth();
+  
+  // If API is offline, return a mock success response
+  if (!isApiAvailable) {
+    console.log(`API appears offline, returning mock success for marking notification as read`);
+    return { success: true, mock: true };
+  }
+  
   const endpoint = `${API_BASE_URL}/notifications/${id}/read`;
   
   try {
@@ -129,6 +142,15 @@ export const markNotificationAsRead = async (id) => {
  * @returns {Promise<Object>} - Promise that resolves to the API response
  */
 export const markAllNotificationsAsRead = async () => {
+  // Check if API is available first
+  const isApiAvailable = await checkApiHealth();
+  
+  // If API is offline, return a mock success response
+  if (!isApiAvailable) {
+    console.log(`API appears offline, returning mock success for marking all notifications as read`);
+    return { success: true, mock: true };
+  }
+  
   const endpoint = `${API_BASE_URL}/notifications/read/all`;
   
   try {
