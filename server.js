@@ -9,7 +9,7 @@ dotenv.config();
 
 // Create Express app
 const app = express();
-const port = process.env.SERVER_PORT || 3000;
+const port = process.env.PORT || 3000;
 
 // CORS configuration for cross-origin requests
 const corsOptions = {
@@ -1104,6 +1104,12 @@ app.get('/api/corporate_actions', async (req, res) => {
     console.error('Error fetching corporate actions data:', error);
     res.status(500).json({ error: 'Failed to fetch corporate actions data' });
   }
+});
+
+// Start the server
+// Fallback route for client-side routing - should be placed after all API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start the server
