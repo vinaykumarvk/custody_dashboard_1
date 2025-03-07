@@ -4,8 +4,42 @@
 
 import { mockApiCall } from '../utils';
 
-// API base URL
+// API base URL - use a fixed base URL for now
+// In production, this could be configured through environment variables
 const API_BASE_URL = 'http://localhost:3000/api';
+
+// API status cache to avoid repeated failed calls
+let apiStatus = {
+  isConnected: null,
+  lastCheck: null,
+  checkInterval: 30000 // 30 seconds
+};
+
+/**
+ * Checks if the API is currently available
+ * @returns {Promise<boolean>} - Promise that resolves to true if API is available
+ */
+export const checkApiHealth = async () => {
+  const now = Date.now();
+  
+  // If we have a recent check result, use that instead of making a new request
+  if (apiStatus.lastCheck && (now - apiStatus.lastCheck < apiStatus.checkInterval)) {
+    return apiStatus.isConnected;
+  }
+  
+  // Otherwise, make a new health check request
+  try {
+    const response = await fetch(`${API_BASE_URL}/health?v=${now}`);
+    apiStatus.isConnected = response.ok;
+    apiStatus.lastCheck = now;
+    return apiStatus.isConnected;
+  } catch (error) {
+    console.warn('API health check failed:', error);
+    apiStatus.isConnected = false;
+    apiStatus.lastCheck = now;
+    return false;
+  }
+};
 
 // API endpoints mapping
 const API_ENDPOINTS = {
@@ -30,6 +64,15 @@ export const fetchData = async (resourceType) => {
     throw new Error(`Unknown resource type: ${resourceType}`);
   }
 
+  // Check if API is available first
+  const isApiAvailable = await checkApiHealth();
+  
+  // If API is offline, go straight to mock data
+  if (!isApiAvailable) {
+    console.log(`API appears offline, using mock data for ${resourceType}`);
+    return await mockApiCall(resourceType);
+  }
+  
   const endpoint = `${API_BASE_URL}${API_ENDPOINTS[resourceType]}`;
   
   try {
