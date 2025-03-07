@@ -466,13 +466,7 @@ const populateSampleData = async () => {
 // Generate trade data for the database
 const generateTradeData = async () => {
   try {
-    // Check if we already have trade data
-    const { rows } = await pool.query('SELECT COUNT(*) FROM trade_data');
-    if (parseInt(rows[0].count) > 0) {
-      return; // Skip if data already exists
-    }
-
-    // Create trade_data table
+    // Create trade_data table first
     await pool.query(`
       CREATE TABLE IF NOT EXISTS trade_data (
         id SERIAL PRIMARY KEY,
@@ -489,6 +483,14 @@ const generateTradeData = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Check if we already have trade data
+    const { rows } = await pool.query('SELECT COUNT(*) FROM trade_data');
+    if (parseInt(rows[0].count) > 0) {
+      return; // Skip if data already exists
+    }
+
+    // Table exists and is empty, continue with data generation
 
     // Create trade_monthly table
     await pool.query(`
