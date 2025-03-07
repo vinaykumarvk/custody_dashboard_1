@@ -1,0 +1,22 @@
+Label,# Samples,Average,Median,90% Line,95% Line,99% Line,Min,Maximum,Error %,Throughput,Received KB/sec,Sent KB/sec
+getAllHoldingsData,6,0,0,0,0,0,0,93916,100.0,1.1/min,0.01,0.0
+getPerformanceStatementAssetAndSubasset,1,72487,72487,72487,72487,72487,72487,72487,0.0,38.3/hour,0.1,0.04
+getMarketCapBreakup,1,344,344,344,344,344,344,344,0.0,2.9/sec,1.59,1.32
+getCreditRatingBreakupData,1,69856,69856,69856,69856,69856,69856,69856,0.0,51.5/hour,1.01,0.01
+getTopFiveStockData,1,70181,70181,70181,70181,70181,70181,70181,0.0,51.3/hour,1.0,0.01
+portfolioSnapshot,1,621,621,621,621,621,621,621,0.0,1.6/sec,2.16,3.02
+getDebtinstrumentData,1,216,216,216,216,216,216,216,0.0,6.2/sec,3.89,2.48
+getKeyRatiosData,1,214,214,214,214,214,214,214,0.0,4.6/sec,3.08,3.4
+getTopFiveSectorData,1,216,216,216,216,216,216,216,0.0,6.0/sec,3.2,2.48
+getAgeingReportData,1,3517,3517,3517,3517,3517,3517,3517,0.0,17.1/min,8.34,7.97
+getTransactionReportData,1,10189,10189,10189,10189,10189,10189,10189,0.0,5.9/min,124.51,5.26
+getCapitalGainReportData,1,4723,4723,4723,4723,4723,4723,4723,0.0,5.9/min,124.51,5.26
+getRiskParameterData,1,524,524,524,524,524,524,524,0.0,1.0/sec,0.05,0.2
+getPortfolioBenchmarkDayWiseValue,1,523,523,523,523,523,523,523,0.0,1.0/sec,0.05,0.2
+getUnitHoldingsSummaryData,1,847,847,847,847,847,847,847,0.0,4.4/sec,5.26,1.5
+getAssetSubassetSummary,1,229,229,229,229,229,229,229,0.0,4.6/sec,5.4,0.22
+getCurrentAccount,1,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0
+getSavingsAccount,1,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0
+getUlipHoldings,1,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0
+getInsuranceHoldings,1,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0
+getFixedDeposit,1,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0

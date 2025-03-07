@@ -1,0 +1,6 @@
+trade_id,customer_name,customer_id,type,asset_class,asset_name,amount,status,trade_date,settlement_date
+T-100001,BlackRock Inc.,C-10015,Buy,Equity,AAPL,1568432.50,Completed,2025-03-01T14:32:17,2025-03-03T14:32:17
+T-100002,Vanguard Group,C-10022,Sell,Fixed Income,US Treasury,3500000.00,Completed,2025-03-02T09:45:30,2025-03-04T09:45:30
+T-100003,State Street,C-10031,Buy,Fund,BlackRock Global,750000.00,Pending,2025-03-05T11:20:15,
+T-100004,JPMorgan,C-10018,Sell,Commodity,Gold,457890.75,Processing,2025-03-06T15:10:22,
+T-100005,Fidelity,C-10027,Buy,Equity,MSFT,982345.25,Pending,2025-03-07T10:05:40,

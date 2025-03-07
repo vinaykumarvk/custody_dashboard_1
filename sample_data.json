@@ -1,0 +1,158 @@
+{
+  "trades": [
+    {
+      "trade_id": "T-100001",
+      "customer_name": "BlackRock Inc.",
+      "customer_id": "C-10015",
+      "type": "Buy",
+      "asset_class": "Equity",
+      "asset_name": "AAPL",
+      "amount": 1568432.50,
+      "status": "Completed",
+      "trade_date": "2025-03-01T14:32:17",
+      "settlement_date": "2025-03-03T14:32:17"
+    },
+    {
+      "trade_id": "T-100002",
+      "customer_name": "Vanguard Group",
+      "customer_id": "C-10022",
+      "type": "Sell",
+      "asset_class": "Fixed Income",
+      "asset_name": "US Treasury",
+      "amount": 3500000.00,
+      "status": "Completed",
+      "trade_date": "2025-03-02T09:45:30",
+      "settlement_date": "2025-03-04T09:45:30"
+    },
+    {
+      "trade_id": "T-100003",
+      "customer_name": "State Street",
+      "customer_id": "C-10031",
+      "type": "Buy",
+      "asset_class": "Fund",
+      "asset_name": "BlackRock Global",
+      "amount": 750000.00,
+      "status": "Pending",
+      "trade_date": "2025-03-05T11:20:15",
+      "settlement_date": null
+    },
+    {
+      "trade_id": "T-100004",
+      "customer_name": "JPMorgan",
+      "customer_id": "C-10018",
+      "type": "Sell",
+      "asset_class": "Commodity",
+      "asset_name": "Gold",
+      "amount": 457890.75,
+      "status": "Processing",
+      "trade_date": "2025-03-06T15:10:22",
+      "settlement_date": null
+    },
+    {
+      "trade_id": "T-100005",
+      "customer_name": "Fidelity",
+      "customer_id": "C-10027",
+      "type": "Buy",
+      "asset_class": "Equity",
+      "asset_name": "MSFT",
+      "amount": 982345.25,
+      "status": "Pending",
+      "trade_date": "2025-03-07T10:05:40",
+      "settlement_date": null
+    }
+  ],
+  "customers": [
+    {
+      "customer_id": "C-10015",
+      "name": "BlackRock Inc.",
+      "type": "Institutional",
+      "country": "USA",
+      "aum": 9823456789.50,
+      "active_accounts": 48
+    },
+    {
+      "customer_id": "C-10022",
+      "name": "Vanguard Group",
+      "type": "Institutional",
+      "country": "USA",
+      "aum": 7654321098.75,
+      "active_accounts": 35
+    },
+    {
+      "customer_id": "C-10031",
+      "name": "State Street",
+      "type": "Institutional",
+      "country": "USA",
+      "aum": 4567890123.25,
+      "active_accounts": 29
+    },
+    {
+      "customer_id": "C-10018",
+      "name": "JPMorgan",
+      "type": "Institutional",
+      "country": "USA",
+      "aum": 6789012345.00,
+      "active_accounts": 42
+    },
+    {
+      "customer_id": "C-10027",
+      "name": "Fidelity",
+      "type": "Institutional",
+      "country": "USA",
+      "aum": 5432109876.50,
+      "active_accounts": 31
+    }
+  ],
+  "corporate_actions": [
+    {
+      "action_id": "CA-5001",
+      "action_type": "Dividend",
+      "security": "AAPL",
+      "ex_date": "2025-03-10",
+      "payment_date": "2025-03-15",
+      "status": "Announced"
+    },
+    {
+      "action_id": "CA-5002",
+      "action_type": "Stock Split",
+      "security": "TSLA",
+      "ex_date": "2025-04-01",
+      "payment_date": "2025-04-05",
+      "status": "Announced"
+    },
+    {
+      "action_id": "CA-5003",
+      "action_type": "Merger",
+      "security": "XYZ Corp",
+      "ex_date": "2025-03-22",
+      "payment_date": "2025-04-15",
+      "status": "Pending"
+    }
+  ],
+  "income": [
+    {
+      "income_id": "I-7001",
+      "customer_id": "C-10015",
+      "income_type": "Custody Fee",
+      "amount": 156789.50,
+      "currency": "USD",
+      "posting_date": "2025-03-01"
+    },
+    {
+      "income_id": "I-7002",
+      "customer_id": "C-10022",
+      "income_type": "Transaction Fee",
+      "amount": 45678.25,
+      "currency": "USD",
+      "posting_date": "2025-03-02"
+    },
+    {
+      "income_id": "I-7003",
+      "customer_id": "C-10031",
+      "income_type": "Corporate Action Fee",
+      "amount": 23456.75,
+      "currency": "USD",
+      "posting_date": "2025-03-03"
+    }
+  ]
+}

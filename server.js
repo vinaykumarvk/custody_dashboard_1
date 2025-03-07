@@ -523,10 +523,29 @@ const generateTradeData = async () => {
         file_type VARCHAR(50) NOT NULL,
         data JSONB,
         metadata JSONB,
-        status VARCHAR(50) DEFAULT 'processed',
         upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    
+    // Check if status column exists, and add it if it doesn't
+    try {
+      // First check if the column exists
+      const columnCheckResult = await pool.query(`
+        SELECT column_name FROM information_schema.columns 
+        WHERE table_name = 'data_uploads' AND column_name = 'status'
+      `);
+      
+      // If the column doesn't exist, add it
+      if (columnCheckResult.rows.length === 0) {
+        await pool.query(`
+          ALTER TABLE data_uploads 
+          ADD COLUMN status VARCHAR(50) DEFAULT 'Processed'
+        `);
+        console.log('Added status column to data_uploads table');
+      }
+    } catch (error) {
+      console.error('Error checking/adding status column:', error);
+    }
 
     console.log('Trade tables created');
     
@@ -1333,7 +1352,13 @@ app.get('/api/download/:id', async (req, res) => {
     } else if (upload.file_type === 'csv') {
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader('Content-Disposition', `attachment; filename=${upload.file_name}`);
-      res.send(upload.data);
+      // For CSV files, convert the stored rows back to CSV format
+      if (upload.data && upload.data.rows) {
+        const csvContent = upload.data.rows.map(row => row.join(',')).join('\n');
+        res.send(csvContent);
+      } else {
+        res.send(upload.data);
+      }
     } else {
       res.status(400).json({
         status: 'error',
