@@ -17,7 +17,10 @@ app.use((req, res, next) => {
 app.use('/api', createProxyMiddleware({
   target: 'http://localhost:3000',
   changeOrigin: true,
-  logLevel: 'silent'
+  pathRewrite: {
+    '^/api': '' // Remove /api prefix when forwarding to the backend
+  },
+  logLevel: 'debug' // Temporarily increase logging for debugging
 }));
 
 // Serve static files directly from the public directory
