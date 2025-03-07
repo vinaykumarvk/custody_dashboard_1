@@ -17,7 +17,9 @@ app.use((req, res, next) => {
 app.use('/api', createProxyMiddleware({
   target: 'http://localhost:3000',
   changeOrigin: true,
-  // We're not rewriting paths anymore to ensure API paths remain consistent
+  pathRewrite: {
+    '^/api': '/api' // Keep API prefix when forwarding to the backend
+  },
   logLevel: 'silent' // Change back to silent
 }));
 
