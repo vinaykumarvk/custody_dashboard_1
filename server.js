@@ -64,9 +64,28 @@ const storage = multer.diskStorage({
   }
 });
 
+// File filter function to only accept JSON and CSV files
+const fileFilter = (req, file, cb) => {
+  // Check MIME type
+  if (file.mimetype === 'application/json' || file.mimetype === 'text/csv') {
+    return cb(null, true);
+  }
+  
+  // Check file extension as a fallback
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (ext === '.json' || ext === '.csv') {
+    return cb(null, true);
+  }
+  
+  // Reject file otherwise
+  cb(new Error('Only JSON and CSV files are allowed'));
+  return cb(null, false);
+};
+
 const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: fileFilter
 });
 
 // Serve static files from the public directory AFTER defining API routes
