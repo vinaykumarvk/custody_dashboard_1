@@ -4,13 +4,12 @@
 
 import { mockApiCall } from '../utils';
 
-// API base URL - detect the current hostname and use appropriate URL  
-// This ensures it works both in development and when deployed
-const API_HOSTNAME = window.location.hostname;
-const API_PORT = '3000'; // Backend API port
+// API base URL - use webpack proxy for API calls
+// This eliminates CORS issues by forwarding all /api requests through webpack proxy
+// The proxy configuration in webpack.config.js handles the forwarding to localhost:3000
 
-// Use the current hostname with the API port
-const API_BASE_URL = `http://${API_HOSTNAME}:${API_PORT}/api`;
+// Use relative URL to leverage webpack proxy (defined in webpack.config.js)
+const API_BASE_URL = '/api';
 
 // API status cache to avoid repeated failed calls
 let apiStatus = {

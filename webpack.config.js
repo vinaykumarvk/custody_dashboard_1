@@ -54,6 +54,15 @@ module.exports = {
     },
     devMiddleware: {
       publicPath: '/'
-    }
+    },
+    // Add proxy configuration to forward API requests to the backend
+    proxy: [
+      {
+        context: ['/api'],
+        target: 'http://localhost:3000',
+        secure: false,
+        changeOrigin: true
+      }
+    ]
   }
 };
