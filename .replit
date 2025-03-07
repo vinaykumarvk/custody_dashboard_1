@@ -23,6 +23,10 @@ args = "Backend"
 task = "workflow.run"
 args = "Dashboard"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Proxy"
+
 [[workflows.workflow]]
 name = "Backend"
 author = "agent"
@@ -52,6 +56,21 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "node start-frontend.js"
 waitForPort = 8080
+
+[[workflows.workflow]]
+name = "Proxy"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node proxy.js"
+waitForPort = 5000
 
 [[ports]]
 localPort = 3000
