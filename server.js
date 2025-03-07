@@ -39,6 +39,30 @@ app.use('/api', (req, res, next) => {
   next();
 });
 
+// Configure uploads directory
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log('Created uploads directory');
+}
+
+// Set up file upload storage with Multer
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, uploadsDir);
+  },
+  filename: function(req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, 'file-' + uniqueSuffix + ext);
+  }
+});
+
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
+
 // Serve static files from the public directory AFTER defining API routes
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -660,6 +684,31 @@ initializeDatabase().then(() => {
 });
 
 // API Routes
+
+// Define dedicated upload routes first - these need to be defined before other routes
+// GET uploads list route
+app.get('/api/uploads', async (req, res) => {
+  console.log('Processing /api/uploads GET request'); // Explicit debug log
+  try {
+    const { rows } = await pool.query(
+      `SELECT id, file_name, file_size, file_type, upload_date, status, 
+       (data IS NOT NULL) as has_data
+       FROM data_uploads
+       ORDER BY upload_date DESC`
+    );
+    
+    res.json({
+      status: 'success',
+      uploads: rows
+    });
+  } catch (error) {
+    console.error('Error fetching uploads:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An error occurred while fetching uploads: ' + error.message
+    });
+  }
+});
 
 // Health check endpoint
 app.get('/api/health', async (req, res) => {
