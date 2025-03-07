@@ -172,20 +172,15 @@ const Trades = () => {
   const tradeColumns = [
     { field: 'trade_id', header: 'Trade ID', width: '100px' },
     { field: 'trade_date', header: 'Date', type: 'date', width: '150px' },
-    { field: 'customer_name', header: 'Client', width: '150px' },
-    { field: 'type', header: 'Type', width: '80px' },
-    { field: 'asset_name', header: 'Security', width: '150px' },
+    { field: 'customer_name', header: 'Customer', width: '150px' },
+    { field: 'asset_name', header: 'Asset', width: '150px' },
     { 
       field: 'amount', 
       header: 'Amount', 
       type: 'currency',
       width: '120px'
     },
-    { 
-      field: 'asset_class', 
-      header: 'Asset Class', 
-      width: '120px',
-    },
+    { field: 'type', header: 'Type', width: '80px' },
     { 
       field: 'status', 
       header: 'Status', 
