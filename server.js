@@ -740,8 +740,8 @@ app.get('/api/uploads', async (req, res) => {
   }
 });
 
-// Health check endpoint
-app.get('/api/health', async (req, res) => {
+// Health check endpoint - support both /health and /api/health
+const healthCheckHandler = async (req, res) => {
   try {
     // Check database connection
     await pool.query('SELECT 1');
@@ -760,7 +760,11 @@ app.get('/api/health', async (req, res) => {
       timestamp: new Date().toISOString()
     });
   }
-});
+};
+
+// Register both routes to handle the health check
+app.get('/api/health', healthCheckHandler);
+app.get('/health', healthCheckHandler);
 
 // Get all notifications
 app.get('/api/notifications', async (req, res) => {
