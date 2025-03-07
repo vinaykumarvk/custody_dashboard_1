@@ -1191,12 +1191,10 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
       const fileContent = fs.readFileSync(filePath, 'utf8');
       data = JSON.parse(fileContent);
     } else if (fileType === '.csv') {
-      // For now, we'll return an error for CSV files
-      // In a future update, we'll implement CSV parsing
-      return res.status(400).json({
-        status: 'error',
-        message: 'CSV parsing is not yet implemented. Please upload a JSON file.'
-      });
+      // For CSV files, we'll read the content and store it for now
+      // In a future update, we'll implement proper CSV parsing
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      data = { rows: fileContent.split('\n').map(line => line.split(',')) };
     }
 
     // Validate data structure
@@ -1208,20 +1206,21 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
     }
 
     // Store in database
-    await pool.query(
-      `INSERT INTO data_uploads (file_name, file_size, file_type, data, metadata)
-       VALUES ($1, $2, $3, $4, $5)
+    const result = await pool.query(
+      `INSERT INTO data_uploads (file_name, file_size, file_type, data, metadata, status)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING id`,
       [
         req.file.originalname,
         req.file.size,
-        req.file.mimetype,
-        JSON.stringify(data),
+        fileType.replace('.', ''),
+        data,
         JSON.stringify({
           uploaded_at: new Date(),
           filename: req.file.filename,
           original_name: req.file.originalname
-        })
+        }),
+        'Processed'
       ]
     );
 
