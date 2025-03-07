@@ -270,6 +270,88 @@ export const mockApiCall = (endpoint, options = {}) => {
  */
 const getMockData = (endpoint) => {
   const mockData = {
+    notifications: [
+      {
+        id: 1,
+        type: 'warning',
+        message: 'Settlement deadline approaching for T-78950',
+        time: '10 minutes ago',
+        read: false,
+        category: 'Settlements'
+      },
+      {
+        id: 2,
+        type: 'info',
+        message: 'New corporate action announced for AAPL',
+        time: '30 minutes ago',
+        read: false,
+        category: 'Corporate Actions'
+      },
+      {
+        id: 3,
+        type: 'success',
+        message: 'Trade T-78946 successfully settled',
+        time: '1 hour ago',
+        read: false,
+        category: 'Trades'
+      },
+      {
+        id: 4,
+        type: 'info',
+        message: 'Client statement generated for BlackRock Inc.',
+        time: '2 hours ago',
+        read: true,
+        category: 'Reports'
+      },
+      {
+        id: 5,
+        type: 'warning',
+        message: 'System maintenance scheduled for tonight 22:00-23:00 UTC',
+        time: '3 hours ago',
+        read: true,
+        category: 'System'
+      },
+      {
+        id: 6,
+        type: 'info',
+        message: 'New income posted for Fidelity account',
+        time: '4 hours ago',
+        read: true,
+        category: 'Income'
+      },
+      {
+        id: 7,
+        type: 'warning',
+        message: 'Upcoming corporate action for MSFT requires attention',
+        time: '5 hours ago',
+        read: true,
+        category: 'Corporate Actions'
+      },
+      {
+        id: 8,
+        type: 'success',
+        message: 'Customer onboarding completed for JP Morgan',
+        time: '7 hours ago',
+        read: true,
+        category: 'Customers'
+      },
+      {
+        id: 9,
+        type: 'info',
+        message: 'Scheduled reports successfully generated',
+        time: '1 day ago',
+        read: true,
+        category: 'Reports'
+      },
+      {
+        id: 10,
+        type: 'success',
+        message: 'System backup completed successfully',
+        time: '1 day ago',
+        read: true,
+        category: 'System'
+      }
+    ],
     reports: {
       available_reports: 48,
       generated_reports_mtd: 156,
