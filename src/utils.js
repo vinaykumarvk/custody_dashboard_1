@@ -914,16 +914,108 @@ const getMockData = (endpoint) => {
       ]
     },
     'trades': {
-      total_trades: 8735,
-      trading_volume: 1765342800,
-      avg_trade_size: 202100,
-      success_rate: 0.96,
-      completed_trades: 7824,
-      pending_trades: 643,
-      processing_trades: 184,
-      failed_trades: 84,
-      trades_buy: 4821,
-      trades_sell: 3914,
+      trades: [
+        {
+          trade_id: 'T-10001',
+          trade_date: '2025-03-01T09:30:00Z',
+          customer_name: 'BlackRock Inc.',
+          asset_name: 'AAPL US Equity',
+          asset_class: 'Equities',
+          amount: 1250000,
+          quantity: 5000,
+          price: 250,
+          type: 'Buy',
+          status: 'Completed',
+          settlement_date: '2025-03-03T16:00:00Z',
+          settlement_status: 'Completed',
+          exchange: 'NASDAQ',
+          settlement_location: 'DTC'
+        },
+        {
+          trade_id: 'T-10002',
+          trade_date: '2025-03-01T10:15:00Z',
+          customer_name: 'Vanguard Group',
+          asset_name: 'TSLA US Equity',
+          asset_class: 'Equities',
+          amount: 875000,
+          quantity: 3500,
+          price: 250,
+          type: 'Sell',
+          status: 'Completed',
+          settlement_date: '2025-03-03T16:00:00Z',
+          settlement_status: 'Completed',
+          exchange: 'NASDAQ',
+          settlement_location: 'DTC'
+        },
+        {
+          trade_id: 'T-10003',
+          trade_date: '2025-03-01T11:05:00Z',
+          customer_name: 'Fidelity Investments',
+          asset_name: 'MSFT US Equity',
+          asset_class: 'Equities',
+          amount: 1500000,
+          quantity: 4000,
+          price: 375,
+          type: 'Buy',
+          status: 'Pending',
+          settlement_date: '2025-03-03T16:00:00Z',
+          settlement_status: 'Pending',
+          exchange: 'NASDAQ',
+          settlement_location: 'DTC'
+        },
+        {
+          trade_id: 'T-10004',
+          trade_date: '2025-03-01T13:20:00Z',
+          customer_name: 'State Street Global',
+          asset_name: 'US 10Y Treasury',
+          asset_class: 'Fixed Income',
+          amount: 5000000,
+          quantity: 5000000,
+          price: 100,
+          type: 'Buy',
+          status: 'Processing',
+          settlement_date: '2025-03-03T16:00:00Z',
+          settlement_status: 'Pending',
+          exchange: 'OTC',
+          settlement_location: 'Fedwire'
+        },
+        {
+          trade_id: 'T-10005',
+          trade_date: '2025-03-02T09:45:00Z',
+          customer_name: 'JP Morgan Asset Management',
+          asset_name: 'EURUSD Spot',
+          asset_class: 'FX',
+          amount: 3500000,
+          quantity: 3500000,
+          price: 1,
+          type: 'Sell',
+          status: 'Completed',
+          settlement_date: '2025-03-04T16:00:00Z',
+          settlement_status: 'Completed',
+          exchange: 'OTC',
+          settlement_location: 'CLS'
+        }
+      ],
+      pagination: {
+        total: 100,
+        limit: 20,
+        offset: 0,
+        pages: 5
+      },
+      stats: {
+        total_trades: 100,
+        completed_trades: 75,
+        pending_trades: 15,
+        processing_trades: 10,
+        total_volume: 175000000
+      },
+      asset_classes: [
+        { label: 'Equities', count: 45, volume: 85750000 },
+        { label: 'Fixed Income', count: 25, volume: 50000000 },
+        { label: 'FX', count: 15, volume: 25250000 },
+        { label: 'Derivatives', count: 10, volume: 10500000 },
+        { label: 'Commodities', count: 5, volume: 3500000 }
+      ],
       
       // Recent trades data
       recent_trades: [

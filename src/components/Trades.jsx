@@ -19,12 +19,21 @@ const Trades = () => {
       setLoading(true);
       try {
         // Fetch trades data
-        const response = await fetchData('trades');
+        console.log('Fetching trades data...');
+        const response = await fetchData('trades', true); // Enable debug mode
+        console.log('Trades data received:', response);
+        
+        if (!response || !response.trades) {
+          console.error('Invalid trade data format:', response);
+          setError('The trades data format is invalid.');
+          return;
+        }
+        
         setData(response);
-        console.log('Trades data loaded:', response);
+        console.log('Trades data loaded successfully.');
       } catch (err) {
         console.error('Error loading trades data:', err);
-        setError('Unable to load trades data.');
+        setError('Unable to load trades data: ' + (err.message || err));
       } finally {
         setLoading(false);
       }
