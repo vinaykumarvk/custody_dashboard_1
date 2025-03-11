@@ -218,7 +218,7 @@ const Trades = () => {
       <h1>Trades</h1>
       
       {/* Metrics summary */}
-      <div className="row">
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3">
           <MetricCard 
             title="Total Trades" 
@@ -259,7 +259,7 @@ const Trades = () => {
       </div>
       
       {/* Status metrics */}
-      <div className="row mt-4">
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3">
           <MetricCard 
             title="Completed" 
@@ -295,7 +295,7 @@ const Trades = () => {
       </div>
       
       {/* Charts */}
-      <div className="row mt-4">
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-8">
           <div className="card">
             <div className="card-header">
@@ -367,7 +367,7 @@ const Trades = () => {
       </div>
       
       {/* Recent trades and charts row */}
-      <div className="row mt-4">
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-8">
           <div className="card">
             <div className="card-header">
