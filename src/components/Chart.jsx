@@ -15,7 +15,7 @@ ChartJS.register(
   Title
 );
 
-const Chart = ({ type, data, options, height = '300px' }) => {
+const Chart = ({ type, data, options, height = '250px' }) => {
   const chartRef = useRef(null);
 
   // Default options with Smart Bank styling
