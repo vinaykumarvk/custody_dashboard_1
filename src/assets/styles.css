@@ -564,8 +564,10 @@ body {
   font-size: 1.5rem;
   margin-top: 20px;
   margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 12px 15px;
+  border-radius: 6px;
+  background-color: rgba(0, 124, 117, 0.08);
+  border-left: 4px solid var(--smartbank-green);
 }
 
 .section-header h2 {
@@ -577,9 +579,12 @@ body {
 
 .subsection-header {
   color: var(--text-color);
-  margin-top: 15px;
-  margin-bottom: 10px;
-  padding-left: 10px;
+  margin-top: 18px;
+  margin-bottom: 12px;
+  padding: 8px 15px;
+  background-color: rgba(0, 124, 117, 0.04);
+  border-radius: 4px;
+  border-left: 3px solid var(--smartbank-dark-green);
 }
 
 .subsection-header h3 {
@@ -1088,18 +1093,26 @@ body {
   margin-bottom: 15px;
   border: 1px solid var(--border-color);
   overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .stats-grid .stats-card:nth-child(1) {
   grid-column: span 4;
+  border-top: 3px solid var(--smartbank-green);
 }
 
 .stats-grid .stats-card:nth-child(2) {
   grid-column: span 4;
+  border-top: 3px solid #17A2B8;  /* Info color for variety */
 }
 
 .stats-grid .stats-card:nth-child(3) {
   grid-column: span 4;
+  border-top: 3px solid #FFC107;  /* Warning color for variety */
 }
 
 .stats-grid .note-card {
@@ -1112,15 +1125,28 @@ body {
 }
 
 .stats-card-header {
-  padding: 10px 15px;
-  background-color: #f8f9fa;
+  padding: 12px 15px;
+  background: linear-gradient(to right, rgba(0, 124, 117, 0.05), rgba(0, 124, 117, 0.01));
   border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stats-card-header:after {
+  content: '';
+  height: 20px;
+  width: 3px;
+  background-color: var(--smartbank-green);
+  margin-left: 5px;
 }
 
 .stats-card-header h3 {
   margin: 0;
   font-size: 1rem;
-  color: var(--smartbank-green);
+  color: var(--smartbank-dark-green);
+  font-weight: 600;
+  position: relative;
 }
 
 .stats-card-body {
@@ -1130,8 +1156,12 @@ body {
 .approval-item, .process-item {
   display: flex;
   justify-content: space-between;
-  padding: 5px 0;
+  padding: 8px 10px;
   border-bottom: 1px solid #e9ecef;
+}
+
+.approval-item:nth-child(even), .process-item:nth-child(even) {
+  background-color: rgba(0, 124, 117, 0.03);
 }
 
 .approval-item:last-child, .process-item:last-child {
@@ -1156,9 +1186,21 @@ body {
   background-color: var(--card-background);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   border: 1px solid var(--border-color);
   overflow: hidden;
+  position: relative;
+  padding-top: 10px;
+}
+
+.stats-large-card:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, var(--smartbank-green), rgba(0, 124, 117, 0.3));
 }
 
 .exceptions-grid {
@@ -1175,10 +1217,18 @@ body {
 }
 
 .exception-item, .trade-section, .event-section, .ticket-section {
-  padding: 10px;
+  padding: 15px;
   text-align: center;
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.exception-item:hover, .trade-section:hover, .event-section:hover, .ticket-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .exception-header, .trade-header, .event-header, .ticket-header {
