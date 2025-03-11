@@ -13,6 +13,7 @@ import OperationsAlerts from './components/OperationsAlerts';
 import OperationsStatistics from './components/OperationsStatistics';
 import ClientList from './components/details/ClientList';
 import ClientDetail from './components/details/ClientDetail';
+import { fetchData } from './services/api';
 import './assets/styles.css';
 
 // Create a context for navigation
@@ -28,6 +29,7 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [currentView, setCurrentView] = useState('main'); // 'main', 'list', 'detail'
   const [currentId, setCurrentId] = useState(null);
+  const [dashboardData, setDashboardData] = useState(null);
   
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -84,6 +86,19 @@ const App = () => {
     // Add resize listener
     window.addEventListener('resize', handleResize);
     
+    // Load dashboard data
+    const loadDashboardData = async () => {
+      try {
+        const data = await fetchData('dashboard');
+        console.log('Dashboard data loaded:', data);
+        setDashboardData(data);
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      }
+    };
+    
+    loadDashboardData();
+    
     return () => {
       console.log('React App component unmounted');
       document.body.removeAttribute('data-react-app');
@@ -126,7 +141,7 @@ const App = () => {
       case 'operations-alerts':
         return <OperationsAlerts />;
       case 'operations-statistics':
-        return <OperationsStatistics />;
+        return <OperationsStatistics dashboardData={dashboardData} />;
       case 'reports':
         return <Reports />;
       case 'settings':
