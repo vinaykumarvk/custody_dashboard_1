@@ -24,9 +24,11 @@ export const formatNumber = (num, decimals = false) => {
  * Format a currency value
  * @param {number} value - The currency value
  * @param {string} currency - The currency code (default: USD)
+ * @param {number} maximumFractionDigits - Maximum number of decimal places (default: 2)
+ * @param {boolean} useCompactNotation - Whether to use compact notation for large numbers
  * @returns {string} Formatted currency
  */
-export const formatCurrency = (value, currency = 'USD') => {
+export const formatCurrency = (value, currency = 'USD', maximumFractionDigits = 2, useCompactNotation = false) => {
   if (value === null || value === undefined) return '-';
   
   // Parse the value if it's a string
@@ -34,9 +36,19 @@ export const formatCurrency = (value, currency = 'USD') => {
     value = parseFloat(value);
   }
   
+  // Use compact notation for very large numbers (trillions/billions) if requested
+  if (useCompactNotation || value >= 1000000000000) { // >= 1 trillion
+    const trillions = value / 1000000000000;
+    return `$${trillions.toFixed(2)}T`;
+  } else if (useCompactNotation || value >= 1000000000) { // >= 1 billion
+    const billions = value / 1000000000;
+    return `$${billions.toFixed(2)}B`;
+  }
+  
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: currency,
+    maximumFractionDigits: maximumFractionDigits
   }).format(value);
 };
 

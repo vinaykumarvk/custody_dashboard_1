@@ -570,10 +570,9 @@ const Dashboard = () => {
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Total AUC" 
-            value={formatCurrency(assetsUnderCustody?.total || 0, 'USD', 0)} 
+            value={formatCurrency(assetsUnderCustody?.total || 0, 'USD', 2, true)} 
             icon="landmark"
             color="#007C75"
-            valueClassName="smaller-value"
           />
         </div>
         <div className="col-md-9 col-sm-6">
@@ -665,9 +664,8 @@ const Dashboard = () => {
                   <div className="col-md-6" key={index}>
                     <MetricCard 
                       title={`${item.label}`} 
-                      value={formatCurrency(item.value, 'USD', 0)} 
+                      value={formatCurrency(item.value, 'USD', 2, true)} 
                       subtitle={`${((item.value / assetsUnderCustody.total) * 100).toFixed(1)}% of total`}
-                      valueClassName="smaller-value"
                     />
                   </div>
                 ))}
