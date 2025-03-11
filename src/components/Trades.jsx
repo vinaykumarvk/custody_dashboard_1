@@ -340,13 +340,13 @@ const Trades = () => {
         </div>
         
         <div className="col-md-4">
-          <div className="card mb-5">
+          <div className="card">
             <div className="card-header">
               <h2>Asset Class Breakdown</h2>
             </div>
             <div className="card-body">
               <Chart 
-                type="doughnut" 
+                type="pie" 
                 data={prepareTradeByAssetClassChartData()} 
                 options={{
                   responsive: true,
@@ -365,7 +365,54 @@ const Trades = () => {
               />
             </div>
           </div>
-          
+        </div>
+      </div>
+      
+      {/* Recent trades and charts row */}
+      <div className="row mt-4">
+        <div className="col-md-8">
+          <div className="card">
+            <div className="card-header">
+              <div className="d-flex justify-content-between align-items-center">
+                <h2>Recent Trades</h2>
+                <div className="filter-buttons">
+                  <button 
+                    className={`filter-btn ${tradeFilter === 'all' ? 'active' : ''}`}
+                    onClick={() => setTradeFilter('all')}
+                  >
+                    All
+                  </button>
+                  <button 
+                    className={`filter-btn ${tradeFilter === 'completed' ? 'active' : ''}`}
+                    onClick={() => setTradeFilter('completed')}
+                  >
+                    Completed
+                  </button>
+                  <button 
+                    className={`filter-btn ${tradeFilter === 'pending' ? 'active' : ''}`}
+                    onClick={() => setTradeFilter('pending')}
+                  >
+                    Pending
+                  </button>
+                  <button 
+                    className={`filter-btn ${tradeFilter === 'failed' ? 'active' : ''}`}
+                    onClick={() => setTradeFilter('failed')}
+                  >
+                    Failed
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="card-body">
+              <DataTable 
+                data={getFilteredTrades()} 
+                columns={tradeColumns}
+                onRowClick={handleTradeClick}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="col-md-4">
           <div className="card">
             <div className="card-header">
               <h2>Buy vs. Sell Trades</h2>
@@ -391,48 +438,6 @@ const Trades = () => {
               />
             </div>
           </div>
-        </div>
-      </div>
-      
-      {/* Recent trades table */}
-      <div className="card mt-4">
-        <div className="card-header">
-          <div className="d-flex justify-content-between align-items-center">
-            <h2>Recent Trades</h2>
-            <div className="filter-buttons">
-              <button 
-                className={`filter-btn ${tradeFilter === 'all' ? 'active' : ''}`}
-                onClick={() => setTradeFilter('all')}
-              >
-                All
-              </button>
-              <button 
-                className={`filter-btn ${tradeFilter === 'completed' ? 'active' : ''}`}
-                onClick={() => setTradeFilter('completed')}
-              >
-                Completed
-              </button>
-              <button 
-                className={`filter-btn ${tradeFilter === 'pending' ? 'active' : ''}`}
-                onClick={() => setTradeFilter('pending')}
-              >
-                Pending
-              </button>
-              <button 
-                className={`filter-btn ${tradeFilter === 'failed' ? 'active' : ''}`}
-                onClick={() => setTradeFilter('failed')}
-              >
-                Failed
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="card-body">
-          <DataTable 
-            data={getFilteredTrades()} 
-            columns={tradeColumns}
-            onRowClick={handleTradeClick}
-          />
         </div>
       </div>
       
