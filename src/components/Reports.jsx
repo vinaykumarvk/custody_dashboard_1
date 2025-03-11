@@ -219,9 +219,8 @@ const Reports = () => {
                 <div key={report.id} className="col-md-4 mb-4">
                   <div className="report-card card h-100">
                     <div className="card-body">
-                      <div className="d-flex justify-content-between">
+                      <div>
                         <h3 className="card-title">{report.name}</h3>
-                        <span className="report-category badge bg-primary">{report.category}</span>
                       </div>
                       <p className="card-text">{report.description}</p>
                       <div className="report-meta">
@@ -267,9 +266,7 @@ const Reports = () => {
                   {filteredReports.map(report => (
                     <tr key={report.id}>
                       <td>{report.name}</td>
-                      <td>
-                        <span className="badge bg-primary">{report.category}</span>
-                      </td>
+                      <td>{report.category}</td>
                       <td>{report.description}</td>
                       <td>{report.available_formats.join(', ')}</td>
                       <td>{report.last_generated ? formatDate(report.last_generated, 'date') : 'Never'}</td>
@@ -325,14 +322,7 @@ const Reports = () => {
                     <td>{report.category}</td>
                     <td>{formatDate(report.generated_date, 'datetime')}</td>
                     <td>{report.format}</td>
-                    <td>
-                      <span 
-                        className="status-indicator" 
-                        style={{ backgroundColor: getStatusColor(report.status) }}
-                      >
-                        {report.status}
-                      </span>
-                    </td>
+                    <td>{report.status}</td>
                     <td>
                       <div className="btn-group">
                         <button className="btn btn-sm btn-outline-primary">
