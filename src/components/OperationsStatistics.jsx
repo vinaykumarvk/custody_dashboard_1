@@ -35,20 +35,20 @@ const OperationsStatistics = () => {
           exceptions: {
             pendingReconciliation: 64,
             unmatchedInventory: 8,
-            positionsMismatch: 'xx'
+            positionsMismatch: 12
           },
           trades: {
             override: 68,
             repair: 32,
             pending: 8,
-            unswept: 'xx',
-            mispost: 'xx',
-            settlementDue: 'xx'
+            unswept: 15,
+            mispost: 7,
+            settlementDue: 23
           },
           mails: {
             sent: 64,
             notSent: 73,
-            reportFailure: true
+            reportFailure: 5
           },
           events: {
             newEvents: 68,
@@ -56,10 +56,10 @@ const OperationsStatistics = () => {
           },
           tickets: {
             breachedLimit: 27,
-            closureDueToday: true,
-            otherOpen: 'xx'
+            closureDueToday: 14,
+            otherOpen: 31
           },
-          pendingPayments: 'xx'
+          pendingPayments: 42
         });
         setLoading(false);
       } catch (err) {
@@ -164,10 +164,7 @@ const OperationsStatistics = () => {
             <div className="exception-header">Positions mismatch CDSLs</div>
             <div className="exception-value">{data.exceptions.positionsMismatch}</div>
           </div>
-          {/* Routing section */}
-          <div className="exception-item routing-section">
-            <div className="routing-text">Routing to queue on click</div>
-          </div>
+
         </div>
       </div>
 
@@ -224,11 +221,7 @@ const OperationsStatistics = () => {
             <h3>Report Failure</h3>
           </div>
           <div className="stats-card-body center-content">
-            <div className="value-indicator">
-              {data.mails.reportFailure ? 
-                <i className="fas fa-exclamation-triangle text-warning"></i> : 
-                <i className="fas fa-check-circle text-success"></i>}
-            </div>
+            <div className="value-large">{data.mails.reportFailure}</div>
           </div>
         </div>
       </div>
@@ -256,11 +249,7 @@ const OperationsStatistics = () => {
           </div>
           <div className="ticket-section">
             <div className="ticket-header">Tickets closure due today</div>
-            <div className="ticket-value">
-              {data.tickets.closureDueToday ? 
-                <i className="fas fa-exclamation-triangle text-warning"></i> : 
-                <i className="fas fa-check-circle text-success"></i>}
-            </div>
+            <div className="ticket-value">{data.tickets.closureDueToday}</div>
           </div>
           <div className="ticket-section">
             <div className="ticket-header">Other open tickets</div>
