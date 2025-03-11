@@ -1475,10 +1475,29 @@ const getMockData = (endpoint) => {
       ]
     },
     'corporate_actions': {
-      total_upcoming: 46,
+      total_actions: 84,
+      upcoming_count: 46,
+      total_upcoming: 46, 
       high_priority: 8,
       pending_elections: 12,
       total_value: 3827500,
+      
+      // Status breakdown for the Corporate Actions component
+      status_breakdown: [
+        { status: 'Completed', count: 28 },
+        { status: 'Pending', count: 36 },
+        { status: 'Announced', count: 12 },
+        { status: 'Processing', count: 8 }
+      ],
+      
+      // Action types breakdown for the chart
+      action_types: [
+        { type: 'Dividend', count: 32 },
+        { type: 'Stock Split', count: 14 },
+        { type: 'Rights Issue', count: 18 },
+        { type: 'Merger', count: 12 },
+        { type: 'Redemption', count: 8 }
+      ],
       
       // Monthly history of corporate actions
       monthly_history: [
