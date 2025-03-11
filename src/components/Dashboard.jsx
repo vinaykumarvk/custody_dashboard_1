@@ -500,7 +500,7 @@ const Dashboard = () => {
             </div>
             <div className="card-body">
               <Chart 
-                type="doughnut"
+                type="pie"
                 data={customerSegmentChartData}
                 height="300px"
                 options={{
@@ -563,7 +563,7 @@ const Dashboard = () => {
             </div>
             <div className="card-body">
               <Chart 
-                type="doughnut"
+                type="pie"
                 data={corporateActionTypesData}
                 height="300px"
                 options={{
