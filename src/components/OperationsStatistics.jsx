@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
 import { formatNumber, formatCurrency, formatPercentage } from '../utils';
+import { NavigationContext } from '../App';
 
 const OperationsStatistics = ({ dashboardData }) => {
   const [data, setData] = useState(null);

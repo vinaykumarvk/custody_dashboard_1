@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
 import { getClientDetailsById } from '../../mock-data/clientsData';
 import { formatDate } from '../../utils';
+import { NavigationContext } from '../../App';
 
-const ClientDetail = () => {
-  const { clientId } = useParams();
+const ClientDetail = ({ clientId }) => {
   const [client, setClient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [notification, setNotification] = useState(null);
-  const navigate = useNavigate();
+  const { navigateTo } = useContext(NavigationContext);
 
   useEffect(() => {
     // Simulate API fetch
@@ -59,7 +58,7 @@ const ClientDetail = () => {
   };
 
   const handleBack = () => {
-    navigate('/clients');
+    navigateTo('back');
   };
 
   const switchTab = (tab) => {
@@ -75,7 +74,7 @@ const ClientDetail = () => {
       <div className="error-container">
         <h2>Client Not Found</h2>
         <p>The requested client could not be found.</p>
-        <button className="btn btn-primary" onClick={() => navigate('/clients')}>
+        <button className="btn btn-primary" onClick={() => navigateTo('back')}>
           Back to Client List
         </button>
       </div>

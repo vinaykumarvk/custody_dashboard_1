@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
@@ -16,50 +15,59 @@ import ClientList from './components/details/ClientList';
 import ClientDetail from './components/details/ClientDetail';
 import './assets/styles.css';
 
-// Main App component with React Router integration
-const AppContent = () => {
+// Create a context for navigation
+export const NavigationContext = React.createContext({
+  navigateTo: () => {},
+  currentPage: '',
+  currentView: '',
+  currentId: null
+});
+
+const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const navigate = useNavigate();
-  const location = useLocation();
-  
-  // Convert path to activePage format
-  const getActivePageFromPath = (path) => {
-    // Extract the first segment of the path
-    const segment = path.split('/')[1] || 'dashboard';
-    return segment;
-  };
-  
-  const [activePage, setActivePage] = useState(() => getActivePageFromPath(window.location.pathname));
+  const [currentPage, setCurrentPage] = useState('dashboard');
+  const [currentView, setCurrentView] = useState('main'); // 'main', 'list', 'detail'
+  const [currentId, setCurrentId] = useState(null);
   
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const handlePageChange = (pageId) => {
-    setActivePage(pageId);
-    console.log(`Navigating to page: ${pageId}`);
-    navigate(`/${pageId}`);
-  };
-
-  useEffect(() => {
-    // Update activePage when location changes
-    const currentPage = getActivePageFromPath(location.pathname);
-    if (currentPage !== activePage && !location.pathname.includes('/clients/')) {
-      setActivePage(currentPage);
+  // Handle navigation between pages/views
+  const navigateTo = (destination, id = null) => {
+    console.log(`Navigating to: ${destination}`, id ? `with ID: ${id}` : '');
+    
+    if (destination === 'back') {
+      // Handle back navigation
+      if (currentView === 'detail') {
+        setCurrentView('list');
+        setCurrentId(null);
+      } else if (currentView === 'list') {
+        setCurrentView('main');
+        setCurrentPage('operations-statistics');
+      }
+      return;
     }
-  }, [location.pathname, activePage]);
+    
+    if (destination.includes('/')) {
+      // Handle path-like navigation (e.g., "clients/1001")
+      const [page, itemId] = destination.split('/');
+      setCurrentPage(page);
+      setCurrentView(itemId ? 'detail' : 'list');
+      setCurrentId(itemId ? parseInt(itemId) : null);
+    } else {
+      // Handle simple page navigation
+      setCurrentPage(destination);
+      setCurrentView('main');
+      setCurrentId(null);
+    }
+  };
 
   useEffect(() => {
     console.log('React App component mounted');
     
     // Apply a custom attribute to identify React-rendered content
     document.body.setAttribute('data-react-app', 'true');
-    
-    // Check for any Angular elements that might exist
-    const angularElements = document.querySelectorAll('[ng-view], [ng-app], [ng-controller]');
-    if (angularElements.length > 0) {
-      console.warn('Angular elements still detected after React mount:', angularElements);
-    }
     
     // Add responsive sidebar handling
     const handleResize = () => {
@@ -83,60 +91,76 @@ const AppContent = () => {
     };
   }, []);
 
-  // Check if we're on a detail page
-  const isDetailPage = location.pathname.startsWith('/clients/') && location.pathname.split('/').length > 2;
+  // Create the navigation context value
+  const navigationContext = {
+    navigateTo,
+    currentPage,
+    currentView,
+    currentId
+  };
+
+  // Render the appropriate component based on current page and view
+  const renderContent = () => {
+    if (currentView === 'list' && currentPage === 'clients') {
+      return <ClientList />;
+    }
+    
+    if (currentView === 'detail' && currentPage === 'clients' && currentId) {
+      return <ClientDetail clientId={currentId} />;
+    }
+    
+    // Main views
+    switch (currentPage) {
+      case 'dashboard':
+        return <Dashboard />;
+      case 'trades':
+        return <Trades />;
+      case 'settlements':
+        return <Settlements />;
+      case 'corporate-actions':
+        return <CorporateActions />;
+      case 'customers':
+        return <Customers />;
+      case 'income':
+        return <Income />;
+      case 'operations-alerts':
+        return <OperationsAlerts />;
+      case 'operations-statistics':
+        return <OperationsStatistics />;
+      case 'reports':
+        return <Reports />;
+      case 'settings':
+        return <Settings />;
+      default:
+        return <Dashboard />;
+    }
+  };
 
   return (
-    <div className={`app-container ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`} data-react-root="true">
-      <Header 
-        userName="Smart Bank Admin" 
-        toggleSidebar={toggleSidebar} 
-        sidebarOpen={sidebarOpen}
-      />
-      
-      <div className="app-content">
-        {!isDetailPage && (
-          <Sidebar 
-            isOpen={sidebarOpen} 
-            onClose={toggleSidebar}
-            activePage={activePage}
-            onPageChange={handlePageChange}
-          />
-        )}
+    <NavigationContext.Provider value={navigationContext}>
+      <div className={`app-container ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`} data-react-root="true">
+        <Header 
+          userName="Smart Bank Admin" 
+          toggleSidebar={toggleSidebar} 
+          sidebarOpen={sidebarOpen}
+        />
         
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/trades" element={<Trades />} />
-            <Route path="/settlements" element={<Settlements />} />
-            <Route path="/corporate-actions" element={<CorporateActions />} />
-            <Route path="/customers" element={<Customers />} />
-            <Route path="/income" element={<Income />} />
-            <Route path="/operations-alerts" element={<OperationsAlerts />} />
-            <Route path="/operations-statistics" element={<OperationsStatistics />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/settings" element={<Settings />} />
-            
-            {/* Client drill-down routes */}
-            <Route path="/clients" element={<ClientList />} />
-            <Route path="/clients/:clientId" element={<ClientDetail />} />
-            
-            {/* Fallback route */}
-            <Route path="*" element={<Dashboard />} />
-          </Routes>
-        </main>
+        <div className="app-content">
+          {currentView === 'main' && (
+            <Sidebar 
+              isOpen={sidebarOpen} 
+              onClose={toggleSidebar}
+              activePage={currentPage}
+              onPageChange={(pageId) => navigateTo(pageId)}
+            />
+          )}
+          
+          <main className="main-content">
+            {renderContent()}
+          </main>
+        </div>
       </div>
-    </div>
-  );
-};
-
-// Wrapper component to provide Router context
-const App = () => {
-  return (
-    <Router>
-      <AppContent />
-    </Router>
+    </NavigationContext.Provider>
   );
 };
 

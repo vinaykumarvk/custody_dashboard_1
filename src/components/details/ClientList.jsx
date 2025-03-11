@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
 import { pendingClients } from '../../mock-data/clientsData';
 import { formatDate } from '../../utils';
+import { NavigationContext } from '../../App';
 
 const ClientList = () => {
   const [clients, setClients] = useState([]);
@@ -9,7 +9,7 @@ const ClientList = () => {
   const [sortConfig, setSortConfig] = useState({ key: 'priority', direction: 'desc' });
   const [filter, setFilter] = useState('');
   
-  const navigate = useNavigate();
+  const { navigateTo } = useContext(NavigationContext);
 
   useEffect(() => {
     // Simulate API fetch
@@ -70,7 +70,7 @@ const ClientList = () => {
 
   // Handle row click to navigate to details
   const handleRowClick = (clientId) => {
-    navigate(`/clients/${clientId}`);
+    navigateTo(`clients/${clientId}`);
   };
 
   // Get class for priority label
@@ -207,7 +207,7 @@ const ClientList = () => {
       <div className="list-footer">
         <div className="record-count">Showing {getFilteredClients().length} of {clients.length} clients</div>
         <div className="action-buttons">
-          <button className="btn btn-secondary" onClick={() => navigate('/operations-statistics')}>
+          <button className="btn btn-secondary" onClick={() => navigateTo('back')}>
             Back to Dashboard
           </button>
         </div>
