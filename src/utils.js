@@ -1384,6 +1384,24 @@ const getMockData = (endpoint) => {
       tradingVolume: 2547893421,
       pendingTrades: 237,
       openEvents: 89,
+      assetsUnderCustody: {
+        total: 4259873651294, // ~4.26 trillion
+        byAssetClass: [
+          { label: 'Equities', value: 1893284574325 }, // ~1.89 trillion
+          { label: 'Fixed Income', value: 1532753514466 }, // ~1.53 trillion
+          { label: 'Alternative Assets', value: 532484206412 }, // ~532 billion
+          { label: 'Cash & Equivalents', value: 301351356091 } // ~301 billion
+        ],
+        history: [
+          { month: '2024-09', value: 3982165498712 },
+          { month: '2024-10', value: 4053287691423 },
+          { month: '2024-11', value: 4089543287146 },
+          { month: '2024-12', value: 4156329841275 },
+          { month: '2025-01', value: 4201478932615 },
+          { month: '2025-02', value: 4227845216748 },
+          { month: '2025-03', value: 4259873651294 }
+        ]
+      },
       corporateActions: {
         mandatory: 34,
         voluntary: 12,
