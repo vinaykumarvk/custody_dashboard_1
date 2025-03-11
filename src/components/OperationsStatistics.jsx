@@ -144,13 +144,6 @@ const OperationsStatistics = () => {
             {renderProcessItem('Fund Obligation Report', data.processesDueToday2.fundObligationReport)}
           </div>
         </div>
-        
-        {/* Information note */}
-        <div className="stats-card note-card">
-          <div className="note-text">
-            Note - access provisioning and dynamic rendering to be factored
-          </div>
-        </div>
       </div>
 
       {/* Exceptions section */}
