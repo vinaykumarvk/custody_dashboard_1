@@ -4,7 +4,7 @@ import { NavigationContext } from '../App';
 
 const OperationsStatistics = ({ dashboardData }) => {
   const [data, setData] = useState(null);
-  const navigate = useNavigate();
+  const { navigateTo } = useContext(NavigationContext);
 
   useEffect(() => {
     // This would typically be an API call in a real application
@@ -15,7 +15,7 @@ const OperationsStatistics = ({ dashboardData }) => {
     // Handle navigation to the appropriate list based on type
     switch(type) {
       case 'clients':
-        navigate('/clients');
+        navigateTo('clients');
         break;
       case 'trades':
         // Will be implemented later
