@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { formatNumber, formatCurrency, formatPercentage } from '../utils';
 import { NavigationContext } from '../App';
+import NotificationButton from './NotificationButton';
 
 const OperationsStatistics = ({ dashboardData }) => {
   const [data, setData] = useState(null);
@@ -179,7 +180,17 @@ const OperationsStatistics = ({ dashboardData }) => {
                 className="exception-item clickable" 
                 onClick={() => handleExceptionClick('trade')}
               >
-                <div className="exception-header">Trade Breaks</div>
+                <div className="exception-header">
+                  Trade Breaks
+                  <NotificationButton 
+                    count={Math.floor((data.pendingTrades ? Math.floor(data.pendingTrades * 0.15) : 36) * 0.25)} 
+                    type="urgent" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      alert('High priority trade breaks require immediate attention');
+                    }}
+                  />
+                </div>
                 <div className="exception-value">{data.pendingTrades ? Math.floor(data.pendingTrades * 0.15) : 36}</div>
               </div>
               <div 
