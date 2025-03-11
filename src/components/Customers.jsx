@@ -148,7 +148,7 @@ const Customers = () => {
       </div>
       
       {/* Metrics summary */}
-      <div className="row">
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3">
           <MetricCard 
             title="Total Customers" 
@@ -188,7 +188,7 @@ const Customers = () => {
       </div>
       
       <div className="dashboard-content">
-        <div className="row">
+        <div className="row g-3 mb-4 equal-height">
           <div className="col-8">
             <div className="card mb-4">
               <div className="card-header">
@@ -270,7 +270,7 @@ const Customers = () => {
           </div>
         </div>
         
-        <div className="row">
+        <div className="row g-3 mb-4 equal-height">
           <div className="col-4">
             <div className="card mb-4">
               <div className="card-header">
