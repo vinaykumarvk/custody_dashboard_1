@@ -1,302 +1,278 @@
 import React, { useState, useEffect } from 'react';
-import { fetchData } from '../services/api';
-import MetricCard from './MetricCard';
+import { useNavigate } from 'react-router-dom';
+import { formatNumber, formatCurrency, formatPercentage } from '../utils';
 
-const OperationsStatistics = () => {
+const OperationsStatistics = ({ dashboardData }) => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        // In a real implementation, this would fetch from an API
-        // For now, we'll use static mock data to match the DR-01 document
-        const toBeApprovedItems = {
-          client: 20,
-          clientExchange: 30,
-          clientDepository: 1,
-          party: 34,
-          bankAccount: 89
-        };
-        
-        // Calculate total to be approved
-        const totalToBeApproved = Object.values(toBeApprovedItems).reduce((a, b) => a + b, 0);
-        
-        setData({
-          toBeApproved: {
-            ...toBeApprovedItems,
-            total: totalToBeApproved
-          },
-          processesDoneToday: {
-            sebiMessage: true,
-            globalSettlement: true,
-            priceUpload: true
-          },
-          processesDueToday2: {
-            dpInstructions: true,
-            mfts: true,
-            earlyPayoutReport: true,
-            fundObligationReport: true
-          },
-          exceptions: {
-            pendingReconciliation: 64,
-            unmatchedInventory: 8,
-            positionsMismatch: 12
-          },
-          trades: {
-            override: 68,
-            repair: 32,
-            pending: 8,
-            unswept: 15,
-            mispost: 7,
-            settlementDue: 23
-          },
-          mails: {
-            sent: 64,
-            notSent: 73,
-            reportFailure: 5
-          },
-          events: {
-            newEvents: 68,
-            paymentsEvents: 62
-          },
-          tickets: {
-            breachedLimit: 27,
-            closureDueToday: 14,
-            otherOpen: 31
-          },
-          pendingPayments: 42
-        });
-        setLoading(false);
-      } catch (err) {
-        console.error('Error loading operations statistics data:', err);
-        setError('Unable to load operations statistics data');
-        setLoading(false);
-      }
-    };
+    // This would typically be an API call in a real application
+    setData(dashboardData);
+  }, [dashboardData]);
 
-    loadData();
-  }, []);
+  const handleApprovalClick = (type) => {
+    // Handle navigation to the appropriate list based on type
+    switch(type) {
+      case 'clients':
+        navigate('/clients');
+        break;
+      case 'trades':
+        // Will be implemented later
+        alert('Trade approvals drill-down will be implemented in the next phase');
+        break;
+      case 'settlements':
+        // Will be implemented later
+        alert('Settlement approvals drill-down will be implemented in the next phase');
+        break;
+      default:
+        console.log('Unknown approval type:', type);
+    }
+  };
 
-  if (loading) {
-    return <div className="loading">Loading statistics data...</div>;
-  }
+  const handleExceptionClick = (type) => {
+    // Will be implemented in future phases
+    alert(`${type} exceptions drill-down will be implemented in the next phase`);
+  };
 
-  if (error) {
-    return <div className="error">{error}</div>;
-  }
+  const handleTradeClick = (type) => {
+    // Will be implemented in future phases
+    alert(`${type} trades drill-down will be implemented in the next phase`);
+  };
 
-  if (!data) {
-    return <div className="no-data">No operations statistics data available.</div>;
-  }
+  const handleEventClick = (type) => {
+    // Will be implemented in future phases
+    alert(`${type} events drill-down will be implemented in the next phase`);
+  };
 
-  // Helper for rendering item row with label and count
-  const renderItemRow = (label, count) => (
-    <div className="approval-item">
-      <span className="approval-label">{label}</span>
-      <span className="approval-count">{count}</span>
-    </div>
-  );
+  const handleTicketClick = (type) => {
+    // Will be implemented in future phases
+    alert(`${type} tickets drill-down will be implemented in the next phase`);
+  };
 
-  // Helper for rendering process items
-  const renderProcessItem = (label, active) => (
-    <div className={`process-item ${active ? 'active' : ''}`}>
-      {label}
-    </div>
-  );
+  if (!data) return <div className="loading">Loading dashboard data...</div>;
 
   return (
     <div className="operations-statistics">
-      <div className="page-header">
-        <h1>Operations</h1>
-      </div>
+      <h1 className="page-title">Operations Dashboard</h1>
       
-      {/* ACTIVITIES SECTION */}
-      <div className="section-header">
-        <h2>Activities</h2>
-      </div>
-      
-      <div className="stats-grid">
-        {/* To Be Approved section */}
-        <div className="stats-card">
-          <div className="stats-card-header">
-            <h3>To be Approved ({data.toBeApproved.total})</h3>
+      <div className="stats-container">
+        <div className="stats-large-card">
+          <h2 className="card-title">Activities</h2>
+          
+          <div className="to-approve-section">
+            <h3 className="section-title">To Be Approved</h3>
+            <div className="approval-grid">
+              <div 
+                className="approval-item clickable" 
+                onClick={() => handleApprovalClick('clients')}
+              >
+                <div className="approval-header">Client Approvals</div>
+                <div className="approval-value">{data.totalCustomers > 0 ? Math.floor(data.totalCustomers * 0.07) : 20}</div>
+              </div>
+              <div 
+                className="approval-item clickable" 
+                onClick={() => handleApprovalClick('trades')}
+              >
+                <div className="approval-header">Trade Approvals</div>
+                <div className="approval-value">{data.pendingTrades || 0}</div>
+              </div>
+              <div 
+                className="approval-item clickable" 
+                onClick={() => handleApprovalClick('settlements')}
+              >
+                <div className="approval-header">Settlement Approvals</div>
+                <div className="approval-value">{data.pendingTrades ? Math.floor(data.pendingTrades * 0.8) : 189}</div>
+              </div>
+            </div>
           </div>
-          <div className="stats-card-body">
-            {renderItemRow('Client', data.toBeApproved.client)}
-            {renderItemRow('Client Exchange', data.toBeApproved.clientExchange)}
-            {renderItemRow('Client Depository', data.toBeApproved.clientDepository)}
-            {renderItemRow('Party', data.toBeApproved.party)}
-            {renderItemRow('Bank Account', data.toBeApproved.bankAccount)}
+          
+          <div className="trades-section">
+            <h3 className="section-title">Trades</h3>
+            <div className="trades-grid">
+              <div 
+                className="trade-section clickable" 
+                onClick={() => handleTradeClick('total')}
+              >
+                <div className="trade-header">Total Trades</div>
+                <div className="trade-value">{formatNumber(data.totalTrades || 0)}</div>
+              </div>
+              <div 
+                className="trade-section clickable" 
+                onClick={() => handleTradeClick('volume')}
+              >
+                <div className="trade-header">Trading Volume</div>
+                <div className="trade-value">{formatCurrency(data.tradingVolume || 0)}</div>
+              </div>
+              <div 
+                className="trade-section clickable" 
+                onClick={() => handleTradeClick('pending')}
+              >
+                <div className="trade-header">Pending Trades</div>
+                <div className="trade-value">{formatNumber(data.pendingTrades || 0)}</div>
+              </div>
+              <div 
+                className="trade-section clickable" 
+                onClick={() => handleTradeClick('execution')}
+              >
+                <div className="trade-header">Avg. Execution Time</div>
+                <div className="trade-value">3.4s</div>
+              </div>
+              <div 
+                className="trade-section clickable" 
+                onClick={() => handleTradeClick('settlement')}
+              >
+                <div className="trade-header">Avg. Settlement Time</div>
+                <div className="trade-value">T+2</div>
+              </div>
+              <div 
+                className="trade-section clickable" 
+                onClick={() => handleTradeClick('failure')}
+              >
+                <div className="trade-header">Trade Failure Rate</div>
+                <div className="trade-value">{formatPercentage(0.023)}</div>
+              </div>
+            </div>
           </div>
-        </div>
-
-        {/* Processes Done Today section */}
-        <div className="stats-card">
-          <div className="stats-card-header">
-            <h3>Processes Done Today</h3>
-          </div>
-          <div className="stats-card-body">
-            {renderProcessItem('SEBI Message', data.processesDoneToday.sebiMessage)}
-            {renderProcessItem('Global settlement', data.processesDoneToday.globalSettlement)}
-            {renderProcessItem('Price upload', data.processesDoneToday.priceUpload)}
-          </div>
-        </div>
-
-        {/* Processes Due Today section */}
-        <div className="stats-card">
-          <div className="stats-card-header">
-            <h3>Processes Due Today</h3>
-          </div>
-          <div className="stats-card-body">
-            {renderProcessItem('DP instructions', data.processesDueToday2.dpInstructions)}
-            {renderProcessItem('MFTS', data.processesDueToday2.mfts)}
-            {renderProcessItem('Early Payout Report', data.processesDueToday2.earlyPayoutReport)}
-            {renderProcessItem('Fund Obligation Report', data.processesDueToday2.fundObligationReport)}
-          </div>
-        </div>
-      </div>
-
-      {/* EXCEPTIONS SECTION */}
-      <div className="section-header">
-        <h2>Exceptions</h2>
-      </div>
-      
-      {/* Holdings subsection */}
-      <div className="subsection-header">
-        <h3>Holdings</h3>
-      </div>
-      <div className="stats-large-card">
-        <div className="stats-card-body exceptions-grid">
-          <div className="exception-item">
-            <div className="exception-header">Pending Reconciliation & Valuation</div>
-            <div className="exception-value">{data.exceptions.pendingReconciliation}</div>
-          </div>
-          <div className="exception-item">
-            <div className="exception-header">Unmatched inventory NDCs</div>
-            <div className="exception-value">{data.exceptions.unmatchedInventory}</div>
-          </div>
-          <div className="exception-item">
-            <div className="exception-header">Positions mismatch CDSLs</div>
-            <div className="exception-value">{data.exceptions.positionsMismatch}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Trades subsection */}
-      <div className="subsection-header">
-        <h3>Trades</h3>
-      </div>
-      <div className="stats-large-card">
-        <div className="stats-card-body trades-grid">
-          <div className="trade-section">
-            <div className="trade-header">Override Trades</div>
-            <div className="trade-value">{data.trades.override}</div>
-          </div>
-          <div className="trade-section">
-            <div className="trade-header">Repair Trades</div>
-            <div className="trade-value">{data.trades.repair}</div>
-          </div>
-          <div className="trade-section">
-            <div className="trade-header">Pending Orders</div>
-            <div className="trade-value">{data.trades.pending}</div>
-          </div>
-          <div className="trade-section">
-            <div className="trade-header">Unswept Trades</div>
-            <div className="trade-value">{data.trades.unswept}</div>
-          </div>
-          <div className="trade-section">
-            <div className="trade-header">Mispost Trades</div>
-            <div className="trade-value">{data.trades.mispost}</div>
-          </div>
-          <div className="trade-section">
-            <div className="trade-header">Settlement Due</div>
-            <div className="trade-value">{data.trades.settlementDue}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Communication subsection */}
-      <div className="subsection-header">
-        <h3>Communication</h3>
-      </div>
-      <div className="stats-row">
-        <div className="stats-card">
-          <div className="stats-card-header">
-            <h3>Mails Sent</h3>
-          </div>
-          <div className="stats-card-body center-content">
-            <div className="value-large">{data.mails.sent}</div>
+          
+          <div className="events-section">
+            <h3 className="section-title">Corporate Actions</h3>
+            <div className="events-grid">
+              <div 
+                className="event-section clickable" 
+                onClick={() => handleEventClick('total')}
+              >
+                <div className="event-header">Total Events</div>
+                <div className="event-value">{data.corporateActions?.total || 0}</div>
+              </div>
+              <div 
+                className="event-section clickable" 
+                onClick={() => handleEventClick('mandatory')}
+              >
+                <div className="event-header">Mandatory Events</div>
+                <div className="event-value">{data.corporateActions?.mandatory || 0}</div>
+              </div>
+              <div 
+                className="event-section clickable" 
+                onClick={() => handleEventClick('voluntary')}
+              >
+                <div className="event-header">Voluntary Events</div>
+                <div className="event-value">{data.corporateActions?.voluntary || 0}</div>
+              </div>
+              <div 
+                className="event-section clickable" 
+                onClick={() => handleEventClick('pending')}
+              >
+                <div className="event-header">Pending Elections</div>
+                <div className="event-value">{data.corporateActions?.pending_elections || 0}</div>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="stats-card">
-          <div className="stats-card-header">
-            <h3>Mails Not Sent</h3>
+        
+        <div className="stats-large-card">
+          <h2 className="card-title">Exceptions</h2>
+          
+          <div className="exceptions-section">
+            <div className="exceptions-grid">
+              <div 
+                className="exception-item clickable" 
+                onClick={() => handleExceptionClick('trade')}
+              >
+                <div className="exception-header">Trade Breaks</div>
+                <div className="exception-value">{data.pendingTrades ? Math.floor(data.pendingTrades * 0.15) : 36}</div>
+              </div>
+              <div 
+                className="exception-item clickable" 
+                onClick={() => handleExceptionClick('settlement')}
+              >
+                <div className="exception-header">Settlement Fails</div>
+                <div className="exception-value">{data.pendingTrades ? Math.floor(data.pendingTrades * 0.18) : 43}</div>
+              </div>
+              <div 
+                className="exception-item clickable" 
+                onClick={() => handleExceptionClick('reconciliation')}
+              >
+                <div className="exception-header">Reconciliation Breaks</div>
+                <div className="exception-value">{data.pendingTrades ? Math.floor(data.pendingTrades * 0.08) : 19}</div>
+              </div>
+              <div 
+                className="exception-item clickable" 
+                onClick={() => handleExceptionClick('corporate')}
+              >
+                <div className="exception-header">Corporate Actions</div>
+                <div className="exception-value">{data.corporateActions?.high_priority || 8}</div>
+              </div>
+              <div 
+                className="exception-item clickable" 
+                onClick={() => handleExceptionClick('cash')}
+              >
+                <div className="exception-header">Cash Breaks</div>
+                <div className="exception-value">{data.pendingTrades ? Math.floor(data.pendingTrades * 0.12) : 28}</div>
+              </div>
+              <div 
+                className="exception-item clickable" 
+                onClick={() => handleExceptionClick('position')}
+              >
+                <div className="exception-header">Position Breaks</div>
+                <div className="exception-value">{data.pendingTrades ? Math.floor(data.pendingTrades * 0.09) : 21}</div>
+              </div>
+            </div>
           </div>
-          <div className="stats-card-body center-content">
-            <div className="value-large">{data.mails.notSent}</div>
+          
+          <div className="tickets-section">
+            <h3 className="section-title">Tickets</h3>
+            <div className="tickets-grid">
+              <div 
+                className="ticket-section clickable" 
+                onClick={() => handleTicketClick('open')}
+              >
+                <div className="ticket-header">Open Tickets</div>
+                <div className="ticket-value">54</div>
+              </div>
+              <div 
+                className="ticket-section clickable" 
+                onClick={() => handleTicketClick('urgent')}
+              >
+                <div className="ticket-header">Urgent Tickets</div>
+                <div className="ticket-value">12</div>
+              </div>
+              <div 
+                className="ticket-section clickable" 
+                onClick={() => handleTicketClick('aging')}
+              >
+                <div className="ticket-header">Avg. Ticket Age</div>
+                <div className="ticket-value">3.2 days</div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="stats-card">
-          <div className="stats-card-header">
-            <h3>Report Failure</h3>
+          
+          <div className="payments-section">
+            <h3 className="section-title">Payments</h3>
+            <div className="tickets-grid">
+              <div 
+                className="ticket-section clickable" 
+                onClick={() => handleTicketClick('pending-payments')}
+              >
+                <div className="ticket-header">Pending Payments</div>
+                <div className="ticket-value">87</div>
+              </div>
+              <div 
+                className="ticket-section clickable" 
+                onClick={() => handleTicketClick('failed-payments')}
+              >
+                <div className="ticket-header">Failed Payments</div>
+                <div className="ticket-value">9</div>
+              </div>
+              <div 
+                className="ticket-section clickable" 
+                onClick={() => handleTicketClick('payment-value')}
+              >
+                <div className="ticket-header">Total Pending Value</div>
+                <div className="ticket-value">{formatCurrency(13589742)}</div>
+              </div>
+            </div>
           </div>
-          <div className="stats-card-body center-content">
-            <div className="value-large">{data.mails.reportFailure}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Corporate Actions subsection */}
-      <div className="subsection-header">
-        <h3>Corporate Actions</h3>
-      </div>
-      <div className="stats-large-card">
-        <div className="stats-card-body events-grid">
-          <div className="event-section">
-            <div className="event-header">New Event due Today</div>
-            <div className="event-value">{data.events.newEvents}</div>
-          </div>
-          <div className="event-section">
-            <div className="event-header">Events Payment Due Today</div>
-            <div className="event-value">{data.events.paymentsEvents}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tickets subsection */}
-      <div className="subsection-header">
-        <h3>Tickets</h3>
-      </div>
-      <div className="stats-large-card">
-        <div className="stats-card-body tickets-grid">
-          <div className="ticket-section">
-            <div className="ticket-header">Tickets Breached Limit</div>
-            <div className="ticket-value">{data.tickets.breachedLimit}</div>
-          </div>
-          <div className="ticket-section">
-            <div className="ticket-header">Tickets closure due today</div>
-            <div className="ticket-value">{data.tickets.closureDueToday}</div>
-          </div>
-          <div className="ticket-section">
-            <div className="ticket-header">Other open tickets</div>
-            <div className="ticket-value">{data.tickets.otherOpen}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Payments subsection */}
-      <div className="subsection-header">
-        <h3>Payments</h3>
-      </div>
-      <div className="stats-card">
-        <div className="stats-card-header">
-          <h3>Pending Payments</h3>
-        </div>
-        <div className="stats-card-body center-content">
-          <div className="value-large">{data.pendingPayments}</div>
         </div>
       </div>
     </div>

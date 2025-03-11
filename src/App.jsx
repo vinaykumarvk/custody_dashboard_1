@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
@@ -11,11 +12,24 @@ import Reports from './components/Reports';
 import Settings from './components/Settings';
 import OperationsAlerts from './components/OperationsAlerts';
 import OperationsStatistics from './components/OperationsStatistics';
+import ClientList from './components/details/ClientList';
+import ClientDetail from './components/details/ClientDetail';
 import './assets/styles.css';
 
-const App = () => {
+// Main App component with React Router integration
+const AppContent = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activePage, setActivePage] = useState('dashboard');
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Convert path to activePage format
+  const getActivePageFromPath = (path) => {
+    // Extract the first segment of the path
+    const segment = path.split('/')[1] || 'dashboard';
+    return segment;
+  };
+  
+  const [activePage, setActivePage] = useState(() => getActivePageFromPath(window.location.pathname));
   
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -24,7 +38,16 @@ const App = () => {
   const handlePageChange = (pageId) => {
     setActivePage(pageId);
     console.log(`Navigating to page: ${pageId}`);
+    navigate(`/${pageId}`);
   };
+
+  useEffect(() => {
+    // Update activePage when location changes
+    const currentPage = getActivePageFromPath(location.pathname);
+    if (currentPage !== activePage && !location.pathname.includes('/clients/')) {
+      setActivePage(currentPage);
+    }
+  }, [location.pathname, activePage]);
 
   useEffect(() => {
     console.log('React App component mounted');
@@ -60,33 +83,8 @@ const App = () => {
     };
   }, []);
 
-  const renderPage = () => {
-    // Switch between different page components based on activePage
-    switch (activePage) {
-      case 'dashboard':
-        return <Dashboard />;
-      case 'trades':
-        return <Trades />;
-      case 'settlements':
-        return <Settlements />;
-      case 'corporate-actions':
-        return <CorporateActions />;
-      case 'customers':
-        return <Customers />;
-      case 'income':
-        return <Income />;
-      case 'operations-alerts':
-        return <OperationsAlerts />;
-      case 'operations-statistics':
-        return <OperationsStatistics />;
-      case 'reports':
-        return <Reports />;
-      case 'settings':
-        return <Settings />;
-      default:
-        return <Dashboard />;
-    }
-  };
+  // Check if we're on a detail page
+  const isDetailPage = location.pathname.startsWith('/clients/') && location.pathname.split('/').length > 2;
 
   return (
     <div className={`app-container ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`} data-react-root="true">
@@ -97,18 +95,48 @@ const App = () => {
       />
       
       <div className="app-content">
-        <Sidebar 
-          isOpen={sidebarOpen} 
-          onClose={toggleSidebar}
-          activePage={activePage}
-          onPageChange={handlePageChange}
-        />
+        {!isDetailPage && (
+          <Sidebar 
+            isOpen={sidebarOpen} 
+            onClose={toggleSidebar}
+            activePage={activePage}
+            onPageChange={handlePageChange}
+          />
+        )}
         
         <main className="main-content">
-          {renderPage()}
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/trades" element={<Trades />} />
+            <Route path="/settlements" element={<Settlements />} />
+            <Route path="/corporate-actions" element={<CorporateActions />} />
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/income" element={<Income />} />
+            <Route path="/operations-alerts" element={<OperationsAlerts />} />
+            <Route path="/operations-statistics" element={<OperationsStatistics />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/settings" element={<Settings />} />
+            
+            {/* Client drill-down routes */}
+            <Route path="/clients" element={<ClientList />} />
+            <Route path="/clients/:clientId" element={<ClientDetail />} />
+            
+            {/* Fallback route */}
+            <Route path="*" element={<Dashboard />} />
+          </Routes>
         </main>
       </div>
     </div>
+  );
+};
+
+// Wrapper component to provide Router context
+const App = () => {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 };
 
