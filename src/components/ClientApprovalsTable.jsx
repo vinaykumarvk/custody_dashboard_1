@@ -132,7 +132,9 @@ const ClientApprovalsTable = ({ onBack }) => {
                             </div>
                             <div className="detail-item">
                               <span className="detail-label">Documentation:</span>
-                              <span className="detail-value status-tag">{client.details.documentationStatus}</span>
+                              <span className={`detail-value status-tag ${client.details.documentationStatus.toLowerCase()}`}>
+                                {client.details.documentationStatus}
+                              </span>
                             </div>
                             <div className="detail-item full-width">
                               <span className="detail-label">Notes:</span>

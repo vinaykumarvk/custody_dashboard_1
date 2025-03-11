@@ -1158,6 +1158,30 @@ body {
   justify-content: space-between;
   padding: 8px 10px;
   border-bottom: 1px solid #e9ecef;
+  position: relative;
+}
+
+.approval-item.clickable {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.approval-item.clickable:hover {
+  background-color: rgba(0, 124, 117, 0.1);
+}
+
+.approval-item.clickable .view-details {
+  display: none;
+  font-size: 12px;
+  color: var(--smartbank-green);
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.approval-item.clickable:hover .view-details {
+  display: block;
 }
 
 .approval-item:nth-child(even), .process-item:nth-child(even) {
@@ -1296,6 +1320,195 @@ body {
   color: var(--success-color);
 }
 
+/* Client Approvals Table Styles */
+.client-approvals-container {
+  background-color: var(--card-background);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: var(--smartbank-green);
+  color: white;
+}
+
+.table-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.approval-table-container {
+  padding: 0;
+  overflow-x: auto;
+}
+
+.approval-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.approval-table th,
+.approval-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.approval-table th {
+  background-color: var(--background-color);
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.approval-table tbody tr:nth-child(odd) {
+  background-color: rgba(0, 124, 117, 0.03);
+}
+
+.approval-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.approval-row:hover {
+  background-color: rgba(0, 124, 117, 0.1);
+}
+
+.approval-row.expanded {
+  background-color: rgba(0, 124, 117, 0.08);
+  border-bottom: none;
+}
+
+.priority-indicator {
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.detail-row {
+  background-color: rgba(0, 124, 117, 0.04);
+}
+
+.client-details {
+  padding: 20px;
+}
+
+.detail-section {
+  background-color: var(--card-background);
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.detail-section h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--smartbank-green);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+  font-size: 14px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-item.full-width {
+  grid-column: span 2;
+}
+
+.detail-label {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.detail-value {
+  font-size: 14px;
+}
+
+.status-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-tag.complete {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: var(--success-color);
+}
+
+.status-tag.incomplete {
+  background-color: rgba(255, 193, 7, 0.1);
+  color: var(--warning-color);
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.approve-button, .reject-button {
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.approve-button {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.approve-button:hover {
+  background-color: #218838;
+}
+
+.reject-button {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.reject-button:hover {
+  background-color: #c82333;
+}
+
 @media (max-width: 768px) {
   .header {
     padding: 0 15px;
@@ -1361,6 +1574,18 @@ body {
   }
   
   .stats-row {
+    flex-direction: column;
+  }
+  
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .detail-item.full-width {
+    grid-column: 1;
+  }
+  
+  .action-buttons {
     flex-direction: column;
   }
 }
