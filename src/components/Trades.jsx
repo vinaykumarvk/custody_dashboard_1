@@ -10,7 +10,15 @@ const Trades = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [dateRange, setDateRange] = useState('3months');
+  const [filterParams, setFilterParams] = useState({
+    startDate: (() => {
+      const date = new Date();
+      date.setDate(date.getDate() - 90); // Default to 90 days view
+      return date;
+    })(),
+    endDate: new Date(),
+    range: '90d'
+  });
   const [selectedTrade, setSelectedTrade] = useState(null);
   const [tradeFilter, setTradeFilter] = useState('all');
 
@@ -100,28 +108,18 @@ const Trades = () => {
   // Prepare trading volume history chart data
   const prepareVolumeHistoryChartData = () => {
     // Generate mock volume history data since API doesn't provide it
-    let filteredData = generateVolumeHistory();
+    let volumeData = generateVolumeHistory();
     
-    // Apply date filter
-    switch(dateRange) {
-      case '1week':
-        filteredData = filteredData.slice(-7);
-        break;
-      case '1month':
-        filteredData = filteredData.slice(-30);
-        break;
-      case '3months':
-        filteredData = filteredData.slice(-90);
-        break;
-      case '6months':
-        filteredData = filteredData.slice(-180);
-        break;
-      case '1year':
-        filteredData = filteredData.slice(-365);
-        break;
-      // 'all' case uses all data
-      default:
-        break;
+    // Apply date filter based on the filterParams
+    let filteredData = volumeData;
+    
+    // Apply date range filters if they exist
+    if (filterParams.startDate || filterParams.endDate) {
+      filteredData = volumeData.filter(item => {
+        const itemDate = new Date(item.date);
+        return (!filterParams.startDate || itemDate >= filterParams.startDate) && 
+              (!filterParams.endDate || itemDate <= filterParams.endDate);
+      });
     }
     
     return {
@@ -303,7 +301,7 @@ const Trades = () => {
             <div className="card-header">
               <div className="d-flex justify-content-between align-items-center">
                 <h2>Trading Volume History</h2>
-                <DateRangeFilter activeRange={dateRange} onChange={setDateRange} />
+                <DateRangeFilter onFilterChange={(newParams) => setFilterParams(newParams)} />
               </div>
             </div>
             <div className="card-body">
