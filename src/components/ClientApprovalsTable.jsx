@@ -23,7 +23,48 @@ const ClientApprovalsTable = ({ onBack }) => {
     e.stopPropagation(); // Prevent row click event
     console.log(`Approving client: ${id}`);
     // In a real app, this would make an API call
-    alert(`Client ${id} has been approved`);
+    // Custom alert to show only the message part without the URL
+    const message = `Client ${id} has been approved`;
+    const alertWindow = window.open("", "_blank", "width=400,height=200");
+    alertWindow.document.write(`
+      <html>
+        <head>
+          <title>Approval Notification</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              background-color: #1E1E1E;
+              color: white;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              height: 100vh;
+              margin: 0;
+              padding: 20px;
+              box-sizing: border-box;
+            }
+            .message {
+              margin-bottom: 20px;
+              font-size: 18px;
+            }
+            .btn {
+              background-color: #D4B5FF;
+              color: black;
+              border: none;
+              padding: 10px 30px;
+              border-radius: 20px;
+              cursor: pointer;
+              font-size: 16px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="message">${message}</div>
+          <button class="btn" onclick="window.close()">OK</button>
+        </body>
+      </html>
+    `);
   };
 
   // Function to handle rejection
@@ -31,7 +72,48 @@ const ClientApprovalsTable = ({ onBack }) => {
     e.stopPropagation(); // Prevent row click event
     console.log(`Rejecting client: ${id}`);
     // In a real app, this would make an API call
-    alert(`Client ${id} has been rejected`);
+    // Custom alert to show only the message part without the URL
+    const message = `Client ${id} has been rejected`;
+    const alertWindow = window.open("", "_blank", "width=400,height=200");
+    alertWindow.document.write(`
+      <html>
+        <head>
+          <title>Rejection Notification</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              background-color: #1E1E1E;
+              color: white;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              height: 100vh;
+              margin: 0;
+              padding: 20px;
+              box-sizing: border-box;
+            }
+            .message {
+              margin-bottom: 20px;
+              font-size: 18px;
+            }
+            .btn {
+              background-color: #D4B5FF;
+              color: black;
+              border: none;
+              padding: 10px 30px;
+              border-radius: 20px;
+              cursor: pointer;
+              font-size: 16px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="message">${message}</div>
+          <button class="btn" onclick="window.close()">OK</button>
+        </body>
+      </html>
+    `);
   };
 
   // Function to render priority indicator
