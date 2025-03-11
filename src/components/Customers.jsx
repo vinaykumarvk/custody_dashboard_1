@@ -225,7 +225,7 @@ const Customers = () => {
                         }
                       }
                     }}
-                    height="300px"
+                    height="250px"
                   />
                 )}
               </div>
@@ -262,7 +262,7 @@ const Customers = () => {
                         }
                       }
                     }}
-                    height="300px"
+                    height="250px"
                   />
                 )}
               </div>
@@ -303,7 +303,7 @@ const Customers = () => {
                         }
                       }
                     }}
-                    height="300px"
+                    height="250px"
                   />
                 )}
               </div>

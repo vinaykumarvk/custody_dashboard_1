@@ -685,7 +685,13 @@ body {
 /* Add specific height for customer charts */
 .customers-dashboard .chart-container {
   height: 250px !important;
-  max-height: 250px;
+  max-height: 250px !important;
+  overflow: hidden !important;
+}
+
+/* Force chart canvas to respect container size */
+.customers-dashboard canvas {
+  max-height: 250px !important;
 }
 
 /* Equal height row */
