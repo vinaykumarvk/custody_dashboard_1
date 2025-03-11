@@ -25,7 +25,7 @@ async function buildApp() {
   }
 }
 
-// Start the servers with a delay to ensure API is ready before front-end
+// Start only the frontend server since we're using mock data
 async function startServers() {
   // Build the application first
   const buildSuccess = await buildApp();
@@ -34,18 +34,7 @@ async function startServers() {
     process.exit(1);
   }
   
-  console.log('Starting API server...');
-  
-  // Start Express API server - use PORT instead of SERVER_PORT to match server.js
-  const apiServer = spawn('node', ['server.js'], {
-    stdio: 'inherit',
-    env: { ...process.env, PORT: '3000' }
-  });
-  
-  // Wait for API server to initialize properly
-  await wait(2000);
-  
-  console.log('Starting frontend server...');
+  console.log('Starting frontend server with mock data...');
   
   // Start the React frontend
   const webpackServer = spawn('npx', ['webpack', 'serve', '--mode', 'development', '--host', '0.0.0.0', '--port', '5000', '--hot'], {
@@ -55,15 +44,13 @@ async function startServers() {
   
   // Handle process termination
   process.on('SIGINT', () => {
-    console.log('Shutting down servers...');
-    apiServer.kill();
+    console.log('Shutting down server...');
     webpackServer.kill();
     process.exit(0);
   });
   
-  console.log('Development servers started:');
-  console.log('- API server running on port 3000');
-  console.log('- Frontend server running on port 5000');
+  console.log('Development server started:');
+  console.log('- Frontend running on port 5000 (using mock data)');
 }
 
 // Start the servers
