@@ -429,7 +429,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard">
       {/* Header cards row */}
-      <div className="row g-3 mb-4">
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Total Customers" 
@@ -463,7 +463,7 @@ const Dashboard = () => {
       </div>
 
       {/* Trading metrics row */}
-      <div className="row g-3 mb-4">
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Total Trades" 
@@ -563,7 +563,7 @@ const Dashboard = () => {
       </div>
 
       {/* Assets Under Custody metrics */}
-      <div className="row g-3 mb-4">
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-12">
           <h2 className="section-header">Assets Under Custody</h2>
         </div>
@@ -676,7 +676,7 @@ const Dashboard = () => {
       </div>
 
       {/* Corporate Actions metrics */}
-      <div className="row g-3 mb-4">
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-12">
           <h2 className="section-header">Corporate Actions</h2>
         </div>
