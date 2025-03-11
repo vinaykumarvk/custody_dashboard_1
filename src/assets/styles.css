@@ -678,8 +678,14 @@ body {
 
 /* Chart Containers */
 .chart-container {
-  height: 300px;
+  height: 250px;
   position: relative;
+}
+
+/* Add specific height for customer charts */
+.customers-dashboard .chart-container {
+  height: 250px !important;
+  max-height: 250px;
 }
 
 /* Equal height row */
@@ -707,7 +713,7 @@ body {
 
 .row.equal-height .chart-container {
   flex: 1;
-  min-height: 300px;
+  min-height: 250px;
 }
 
 /* Table Styles */
