@@ -54,6 +54,7 @@ const Dashboard = () => {
         
         // Process the data from our API format to the component format
         const processedData = processApiData(dashboardData);
+        console.log('Processed dashboard data:', processedData);
         setData(processedData);
         setLoading(false);
         
@@ -116,10 +117,10 @@ const Dashboard = () => {
    */
   const processApiData = (apiData) => {
     // Extract metrics directly from API response
-    const totalCustomers = apiData.total_customers || 0;
-    const activeCustomers = apiData.active_customers || 0;
-    const monthlyGrowth = parseFloat(apiData.monthly_growth) || 0;
-    const totalIncome = parseFloat(apiData.total_income) || 0;
+    const totalCustomers = apiData.totalCustomers || apiData.total_customers || 0;
+    const activeCustomers = apiData.activeCustomers || apiData.active_customers || 0;
+    const monthlyGrowth = parseFloat(apiData.monthlyGrowth || apiData.monthly_growth) || 0;
+    const totalIncome = parseFloat(apiData.monthlyIncome || apiData.total_income) || 0;
     
     // Extract and transform customer data
     const customerSegments = [
@@ -156,27 +157,29 @@ const Dashboard = () => {
     }));
     
     // Use real asset class breakdown if available
-    let tradesByAssetClass = [];
-    if (apiData.trades_by_asset && apiData.trades_by_asset.length > 0) {
-      tradesByAssetClass = apiData.trades_by_asset;
-    } else {
-      // Fallback mock data
-      tradesByAssetClass = [
-        { label: 'Equity', value: 45 },
-        { label: 'Fixed Income', value: 30 },
-        { label: 'FX', value: 15 },
-        { label: 'Fund', value: 10 }
-      ];
+    let tradesByAssetClass = apiData.tradesByAssetClass || [];
+    if (!tradesByAssetClass || tradesByAssetClass.length === 0) {
+      if (apiData.trades_by_asset && apiData.trades_by_asset.length > 0) {
+        tradesByAssetClass = apiData.trades_by_asset;
+      } else {
+        // Fallback mock data
+        tradesByAssetClass = [
+          { label: 'Equity', value: 45 },
+          { label: 'Fixed Income', value: 30 },
+          { label: 'FX', value: 15 },
+          { label: 'Fund', value: 10 }
+        ];
+      }
     }
     
     // Get total trades and trading volume from API
-    const totalTrades = apiData.total_trades || 
+    const totalTrades = apiData.totalTrades || apiData.total_trades || 
       tradeMonthlyData.reduce((sum, item) => sum + parseInt(item.total_trades), 0);
       
-    const tradingVolume = apiData.trading_volume || 
+    const tradingVolume = apiData.tradingVolume || apiData.trading_volume || 
       tradeMonthlyData.reduce((sum, item) => sum + parseFloat(item.trade_volume), 0);
     
-    const pendingTrades = apiData.pending_trades || Math.round(totalTrades * 0.05);
+    const pendingTrades = apiData.pendingTrades || apiData.pending_trades || Math.round(totalTrades * 0.05);
     
     // Mock recent trades - in a real implementation, this would come from the API
     const recentTrades = Array(10).fill(0).map((_, i) => ({
@@ -189,6 +192,29 @@ const Dashboard = () => {
       date: new Date(Date.now() - (i * 86400000)).toISOString()
     }));
     
+    // Extract deal processing and open events data
+    let dealProcessing = apiData.dealProcessing;
+    // Handle dealProcessing as object or number
+    if (typeof dealProcessing === 'object') {
+      // already an object, keep as is
+    } else if (typeof dealProcessing === 'number') {
+      dealProcessing = {
+        completed: Math.round(dealProcessing * 0.8),
+        pending: Math.round(dealProcessing * 0.15),
+        failed: Math.round(dealProcessing * 0.05)
+      };
+    } else {
+      // Create default object
+      dealProcessing = {
+        completed: 0,
+        pending: 0,
+        failed: 0
+      };
+    }
+    
+    // Get open events count 
+    const openEvents = apiData.openEvents || 15;
+    
     // Return processed data
     return {
       totalCustomers: totalCustomers,
@@ -197,7 +223,7 @@ const Dashboard = () => {
       totalTrades: totalTrades,
       tradingVolume: tradingVolume,
       pendingTrades: pendingTrades,
-      openEvents: 15,
+      openEvents: openEvents,
       corporateActions: apiData.corporateActions || {
         mandatory: 34,
         voluntary: 12,
@@ -207,7 +233,7 @@ const Dashboard = () => {
         status: [],
         types: []
       },
-      dealProcessing: 8,
+      dealProcessing: dealProcessing,
       monthlyIncome: totalIncome,
       incomeByService: [],
       customerSegments,
