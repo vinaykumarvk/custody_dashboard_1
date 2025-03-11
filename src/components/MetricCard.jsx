@@ -66,7 +66,7 @@ const MetricCard = ({
         </div>
         
         <div className="metric-value">
-          <h2 className={value && value.length > 8 ? 'fs-3' : 'fs-2'}>
+          <h2 className={value && value.toString().length > 12 ? 'large-number' : (value && value.toString().length > 8 ? 'fs-3' : 'fs-2')}>
             {value || '—'}
           </h2>
           

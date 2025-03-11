@@ -648,8 +648,21 @@ body {
   margin-bottom: 5px;
 }
 
+/* Class for handling large financial numbers */
 .metric-card .value.smaller-value {
   font-size: 1.3rem;
+}
+
+/* Make large numbers responsive */
+.metric-card .large-number {
+  font-size: clamp(1rem, 5vw, 1.6rem);
+  font-weight: bold;
+  margin-bottom: 5px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  white-space: normal;
+  line-height: 1.2;
 }
 
 .metric-card .title {
