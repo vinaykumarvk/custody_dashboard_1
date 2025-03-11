@@ -558,6 +558,16 @@ body {
   border-top: 1px solid var(--border-color);
 }
 
+/* Section Headers */
+.section-header {
+  color: var(--smartbank-green);
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
 /* Dashboard Card Styles */
 .card {
   background-color: var(--card-background);

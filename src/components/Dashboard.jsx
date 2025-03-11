@@ -122,6 +122,13 @@ const Dashboard = () => {
     const monthlyGrowth = parseFloat(apiData.monthlyGrowth || apiData.monthly_growth) || 0;
     const totalIncome = parseFloat(apiData.monthlyIncome || apiData.total_income) || 0;
     
+    // Extract Assets Under Custody (AUC) data
+    const assetsUnderCustody = apiData.assetsUnderCustody || {
+      total: 0,
+      byAssetClass: [],
+      history: []
+    };
+    
     // Extract customer segments data from API
     const customerSegments = apiData.customerSegments || [
       { label: 'Institutional', value: 45 },
@@ -240,6 +247,7 @@ const Dashboard = () => {
       dealProcessing: dealProcessing,
       monthlyIncome: totalIncome,
       incomeByService: [],
+      assetsUnderCustody: assetsUnderCustody,
       customerSegments,
       tradesByAssetClass,
       recentTrades,
@@ -289,7 +297,8 @@ const Dashboard = () => {
     tradesByAssetClass,
     monthlyIncome,
     incomeByService,
-    recentTrades
+    recentTrades,
+    assetsUnderCustody
   } = data;
 
   // Prepare chart data
@@ -304,6 +313,41 @@ const Dashboard = () => {
           '#006560',  // Dark green
         ],
         borderWidth: 0,
+      }
+    ]
+  };
+  
+  // Assets Under Custody (AUC) data
+  const aucByAssetClassData = {
+    labels: assetsUnderCustody?.byAssetClass?.map(item => item.label) || [],
+    datasets: [
+      {
+        data: assetsUnderCustody?.byAssetClass?.map(item => item.value) || [],
+        backgroundColor: [
+          '#007C75',  // Primary green
+          '#009E94',  // Light green
+          '#006560',  // Dark green
+          '#00AEA4',  // Lighter green
+        ],
+        borderWidth: 0,
+      }
+    ]
+  };
+  
+  // AUC history chart data
+  const aucHistoryData = {
+    labels: assetsUnderCustody?.history?.map(item => {
+      const [year, month] = item.month.split('-');
+      return `${month}/${year.slice(2)}`;
+    }) || [],
+    datasets: [
+      {
+        label: 'Assets Under Custody',
+        data: assetsUnderCustody?.history?.map(item => item.value) || [],
+        fill: true,
+        tension: 0.4,
+        backgroundColor: 'rgba(0, 124, 117, 0.2)',
+        borderColor: '#007C75',
       }
     ]
   };
@@ -518,8 +562,126 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Assets Under Custody metrics */}
+      <div className="row g-3 mb-4">
+        <div className="col-md-12">
+          <h2 className="section-header">Assets Under Custody</h2>
+        </div>
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="Total AUC" 
+            value={formatCurrency(assetsUnderCustody?.total || 0, 'USD', 0)} 
+            icon="landmark"
+            color="#007C75"
+            valueClassName="smaller-value"
+          />
+        </div>
+        <div className="col-md-9 col-sm-6">
+          <div className="card">
+            <div className="card-header">
+              <h2>AUC History</h2>
+            </div>
+            <div className="card-body">
+              <Chart 
+                type="line"
+                data={aucHistoryData}
+                height="150px"
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: false,
+                      ticks: {
+                        callback: function(value) {
+                          return formatCurrency(value, 'USD', 0);
+                        }
+                      }
+                    }
+                  },
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: function(context) {
+                          return formatCurrency(context.raw, 'USD', 0);
+                        }
+                      }
+                    },
+                    legend: {
+                      display: false
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* AUC by Asset Class */}
+      <div className="row g-3 mb-4">
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-header">
+              <h2>AUC by Asset Class</h2>
+            </div>
+            <div className="card-body">
+              <Chart 
+                type="pie"
+                data={aucByAssetClassData}
+                height="300px"
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: function(context) {
+                          const label = context.label || '';
+                          const value = context.raw || 0;
+                          const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                          const percentage = ((value * 100) / total).toFixed(1);
+                          return `${label}: ${formatCurrency(value, 'USD', 0)} (${percentage}%)`;
+                        }
+                      }
+                    },
+                    legend: {
+                      position: 'right'
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6">
+          <div className="card h-100">
+            <div className="card-header">
+              <h2>AUC Metrics</h2>
+            </div>
+            <div className="card-body">
+              <div className="row gy-3">
+                {assetsUnderCustody?.byAssetClass?.map((item, index) => (
+                  <div className="col-md-6" key={index}>
+                    <MetricCard 
+                      title={`${item.label}`} 
+                      value={formatCurrency(item.value, 'USD', 0)} 
+                      subtitle={`${((item.value / assetsUnderCustody.total) * 100).toFixed(1)}% of total`}
+                      valueClassName="smaller-value"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Corporate Actions metrics */}
       <div className="row g-3 mb-4">
+        <div className="col-md-12">
+          <h2 className="section-header">Corporate Actions</h2>
+        </div>
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Total Corporate Actions" 
