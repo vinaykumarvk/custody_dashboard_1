@@ -122,27 +122,31 @@ const Dashboard = () => {
     const monthlyGrowth = parseFloat(apiData.monthlyGrowth || apiData.monthly_growth) || 0;
     const totalIncome = parseFloat(apiData.monthlyIncome || apiData.total_income) || 0;
     
-    // Extract and transform customer data
-    const customerSegments = [
-      { label: 'MUTUAL FUND', value: 2800 },
-      { label: 'FD', value: 3100 },
-      { label: 'PORTFOLIO', value: 4100 }
+    // Extract customer segments data from API
+    const customerSegments = apiData.customerSegments || [
+      { label: 'Institutional', value: 45 },
+      { label: 'Corporate', value: 30 },
+      { label: 'Retail', value: 25 }
     ];
     
     // Use real trade data if available, otherwise generate mock data
     let tradeMonthlyData = [];
-    if (apiData.trade_monthly && apiData.trade_monthly.length > 0) {
+    if (apiData.tradeHistory && apiData.tradeHistory.length > 0) {
+      tradeMonthlyData = apiData.tradeHistory;
+    } else if (apiData.trade_monthly && apiData.trade_monthly.length > 0) {
       tradeMonthlyData = apiData.trade_monthly;
     } else {
-      // Mock trade data as fallback
-      tradeMonthlyData = apiData.customers_monthly?.map((item, index) => {
-        const date = new Date(item.date);
+      // Generate mock trade data with consistent dates for the past 14 days
+      const today = new Date();
+      tradeMonthlyData = Array(14).fill(0).map((_, index) => {
+        const date = new Date(today);
+        date.setDate(date.getDate() - (13 - index)); // Going backward from 14 days ago to today
         return {
           date: date.toISOString().split('T')[0],
-          total_trades: 1000 + (index * 100),
-          trade_volume: 500000 + (index * 50000)
+          total_trades: 1200 - (index * 25) + Math.floor(Math.random() * 200), // Values between 850-1400 with some randomness
+          trade_volume: 180000000 - (index * 5000000) + Math.floor(Math.random() * 10000000) // Values with trend and some randomness
         };
-      }) || [];
+      });
     }
     
     // Extract trade data for charts
