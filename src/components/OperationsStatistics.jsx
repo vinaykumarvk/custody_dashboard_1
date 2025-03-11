@@ -13,13 +13,21 @@ const OperationsStatistics = () => {
       try {
         // In a real implementation, this would fetch from an API
         // For now, we'll use static mock data to match the DR-01 document
+        const toBeApprovedItems = {
+          client: 20,
+          clientExchange: 30,
+          clientDepository: 1,
+          party: 34,
+          bankAccount: 89
+        };
+        
+        // Calculate total to be approved
+        const totalToBeApproved = Object.values(toBeApprovedItems).reduce((a, b) => a + b, 0);
+        
         setData({
           toBeApproved: {
-            client: 20,
-            clientExchange: 30,
-            clientDepository: 1,
-            party: 34,
-            bankAccount: 89
+            ...toBeApprovedItems,
+            total: totalToBeApproved
           },
           processesDoneToday: {
             sebiMessage: true,
@@ -102,14 +110,19 @@ const OperationsStatistics = () => {
   return (
     <div className="operations-statistics">
       <div className="page-header">
-        <h1>Operations Statistics</h1>
+        <h1>Operations</h1>
+      </div>
+      
+      {/* ACTIVITIES SECTION */}
+      <div className="section-header">
+        <h2>Activities</h2>
       </div>
       
       <div className="stats-grid">
         {/* To Be Approved section */}
         <div className="stats-card">
           <div className="stats-card-header">
-            <h3>To be Approved (xxx)</h3>
+            <h3>To be Approved ({data.toBeApproved.total})</h3>
           </div>
           <div className="stats-card-body">
             {renderItemRow('Client', data.toBeApproved.client)}
@@ -146,11 +159,16 @@ const OperationsStatistics = () => {
         </div>
       </div>
 
-      {/* Exceptions section */}
+      {/* EXCEPTIONS SECTION */}
+      <div className="section-header">
+        <h2>Exceptions</h2>
+      </div>
+      
+      {/* Holdings subsection */}
+      <div className="subsection-header">
+        <h3>Holdings</h3>
+      </div>
       <div className="stats-large-card">
-        <div className="stats-card-header">
-          <h3>Exceptions</h3>
-        </div>
         <div className="stats-card-body exceptions-grid">
           <div className="exception-item">
             <div className="exception-header">Pending Reconciliation & Valuation</div>
@@ -164,11 +182,13 @@ const OperationsStatistics = () => {
             <div className="exception-header">Positions mismatch CDSLs</div>
             <div className="exception-value">{data.exceptions.positionsMismatch}</div>
           </div>
-
         </div>
       </div>
 
-      {/* Trades section */}
+      {/* Trades subsection */}
+      <div className="subsection-header">
+        <h3>Trades</h3>
+      </div>
       <div className="stats-large-card">
         <div className="stats-card-body trades-grid">
           <div className="trade-section">
@@ -198,7 +218,10 @@ const OperationsStatistics = () => {
         </div>
       </div>
 
-      {/* Mails section */}
+      {/* Communication subsection */}
+      <div className="subsection-header">
+        <h3>Communication</h3>
+      </div>
       <div className="stats-row">
         <div className="stats-card">
           <div className="stats-card-header">
@@ -226,7 +249,10 @@ const OperationsStatistics = () => {
         </div>
       </div>
 
-      {/* Events section */}
+      {/* Corporate Actions subsection */}
+      <div className="subsection-header">
+        <h3>Corporate Actions</h3>
+      </div>
       <div className="stats-large-card">
         <div className="stats-card-body events-grid">
           <div className="event-section">
@@ -240,7 +266,10 @@ const OperationsStatistics = () => {
         </div>
       </div>
 
-      {/* Tickets section */}
+      {/* Tickets subsection */}
+      <div className="subsection-header">
+        <h3>Tickets</h3>
+      </div>
       <div className="stats-large-card">
         <div className="stats-card-body tickets-grid">
           <div className="ticket-section">
@@ -258,7 +287,10 @@ const OperationsStatistics = () => {
         </div>
       </div>
 
-      {/* Pending Payments section */}
+      {/* Payments subsection */}
+      <div className="subsection-header">
+        <h3>Payments</h3>
+      </div>
       <div className="stats-card">
         <div className="stats-card-header">
           <h3>Pending Payments</h3>
