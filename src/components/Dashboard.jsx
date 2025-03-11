@@ -498,7 +498,7 @@ const Dashboard = () => {
       </div>
 
       {/* Charts row */}
-      <div className="row g-3 mb-4">
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-8">
           <div className="card">
             <div className="card-header d-flex justify-content-between align-items-center">
@@ -618,7 +618,7 @@ const Dashboard = () => {
       </div>
       
       {/* AUC by Asset Class */}
-      <div className="row g-3 mb-4">
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-6">
           <div className="card">
             <div className="card-header">
@@ -715,7 +715,7 @@ const Dashboard = () => {
       </div>
       
       {/* Corporate Actions Charts */}
-      <div className="row g-3 mb-4">
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-6">
           <div className="card">
             <div className="card-header">
@@ -777,7 +777,7 @@ const Dashboard = () => {
       </div>
 
       {/* More charts row */}
-      <div className="row g-3 mb-4">
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-6">
           <div className="card">
             <div className="card-header d-flex justify-content-between align-items-center">
