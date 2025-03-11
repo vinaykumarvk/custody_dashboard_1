@@ -21,7 +21,7 @@ const OperationsStatistics = () => {
             party: 34,
             bankAccount: 89
           },
-          processesDueToday1: {
+          processesDoneToday: {
             sebiMessage: true,
             globalSettlement: true,
             priceUpload: true
@@ -120,19 +120,19 @@ const OperationsStatistics = () => {
           </div>
         </div>
 
-        {/* Processes Due Today section 1 */}
+        {/* Processes Done Today section */}
         <div className="stats-card">
           <div className="stats-card-header">
-            <h3>Processes Due Today</h3>
+            <h3>Processes Done Today</h3>
           </div>
           <div className="stats-card-body">
-            {renderProcessItem('SEBI Message', data.processesDueToday1.sebiMessage)}
-            {renderProcessItem('Global settlement', data.processesDueToday1.globalSettlement)}
-            {renderProcessItem('Price upload', data.processesDueToday1.priceUpload)}
+            {renderProcessItem('SEBI Message', data.processesDoneToday.sebiMessage)}
+            {renderProcessItem('Global settlement', data.processesDoneToday.globalSettlement)}
+            {renderProcessItem('Price upload', data.processesDoneToday.priceUpload)}
           </div>
         </div>
 
-        {/* Processes Due Today section 2 */}
+        {/* Processes Due Today section */}
         <div className="stats-card">
           <div className="stats-card-header">
             <h3>Processes Due Today</h3>
