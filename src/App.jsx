@@ -9,6 +9,7 @@ import Customers from './components/Customers';
 import Income from './components/Income';
 import Reports from './components/Reports';
 import Settings from './components/Settings';
+import OperationsAlerts from './components/OperationsAlerts';
 import './assets/styles.css';
 
 const App = () => {
@@ -73,6 +74,8 @@ const App = () => {
         return <Customers />;
       case 'income':
         return <Income />;
+      case 'operations-alerts':
+        return <OperationsAlerts />;
       case 'reports':
         return <Reports />;
       case 'settings':

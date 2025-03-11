@@ -8,6 +8,7 @@ const Sidebar = ({ isOpen, onClose, activePage, onPageChange }) => {
     { id: 'income', label: 'Income', icon: 'chart-line' },
     { id: 'corporate-actions', label: 'Corporate Actions', icon: 'building' },
     { id: 'settlements', label: 'Settlements', icon: 'money-check-alt' },
+    { id: 'operations-alerts', label: 'Operations Alerts', icon: 'exclamation-triangle' },
     { id: 'reports', label: 'Reports', icon: 'file-alt' },
     { id: 'settings', label: 'Settings', icon: 'cog' }
   ];

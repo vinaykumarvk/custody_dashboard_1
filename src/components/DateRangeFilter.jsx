@@ -1,27 +1,41 @@
 import React from 'react';
 
-const DateRangeFilter = ({ activeRange, onChange }) => {
-  const ranges = [
-    { label: '1W', value: '1week' },
-    { label: '1M', value: '1month' },
-    { label: '3M', value: '3months' },
-    { label: '6M', value: '6months' },
-    { label: 'YTD', value: 'ytd' },
-    { label: '1Y', value: '1year' },
-    { label: 'All', value: 'all' }
+/**
+ * DateRangeFilter - A component for selecting date range filters
+ * 
+ * @param {Object} props Component props
+ * @param {string} props.activeRange Currently active range
+ * @param {Function} props.onChange Function to call when range changes
+ * @param {Array} props.options Array of options with id and label
+ * @returns {JSX.Element} Date range filter component
+ */
+const DateRangeFilter = ({ activeRange, onChange, options = [] }) => {
+  // Default options if none provided
+  const defaultOptions = [
+    { id: 'today', label: 'Today' },
+    { id: 'week', label: 'This Week' },
+    { id: 'month', label: 'This Month' },
+    { id: 'year', label: 'This Year' },
+    { id: 'all', label: 'All Time' }
   ];
-
+  
+  // Use provided options or fall back to defaults
+  const filterOptions = options.length > 0 ? options : defaultOptions;
+  
   return (
     <div className="date-range-filter">
-      {ranges.map(range => (
-        <button
-          key={range.value}
-          className={`filter-btn ${activeRange === range.value ? 'active' : ''}`}
-          onClick={() => onChange(range.value)}
-        >
-          {range.label}
-        </button>
-      ))}
+      <div className="btn-group" role="group" aria-label="Date range filter">
+        {filterOptions.map(option => (
+          <button
+            key={option.id}
+            type="button"
+            className={`btn ${activeRange === option.id ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => onChange(option.id)}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
