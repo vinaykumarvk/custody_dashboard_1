@@ -7,6 +7,31 @@ import DataTable from './DataTable';
 import DateRangeFilter from './DateRangeFilter';
 import TradeDetailModal from './TradeDetailModal';
 
+// Status styling for corporate actions
+const statusDotStyle = {
+  display: 'inline-block',
+  width: '12px',
+  height: '12px',
+  borderRadius: '50%',
+  marginRight: '8px'
+};
+
+const statusItemStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  margin: '8px 0'
+};
+
+const statusLabelStyle = {
+  fontWeight: 'bold',
+  marginRight: '8px'
+};
+
+const statusValueStyle = {
+  fontSize: '1.2rem',
+  fontWeight: '500'
+};
+
 const Dashboard = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -173,7 +198,15 @@ const Dashboard = () => {
       tradingVolume: tradingVolume,
       pendingTrades: pendingTrades,
       openEvents: 15,
-      corporateActions: 12,
+      corporateActions: apiData.corporateActions || {
+        mandatory: 34,
+        voluntary: 12,
+        total: 46,
+        high_priority: 8,
+        pending_elections: 12,
+        status: [],
+        types: []
+      },
       dealProcessing: 8,
       monthlyIncome: totalIncome,
       incomeByService: [],
@@ -239,6 +272,24 @@ const Dashboard = () => {
           '#007C75',  // Primary green
           '#009E94',  // Light green
           '#006560',  // Dark green
+        ],
+        borderWidth: 0,
+      }
+    ]
+  };
+  
+  // Corporate Actions chart data
+  const corporateActionTypesData = {
+    labels: corporateActions.types ? corporateActions.types.map(item => item.type) : [],
+    datasets: [
+      {
+        data: corporateActions.types ? corporateActions.types.map(item => item.count) : [],
+        backgroundColor: [
+          '#007C75',  // Primary green
+          '#009E94',  // Light green
+          '#006560',  // Dark green
+          '#00AEA4',  // Lighter green
+          '#005550',  // Darker green
         ],
         borderWidth: 0,
       }
@@ -432,6 +483,104 @@ const Dashboard = () => {
                   }
                 }}
               />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Corporate Actions metrics */}
+      <div className="row g-3 mb-4">
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="Total Corporate Actions" 
+            value={formatNumber(corporateActions.total || 0, false)} 
+            icon="file-alt"
+            color="#007C75"
+          />
+        </div>
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="High Priority Actions" 
+            value={formatNumber(corporateActions.high_priority || 0, false)} 
+            icon="exclamation"
+            color="#DC3545"
+          />
+        </div>
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="Mandatory Actions" 
+            value={formatNumber(corporateActions.mandatory || 0, false)} 
+            icon="clipboard-check"
+            color="#28A745"
+          />
+        </div>
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="Voluntary Actions" 
+            value={formatNumber(corporateActions.voluntary || 0, false)} 
+            icon="clipboard-list"
+            color="#17A2B8"
+          />
+        </div>
+      </div>
+      
+      {/* Corporate Actions Charts */}
+      <div className="row g-3 mb-4">
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-header">
+              <h2>Corporate Action Types</h2>
+            </div>
+            <div className="card-body">
+              <Chart 
+                type="doughnut"
+                data={corporateActionTypesData}
+                height="300px"
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'right'
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-header">
+              <h2>Corporate Actions Status</h2>
+            </div>
+            <div className="card-body">
+              <div className="d-flex flex-column align-items-center">
+                <div className="d-flex justify-content-between w-100 mb-3">
+                  <div style={statusItemStyle}>
+                    <span style={{...statusDotStyle, backgroundColor: '#28A745'}}></span>
+                    <span style={statusLabelStyle}>Completed:</span>
+                    <span style={statusValueStyle}>{formatNumber(corporateActions.status?.find(s => s.status === 'Completed')?.count || 0, false)}</span>
+                  </div>
+                  <div style={statusItemStyle}>
+                    <span style={{...statusDotStyle, backgroundColor: '#FFC107'}}></span>
+                    <span style={statusLabelStyle}>Pending:</span>
+                    <span style={statusValueStyle}>{formatNumber(corporateActions.status?.find(s => s.status === 'Pending')?.count || 0, false)}</span>
+                  </div>
+                </div>
+                <div className="d-flex justify-content-between w-100">
+                  <div style={statusItemStyle}>
+                    <span style={{...statusDotStyle, backgroundColor: '#17A2B8'}}></span>
+                    <span style={statusLabelStyle}>Announced:</span>
+                    <span style={statusValueStyle}>{formatNumber(corporateActions.status?.find(s => s.status === 'Announced')?.count || 0, false)}</span>
+                  </div>
+                  <div style={statusItemStyle}>
+                    <span style={{...statusDotStyle, backgroundColor: '#007C75'}}></span>
+                    <span style={statusLabelStyle}>Processing:</span>
+                    <span style={statusValueStyle}>{formatNumber(corporateActions.status?.find(s => s.status === 'Processing')?.count || 0, false)}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

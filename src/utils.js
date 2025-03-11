@@ -1386,7 +1386,23 @@ const getMockData = (endpoint) => {
       openEvents: 89,
       corporateActions: {
         mandatory: 34,
-        voluntary: 12
+        voluntary: 12,
+        total: 46,
+        high_priority: 8,
+        pending_elections: 12,
+        status: [
+          { status: 'Completed', count: 28 },
+          { status: 'Pending', count: 36 },
+          { status: 'Announced', count: 12 },
+          { status: 'Processing', count: 8 }
+        ],
+        types: [
+          { type: 'Dividend', count: 32 },
+          { type: 'Stock Split', count: 14 },
+          { type: 'Rights Issue', count: 18 },
+          { type: 'Merger', count: 12 },
+          { type: 'Redemption', count: 8 }
+        ]
       },
       dealProcessing: {
         completed: 1458,
