@@ -197,7 +197,17 @@ const OperationsStatistics = ({ dashboardData }) => {
                 className="exception-item clickable" 
                 onClick={() => handleExceptionClick('settlement')}
               >
-                <div className="exception-header">Settlement Fails</div>
+                <div className="exception-header">
+                  Settlement Fails
+                  <NotificationButton 
+                    count={Math.floor((data.pendingTrades ? Math.floor(data.pendingTrades * 0.18) : 43) * 0.15)} 
+                    type="urgent" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      alert('High priority settlement fails require immediate attention');
+                    }}
+                  />
+                </div>
                 <div className="exception-value">{data.pendingTrades ? Math.floor(data.pendingTrades * 0.18) : 43}</div>
               </div>
               <div 
@@ -211,7 +221,17 @@ const OperationsStatistics = ({ dashboardData }) => {
                 className="exception-item clickable" 
                 onClick={() => handleExceptionClick('corporate')}
               >
-                <div className="exception-header">Corporate Actions</div>
+                <div className="exception-header">
+                  Corporate Actions
+                  <NotificationButton 
+                    count={data.corporateActions?.high_priority || 8} 
+                    type="warning" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      alert('High priority corporate actions need review');
+                    }}
+                  />
+                </div>
                 <div className="exception-value">{data.corporateActions?.high_priority || 8}</div>
               </div>
               <div 
@@ -245,7 +265,17 @@ const OperationsStatistics = ({ dashboardData }) => {
                 className="ticket-section clickable" 
                 onClick={() => handleTicketClick('urgent')}
               >
-                <div className="ticket-header">Urgent Tickets</div>
+                <div className="ticket-header">
+                  Urgent Tickets
+                  <NotificationButton 
+                    count={5} 
+                    type="urgent" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      alert('Critical tickets require immediate attention');
+                    }}
+                  />
+                </div>
                 <div className="ticket-value">12</div>
               </div>
               <div 
@@ -272,7 +302,17 @@ const OperationsStatistics = ({ dashboardData }) => {
                 className="ticket-section clickable" 
                 onClick={() => handleTicketClick('failed-payments')}
               >
-                <div className="ticket-header">Failed Payments</div>
+                <div className="ticket-header">
+                  Failed Payments
+                  <NotificationButton 
+                    count={3} 
+                    type="urgent" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      alert('High-value failed payments require immediate attention');
+                    }}
+                  />
+                </div>
                 <div className="ticket-value">9</div>
               </div>
               <div 
