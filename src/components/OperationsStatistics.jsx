@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { fetchData } from '../services/api';
 import MetricCard from './MetricCard';
+import ClientApprovalsTable from './ClientApprovalsTable';
 
 const OperationsStatistics = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showClientApprovals, setShowClientApprovals] = useState(false);
   
   useEffect(() => {
     const loadData = async () => {
@@ -92,13 +94,31 @@ const OperationsStatistics = () => {
     return <div className="no-data">No operations statistics data available.</div>;
   }
 
+  // Handle click on Client item
+  const handleClientClick = () => {
+    setShowClientApprovals(true);
+  };
+
+  // Handle back button from client approvals
+  const handleBackFromClientApprovals = () => {
+    setShowClientApprovals(false);
+  };
+
   // Helper for rendering item row with label and count
-  const renderItemRow = (label, count) => (
-    <div className="approval-item">
-      <span className="approval-label">{label}</span>
-      <span className="approval-count">{count}</span>
-    </div>
-  );
+  const renderItemRow = (label, count, onClick = null) => {
+    const isClickable = onClick !== null;
+    
+    return (
+      <div 
+        className={`approval-item ${isClickable ? 'clickable' : ''}`}
+        onClick={onClick}
+      >
+        <span className="approval-label">{label}</span>
+        <span className="approval-count">{count}</span>
+        {isClickable && <span className="view-details">View Details →</span>}
+      </div>
+    );
+  };
 
   // Helper for rendering process items
   const renderProcessItem = (label, active) => (
@@ -106,6 +126,11 @@ const OperationsStatistics = () => {
       {label}
     </div>
   );
+
+  // Show Client Approvals Table if in that view
+  if (showClientApprovals) {
+    return <ClientApprovalsTable onBack={handleBackFromClientApprovals} />;
+  }
 
   return (
     <div className="operations-statistics">
@@ -125,7 +150,7 @@ const OperationsStatistics = () => {
             <h3>To be Approved ({data.toBeApproved.total})</h3>
           </div>
           <div className="stats-card-body">
-            {renderItemRow('Client', data.toBeApproved.client)}
+            {renderItemRow('Client', data.toBeApproved.client, handleClientClick)}
             {renderItemRow('Client Exchange', data.toBeApproved.clientExchange)}
             {renderItemRow('Client Depository', data.toBeApproved.clientDepository)}
             {renderItemRow('Party', data.toBeApproved.party)}
