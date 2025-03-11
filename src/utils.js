@@ -776,6 +776,106 @@ const getMockData = (endpoint) => {
         { category: 'Corporate Actions', count: 6 }
       ],
       
+      // Available report list for filtering
+      available_report_list: [
+        {
+          id: 'REP-001',
+          name: 'Daily Trade Summary',
+          category: 'Trading',
+          description: 'Detailed summary of all trades executed during the previous business day',
+          available_formats: ['PDF', 'XLSX', 'CSV'],
+          last_generated: '2025-03-02T13:45:22'
+        },
+        {
+          id: 'REP-002',
+          name: 'Settlement Status Report',
+          category: 'Settlements',
+          description: 'Overview of all pending and completed settlements',
+          available_formats: ['PDF', 'XLSX'],
+          last_generated: '2025-03-03T09:15:30'
+        },
+        {
+          id: 'REP-003',
+          name: 'Compliance Exceptions',
+          category: 'Compliance',
+          description: 'List of compliance exceptions requiring review and resolution',
+          available_formats: ['PDF', 'XLSX', 'CSV'],
+          last_generated: '2025-03-01T16:20:05'
+        },
+        {
+          id: 'REP-004',
+          name: 'Portfolio Performance Analysis',
+          category: 'Performance',
+          description: 'Comprehensive analysis of portfolio performance with benchmarking',
+          available_formats: ['PDF', 'XLSX'],
+          last_generated: '2025-02-28T14:30:45'
+        },
+        {
+          id: 'REP-005',
+          name: 'Corporate Actions Calendar',
+          category: 'Corporate Actions',
+          description: 'Calendar view of upcoming corporate actions requiring attention',
+          available_formats: ['PDF', 'XLSX', 'ICS'],
+          last_generated: '2025-03-03T08:45:12'
+        },
+        {
+          id: 'REP-006',
+          name: 'Position Reconciliation',
+          category: 'Settlements',
+          description: 'Reconciliation report for positions across all accounts',
+          available_formats: ['PDF', 'XLSX', 'CSV'],
+          last_generated: '2025-03-02T17:10:33'
+        },
+        {
+          id: 'REP-007',
+          name: 'Regulatory Filing Status',
+          category: 'Compliance',
+          description: 'Status report for all regulatory filings and submissions',
+          available_formats: ['PDF', 'XLSX'],
+          last_generated: '2025-02-27T11:25:50'
+        },
+        {
+          id: 'REP-008',
+          name: 'Assets Under Custody',
+          category: 'Performance',
+          description: 'Detailed analysis of all assets under custody with trends',
+          available_formats: ['PDF', 'XLSX'],
+          last_generated: '2025-03-01T09:30:15'
+        },
+        {
+          id: 'REP-009',
+          name: 'Trade Execution Quality',
+          category: 'Trading',
+          description: 'Analysis of trade execution quality and broker performance',
+          available_formats: ['PDF', 'XLSX'],
+          last_generated: '2025-02-25T14:50:22'
+        },
+        {
+          id: 'REP-010',
+          name: 'Client Activity Summary',
+          category: 'Performance',
+          description: 'Summary of all client activity for the selected period',
+          available_formats: ['PDF', 'XLSX', 'CSV'],
+          last_generated: null
+        },
+        {
+          id: 'REP-011',
+          name: 'Fee Revenue Analysis',
+          category: 'Performance',
+          description: 'Analysis of all fee revenue by client and service type',
+          available_formats: ['PDF', 'XLSX'],
+          last_generated: '2025-03-01T10:15:30'
+        },
+        {
+          id: 'REP-012',
+          name: 'Corporate Actions Activity',
+          category: 'Corporate Actions',
+          description: 'Detailed log of all corporate actions processed in the period',
+          available_formats: ['PDF', 'XLSX', 'CSV'],
+          last_generated: '2025-02-28T13:40:55'
+        }
+      ],
+      
       // Recent reports
       recent_reports: [
         {
