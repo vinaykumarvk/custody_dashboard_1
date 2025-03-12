@@ -100,7 +100,7 @@ const Dashboard = () => {
   };
   
   const applyDateFilter = (volumeData, tradeCountData, filterParams) => {
-    const { startDate, endDate } = filterParams;
+    const { startDate, endDate, range } = filterParams;
     
     // If 'all' is selected, use all data
     if (filterParams.range.toLowerCase() === 'all') {
@@ -109,31 +109,72 @@ const Dashboard = () => {
       return;
     }
     
-    // Apply date filters
-    const filteredVolume = volumeData.filter(item => {
-      // Parse the date string to ensure proper comparison
-      const itemDate = new Date(item.date);
-      
-      // Log some dates for debugging
-      if (Math.random() < 0.05) { // Only log ~5% of items to avoid console spam
-        console.log(`Trading volume date check (${item.date}):`, {
-          itemDateObj: itemDate,
-          startDate: startDate,
-          endDate: endDate,
-          passesFilter: (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate)
-        });
-      }
-      
-      return (!startDate || itemDate >= startDate) && 
-             (!endDate || itemDate <= endDate);
-    });
+    // For more consistent filtering across charts, use the same time-range based approach
+    let filteredVolume = [];
+    let filteredCount = [];
+    const rangeLower = range.toLowerCase();
     
-    const filteredCount = tradeCountData.filter(item => {
-      // Parse the date string to ensure proper comparison
-      const itemDate = new Date(item.date);
-      return (!startDate || itemDate >= startDate) && 
-             (!endDate || itemDate <= endDate);
-    });
+    if (rangeLower === '7d') {
+      // For 7d, get the most recent 7 days
+      filteredVolume = volumeData.slice(-7);
+      filteredCount = tradeCountData.slice(-7);
+      console.log(`Using most recent 7 days for Volume/Count - 7d filter`);
+    } 
+    else if (rangeLower === '30d') {
+      // For 30d, get the most recent 30 days
+      filteredVolume = volumeData.slice(-30);
+      filteredCount = tradeCountData.slice(-30);
+      console.log(`Using most recent 30 days for Volume/Count - 30d filter`);
+    }
+    else if (rangeLower === '90d') {
+      // For 90d filter, get the most recent 90 days
+      filteredVolume = volumeData.slice(-90);
+      filteredCount = tradeCountData.slice(-90);
+      console.log(`Using most recent 90 days for Volume/Count - 90d filter`);
+    }
+    else if (rangeLower === 'ytd') {
+      // For YTD, filter to the current year
+      const currentYear = new Date().getFullYear();
+      
+      filteredVolume = volumeData.filter(item => {
+        const date = new Date(item.date);
+        return date.getFullYear() === currentYear;
+      });
+      
+      filteredCount = tradeCountData.filter(item => {
+        const date = new Date(item.date);
+        return date.getFullYear() === currentYear;
+      });
+      
+      console.log(`Using current year data for Volume/Count - YTD filter`);
+    }
+    else {
+      // Apply date-based filters as fallback
+      filteredVolume = volumeData.filter(item => {
+        // Parse the date string to ensure proper comparison
+        const itemDate = new Date(item.date);
+        
+        // Log some dates for debugging
+        if (Math.random() < 0.05) { // Only log ~5% of items to avoid console spam
+          console.log(`Trading volume date check (${item.date}):`, {
+            itemDateObj: itemDate,
+            startDate: startDate,
+            endDate: endDate,
+            passesFilter: (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate)
+          });
+        }
+        
+        return (!startDate || itemDate >= startDate) && 
+               (!endDate || itemDate <= endDate);
+      });
+      
+      filteredCount = tradeCountData.filter(item => {
+        // Parse the date string to ensure proper comparison
+        const itemDate = new Date(item.date);
+        return (!startDate || itemDate >= startDate) && 
+               (!endDate || itemDate <= endDate);
+      });
+    }
     
     console.log(`Filtered volume data: ${filteredVolume.length} of ${volumeData.length} items`);
     console.log(`Filtered count data: ${filteredCount.length} of ${tradeCountData.length} items`);
@@ -167,26 +208,60 @@ const Dashboard = () => {
       return;
     }
     
-    // For monthly data, we need to convert month strings to dates for comparison
-    const filteredAuc = aucHistory.filter(item => {
-      const [year, month] = item.month.split('-');
-      // Create a date object for the first day of the month
-      const itemDate = new Date(parseInt(year), parseInt(month) - 1, 1);
-      
-      // Debug log
-      console.log(`Comparing month ${item.month}:`, {
-        itemDate: itemDate.toISOString(),
-        passesFilter: (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate),
-        startCheck: !startDate || itemDate >= startDate,
-        endCheck: !endDate || itemDate <= endDate
-      });
-      
-      return (!startDate || itemDate >= startDate) && 
-             (!endDate || itemDate <= endDate);
-    });
+    // For AUC data, we choose a different approach for different time ranges
+    // because we're dealing with monthly data
+    let filteredData = [];
+    const rangeLower = range.toLowerCase();
     
-    console.log(`Filtered AUC data: ${filteredAuc.length} items`);
-    setFilteredAucHistoryData(filteredAuc);
+    if (rangeLower === '7d' || rangeLower === '30d') {
+      // For 7 and 30 day ranges, just show the most recent N months
+      const monthsToShow = rangeLower === '7d' ? 3 : 6;
+      filteredData = aucHistory.slice(-monthsToShow);
+      console.log(`Using most recent ${monthsToShow} months of AUC data for ${rangeLower} filter`);
+    } 
+    else if (rangeLower === '90d') {
+      // For 90d, show 12 months 
+      filteredData = aucHistory.slice(-12);
+      console.log(`Using most recent 12 months of AUC data for 90d filter`);
+    }
+    else if (rangeLower === 'ytd') {
+      // For YTD, show all months in current year
+      const currentYear = new Date().getFullYear();
+      filteredData = aucHistory.filter(item => {
+        const [year] = item.month.split('-').map(num => parseInt(num, 10));
+        return year === currentYear;
+      });
+      console.log(`Filtered to ${filteredData.length} months in current year for YTD filter`);
+    }
+    else {
+      // For any other filter, try to use the date range (this is the original approach)
+      filteredData = aucHistory.filter(item => {
+        const [year, month] = item.month.split('-').map(num => parseInt(num, 10));
+        // Create a date object for the first day of the month
+        const itemDate = new Date(year, month - 1, 1);
+        
+        // Debug log
+        console.log(`Comparing month ${item.month}:`, {
+          itemDate: itemDate.toISOString(),
+          passesFilter: (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate),
+          startCheck: !startDate || itemDate >= startDate,
+          endCheck: !endDate || itemDate <= endDate
+        });
+        
+        return (!startDate || itemDate >= startDate) && 
+               (!endDate || itemDate <= endDate);
+      });
+    }
+    
+    console.log(`Filtered AUC data: ${filteredData.length} items`);
+    
+    // If no data after filtering, use all data as fallback
+    if (filteredData.length === 0) {
+      console.log('No AUC data after filtering, using all data');
+      setFilteredAucHistoryData(aucHistory);
+    } else {
+      setFilteredAucHistoryData(filteredData);
+    }
   };
   
   // Handle Trades by Asset Class filter changes
@@ -214,28 +289,58 @@ const Dashboard = () => {
       return;
     }
     
-    // Filter history by date range
-    const filteredHistory = tradesByAssetHistory.filter(item => {
-      const itemDate = new Date(item.date);
-      const passes = (!startDate || itemDate >= startDate) && 
-             (!endDate || itemDate <= endDate);
-      
-      if (tradesByAssetHistory.length < 10 || Math.random() < 0.01) {
-        // Log a sample of items for debugging (to avoid flooding console)
-        console.log(`Comparing date ${item.date}:`, {
-          itemDate: itemDate.toISOString(),
-          passesFilter: passes,
-          startCheck: !startDate || itemDate >= startDate,
-          endCheck: !endDate || itemDate <= endDate
-        });
-      }
-      
-      return passes;
-    });
+    // For trades by asset class, we'll use similar logic as AUC
+    let filteredHistory = [];
+    const rangeLower = range.toLowerCase();
+    
+    if (rangeLower === '7d') {
+      // For 7d, get the most recent 7 days
+      filteredHistory = tradesByAssetHistory.slice(-7);
+      console.log(`Using most recent 7 days for Trades by Asset - 7d filter`);
+    } 
+    else if (rangeLower === '30d') {
+      // For 30d, get the most recent 30 days
+      filteredHistory = tradesByAssetHistory.slice(-30);
+      console.log(`Using most recent 30 days for Trades by Asset - 30d filter`);
+    }
+    else if (rangeLower === '90d') {
+      // For 90d filter, get the most recent 90 days
+      filteredHistory = tradesByAssetHistory.slice(-90);
+      console.log(`Using most recent 90 days for Trades by Asset - 90d filter`);
+    }
+    else if (rangeLower === 'ytd') {
+      // For YTD, filter to the current year
+      const currentYear = new Date().getFullYear();
+      filteredHistory = tradesByAssetHistory.filter(item => {
+        const date = new Date(item.date);
+        return date.getFullYear() === currentYear;
+      });
+      console.log(`Using current year data for Trades by Asset - YTD filter: ${filteredHistory.length} days`);
+    }
+    else {
+      // For other filters, use date-based filtering (original approach)
+      filteredHistory = tradesByAssetHistory.filter(item => {
+        const itemDate = new Date(item.date);
+        const passes = (!startDate || itemDate >= startDate) && 
+               (!endDate || itemDate <= endDate);
+        
+        if (tradesByAssetHistory.length < 10 || Math.random() < 0.01) {
+          // Log a sample of items for debugging (to avoid flooding console)
+          console.log(`Comparing date ${item.date}:`, {
+            itemDate: itemDate.toISOString(),
+            passesFilter: passes,
+            startCheck: !startDate || itemDate >= startDate,
+            endCheck: !endDate || itemDate <= endDate
+          });
+        }
+        
+        return passes;
+      });
+    }
     
     console.log(`Filtered trades history: ${filteredHistory.length} days of data`);
     
-    // If we have no data after filtering, use default data
+    // If we have no data after filtering, use default data (all trades)
     if (filteredHistory.length === 0) {
       console.log('No data in range, using default trades by asset data');
       setFilteredTradesByAssetData([]);
