@@ -893,6 +893,7 @@ const Dashboard = () => {
                   scales: {
                     y: {
                       beginAtZero: false,
+                      grace: "5%",
                       ticks: {
                         callback: function(value) {
                           return formatCurrency(value, 'USD', 0);
@@ -969,6 +970,7 @@ const Dashboard = () => {
                   scales: {
                     y: {
                       beginAtZero: false,
+                      grace: "5%",
                       ticks: {
                         callback: function(value) {
                           return formatCurrency(value, 'USD', 0);
