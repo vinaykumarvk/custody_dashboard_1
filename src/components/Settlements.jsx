@@ -10,7 +10,7 @@ const Settlements = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [dateRange, setDateRange] = useState('3months');
+  const [dateRange, setDateRange] = useState('90d');
   const [selectedSettlement, setSelectedSettlement] = useState(null);
   const [settlementFilter, setSettlementFilter] = useState('all');
 
@@ -55,20 +55,22 @@ const Settlements = () => {
     
     // Apply date filter
     switch(dateRange) {
-      case '1week':
+      case '7d':
         filteredData = filteredData.slice(-7);
         break;
-      case '1month':
+      case '30d':
         filteredData = filteredData.slice(-30);
         break;
-      case '3months':
+      case '90d':
         filteredData = filteredData.slice(-90);
         break;
-      case '6months':
-        filteredData = filteredData.slice(-180);
-        break;
-      case '1year':
-        filteredData = filteredData.slice(-365);
+      case 'ytd':
+        // Get data from January 1st of current year
+        const currentYear = new Date().getFullYear();
+        filteredData = filteredData.filter(item => {
+          const itemDate = new Date(item.date);
+          return itemDate.getFullYear() === currentYear;
+        });
         break;
       // 'all' case uses all data
       default:
@@ -250,7 +252,17 @@ const Settlements = () => {
             <div className="card-header">
               <div className="d-flex justify-content-between align-items-center">
                 <h2>Settlement History</h2>
-                <DateRangeFilter activeRange={dateRange} onChange={setDateRange} />
+                <DateRangeFilter activeRange={dateRange} onChange={(filterData) => {
+                  // If we received a range ID string directly, use it
+                  if (typeof filterData === 'string') {
+                    setDateRange(filterData);
+                  } 
+                  // Otherwise extract the range ID from the filter object
+                  else if (filterData && filterData.range) {
+                    setDateRange(filterData.range);
+                    console.log(`Date range filter applied: ${filterData.range}`);
+                  }
+                }} />
               </div>
             </div>
             <div className="card-body">
