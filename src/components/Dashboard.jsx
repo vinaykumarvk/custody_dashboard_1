@@ -892,7 +892,7 @@ const Dashboard = () => {
                   maintainAspectRatio: false,
                   scales: {
                     y: {
-                      beginAtZero: true,
+                      beginAtZero: false,
                       ticks: {
                         callback: function(value) {
                           return formatCurrency(value, 'USD', 0);
@@ -1172,7 +1172,8 @@ const Dashboard = () => {
                   maintainAspectRatio: false,
                   scales: {
                     y: {
-                      beginAtZero: true,
+                      beginAtZero: false,
+                      grace: '5%',
                       ticks: {
                         precision: 0
                       }
