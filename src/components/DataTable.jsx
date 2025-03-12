@@ -78,11 +78,14 @@ const DataTable = ({
     }
     
     if (column.type === 'number') {
-      return formatNumber(value, column.decimals || false);
+      // For table displays, we use decimals if specified, otherwise forcing integers
+      const forceInt = !(column.decimals);
+      return formatNumber(value, column.decimals || false, forceInt);
     }
     
     if (column.type === 'currency') {
-      return formatCurrency(value, column.currency || 'USD');
+      // For currency in tables, use 2 decimal places by default
+      return formatCurrency(value, column.currency || 'USD', 2, false, true);
     }
     
     if (column.type === 'status') {

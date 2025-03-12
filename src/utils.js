@@ -2,9 +2,10 @@
  * Format a number with thousand separators
  * @param {number} num - The number to format
  * @param {boolean} decimals - Whether to include decimals
+ * @param {boolean} forceInt - Force integer display (no decimals), default true
  * @returns {string} Formatted number
  */
-export const formatNumber = (num, decimals = false) => {
+export const formatNumber = (num, decimals = false, forceInt = true) => {
   if (num === null || num === undefined) return '-';
   
   // Parse the number if it's a string
@@ -12,11 +13,16 @@ export const formatNumber = (num, decimals = false) => {
     num = parseFloat(num);
   }
   
+  // For metric cards and other integer displays, we want to force integers
+  if (forceInt) {
+    num = Math.round(num);
+  }
+  
   // Format with thousand separators and optional decimals
-  if (decimals) {
+  if (decimals && !forceInt) {
     return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   } else {
-    return num.toLocaleString('en-US');
+    return num.toLocaleString('en-US', { maximumFractionDigits: 0 });
   }
 };
 
@@ -24,16 +30,22 @@ export const formatNumber = (num, decimals = false) => {
  * Format a currency value
  * @param {number} value - The currency value
  * @param {string} currency - The currency code (default: USD)
- * @param {number} maximumFractionDigits - Maximum number of decimal places (default: 2)
+ * @param {number} maximumFractionDigits - Maximum number of decimal places (default: 0 for integers)
  * @param {boolean} useCompactNotation - Whether to use compact notation for large numbers
+ * @param {boolean} forTable - Whether this is for a table display (uses 2 decimals)
  * @returns {string} Formatted currency
  */
-export const formatCurrency = (value, currency = 'USD', maximumFractionDigits = 2, useCompactNotation = false) => {
+export const formatCurrency = (value, currency = 'USD', maximumFractionDigits = 0, useCompactNotation = false, forTable = false) => {
   if (value === null || value === undefined) return '-';
   
   // Parse the value if it's a string
   if (typeof value === 'string') {
     value = parseFloat(value);
+  }
+  
+  // For table displays, we want to show 2 decimal places
+  if (forTable && maximumFractionDigits === 0) {
+    maximumFractionDigits = 2;
   }
   
   // Use compact notation for very large numbers (trillions/billions) if requested
@@ -43,6 +55,11 @@ export const formatCurrency = (value, currency = 'USD', maximumFractionDigits = 
   } else if (useCompactNotation || value >= 1000000000) { // >= 1 billion
     const billions = value / 1000000000;
     return `$${billions.toFixed(2)}B`;
+  }
+  
+  // For non-compact values, round to the nearest integer unless specified
+  if (maximumFractionDigits === 0) {
+    value = Math.round(value);
   }
   
   return new Intl.NumberFormat('en-US', {
