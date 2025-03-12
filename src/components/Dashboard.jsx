@@ -777,23 +777,7 @@ const Dashboard = () => {
     ]
   };
   
-  // Corporate Actions chart data
-  const corporateActionTypesData = {
-    labels: corporateActions.types ? corporateActions.types.map(item => item.type) : [],
-    datasets: [
-      {
-        data: corporateActions.types ? corporateActions.types.map(item => item.count) : [],
-        backgroundColor: [
-          '#007C75',  // Primary green
-          '#009E94',  // Light green
-          '#006560',  // Dark green
-          '#00AEA4',  // Lighter green
-          '#005550',  // Darker green
-        ],
-        borderWidth: 0,
-      }
-    ]
-  };
+  // Corporate Actions chart data removed (moved to Corporate Actions component)
 
   // Trades by Asset Class chart data - using filtered data from the specified time period
   const tradesByAssetChartData = {

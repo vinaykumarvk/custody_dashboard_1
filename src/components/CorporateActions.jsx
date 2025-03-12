@@ -234,14 +234,43 @@ const CorporateActions = () => {
       <h1 className="page-title mb-4">Corporate Actions</h1>
       
       {/* Summary metrics row */}
-      <div className="row g-3 mb-4">
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3 col-sm-6">
           <MetricCard 
-            title="Total Actions" 
+            title="Total Corporate Actions" 
             value={formatNumber(data.total_actions || 0, false)} 
-            icon="bullhorn"
+            icon="file-alt"
+            color="#007C75"
           />
         </div>
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="High Priority Actions" 
+            value={formatNumber(data.high_priority || 0, false)} 
+            icon="exclamation"
+            color="#DC3545"
+          />
+        </div>
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="Mandatory Actions" 
+            value={formatNumber(data.mandatory || 0, false)} 
+            icon="clipboard-check"
+            color="#28A745"
+          />
+        </div>
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="Voluntary Actions" 
+            value={formatNumber(data.voluntary || 0, false)} 
+            icon="clipboard-list"
+            color="#17A2B8"
+          />
+        </div>
+      </div>
+      
+      {/* Additional metrics row */}
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Upcoming Actions" 
@@ -264,6 +293,14 @@ const CorporateActions = () => {
             value={formatNumber(statusBreakdown.find(s => s.status === 'Pending')?.count || 0, false)} 
             icon="exclamation-circle"
             color="#DC3545"
+          />
+        </div>
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="Pending Elections" 
+            value={formatNumber(data.pending_elections || 0, false)} 
+            icon="vote-yea"
+            color="#17A2B8"
           />
         </div>
       </div>
