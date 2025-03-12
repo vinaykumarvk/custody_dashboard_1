@@ -139,12 +139,6 @@ const Customers = () => {
     <div className="customers-dashboard">
       <div className="dashboard-header">
         <h1>Customers Dashboard</h1>
-        <div className="date-range-selector">
-          <button className={dateRange === '3m' ? 'active' : ''} onClick={() => setDateRange('3m')}>3 Months</button>
-          <button className={dateRange === '6m' ? 'active' : ''} onClick={() => setDateRange('6m')}>6 Months</button>
-          <button className={dateRange === '12m' ? 'active' : ''} onClick={() => setDateRange('12m')}>12 Months</button>
-          <button className={dateRange === 'all' ? 'active' : ''} onClick={() => setDateRange('all')}>All</button>
-        </div>
       </div>
       
       {/* Metrics summary */}
@@ -192,7 +186,15 @@ const Customers = () => {
           <div className="col-8">
             <div className="card mb-4">
               <div className="card-header">
-                <h2>Customer Growth</h2>
+                <div className="d-flex justify-content-between align-items-center">
+                  <h2>Customer Growth</h2>
+                  <div className="date-range-selector">
+                    <button className={dateRange === '3m' ? 'active' : ''} onClick={() => setDateRange('3m')}>3 Months</button>
+                    <button className={dateRange === '6m' ? 'active' : ''} onClick={() => setDateRange('6m')}>6 Months</button>
+                    <button className={dateRange === '12m' ? 'active' : ''} onClick={() => setDateRange('12m')}>12 Months</button>
+                    <button className={dateRange === 'all' ? 'active' : ''} onClick={() => setDateRange('all')}>All</button>
+                  </div>
+                </div>
               </div>
               <div className="card-body">
                 {data.customers_monthly && (
