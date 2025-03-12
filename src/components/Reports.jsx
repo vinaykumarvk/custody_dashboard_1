@@ -222,10 +222,10 @@ const Reports = () => {
                       <div>
                         <h3 className="card-title">{report.name}</h3>
                       </div>
-                      <p className="card-text">{report.description}</p>
-                      <div className="report-meta">
-                        <div><i className="fas fa-file-export"></i> Formats: {report.available_formats.join(', ')}</div>
-                        <div><i className="fas fa-clock"></i> Last Generated: {report.last_generated ? formatDate(report.last_generated, 'date') : 'Never'}</div>
+                      <p className="card-text small text-muted">{report.description}</p>
+                      <div className="report-meta small mt-2">
+                        <div>Formats: {report.available_formats.join(', ')}</div>
+                        <div>Last Generated: {report.last_generated ? formatDate(report.last_generated, 'date') : 'Never'}</div>
                       </div>
                     </div>
                     <div className="card-footer d-flex justify-content-between">
