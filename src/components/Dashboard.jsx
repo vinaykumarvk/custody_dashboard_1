@@ -36,7 +36,7 @@ const Dashboard = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedTrade, setSelectedTrade] = useState(null);
+  // States for trade and filter management
   const [filterParams, setFilterParams] = useState({
     startDate: null,
     endDate: new Date(),
@@ -411,13 +411,7 @@ const Dashboard = () => {
     }
   };
   
-  const handleRowClick = (trade) => {
-    setSelectedTrade(trade);
-  };
-  
-  const closeTradeModal = () => {
-    setSelectedTrade(null);
-  };
+  // Functions for trade interactions removed (moved to Trades.jsx)
   
   /**
    * Process API data into the format expected by the dashboard component
@@ -1123,106 +1117,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Corporate Actions metrics */}
-      <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-12">
-          <h2 className="section-header">Corporate Actions</h2>
-        </div>
-        <div className="col-md-3 col-sm-6">
-          <MetricCard 
-            title="Total Corporate Actions" 
-            value={formatNumber(corporateActions.total || 0, false)} 
-            icon="file-alt"
-            color="#007C75"
-          />
-        </div>
-        <div className="col-md-3 col-sm-6">
-          <MetricCard 
-            title="High Priority Actions" 
-            value={formatNumber(corporateActions.high_priority || 0, false)} 
-            icon="exclamation"
-            color="#DC3545"
-          />
-        </div>
-        <div className="col-md-3 col-sm-6">
-          <MetricCard 
-            title="Mandatory Actions" 
-            value={formatNumber(corporateActions.mandatory || 0, false)} 
-            icon="clipboard-check"
-            color="#28A745"
-          />
-        </div>
-        <div className="col-md-3 col-sm-6">
-          <MetricCard 
-            title="Voluntary Actions" 
-            value={formatNumber(corporateActions.voluntary || 0, false)} 
-            icon="clipboard-list"
-            color="#17A2B8"
-          />
-        </div>
-      </div>
-      
-      {/* Corporate Actions Charts */}
-      <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-6">
-          <div className="card">
-            <div className="card-header">
-              <h2>Corporate Action Types</h2>
-            </div>
-            <div className="card-body">
-              <Chart 
-                type="pie"
-                data={corporateActionTypesData}
-                height="300px"
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    legend: {
-                      position: 'right'
-                    }
-                  }
-                }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="col-md-6">
-          <div className="card">
-            <div className="card-header">
-              <h2>Corporate Actions Status</h2>
-            </div>
-            <div className="card-body">
-              <div className="d-flex flex-column align-items-center">
-                <div className="d-flex justify-content-between w-100 mb-3">
-                  <div style={statusItemStyle}>
-                    <span style={{...statusDotStyle, backgroundColor: '#28A745'}}></span>
-                    <span style={statusLabelStyle}>Completed:</span>
-                    <span style={statusValueStyle}>{formatNumber(corporateActions.status?.find(s => s.status === 'Completed')?.count || 0, false)}</span>
-                  </div>
-                  <div style={statusItemStyle}>
-                    <span style={{...statusDotStyle, backgroundColor: '#FFC107'}}></span>
-                    <span style={statusLabelStyle}>Pending:</span>
-                    <span style={statusValueStyle}>{formatNumber(corporateActions.status?.find(s => s.status === 'Pending')?.count || 0, false)}</span>
-                  </div>
-                </div>
-                <div className="d-flex justify-content-between w-100">
-                  <div style={statusItemStyle}>
-                    <span style={{...statusDotStyle, backgroundColor: '#17A2B8'}}></span>
-                    <span style={statusLabelStyle}>Announced:</span>
-                    <span style={statusValueStyle}>{formatNumber(corporateActions.status?.find(s => s.status === 'Announced')?.count || 0, false)}</span>
-                  </div>
-                  <div style={statusItemStyle}>
-                    <span style={{...statusDotStyle, backgroundColor: '#007C75'}}></span>
-                    <span style={statusLabelStyle}>Processing:</span>
-                    <span style={statusValueStyle}>{formatNumber(corporateActions.status?.find(s => s.status === 'Processing')?.count || 0, false)}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Note: Corporate Actions section moved to dedicated CorporateActions page */}
 
       {/* More charts row */}
       <div className="row g-3 mb-4 equal-height">
@@ -1285,27 +1180,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Recent trades table */}
-      <div className="card mb-4">
-        <div className="card-header">
-          <h2>Recent Trades</h2>
-        </div>
-        <div className="card-body">
-          <DataTable 
-            data={recentTrades}
-            columns={recentTradesColumns}
-            onRowClick={handleRowClick}
-          />
-        </div>
-      </div>
-      
-      {/* Trade detail modal */}
-      {selectedTrade && (
-        <TradeDetailModal 
-          trade={selectedTrade} 
-          onClose={closeTradeModal} 
-        />
-      )}
+      {/* Note: Recent Trades section moved to dedicated Trades page */}
     </div>
   );
 };
