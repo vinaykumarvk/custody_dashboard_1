@@ -27,6 +27,13 @@ const DateRangeFilter = ({ options = [], onFilterChange }) => {
   // Initialize active range to 30 days by default
   const [activeRange, setActiveRange] = useState('30d');
   
+  // Call filter change on mount to set initial state
+  React.useEffect(() => {
+    // Trigger the initial filter on component mount
+    handleFilterChange('30d');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
   // Handle filter change
   const handleFilterChange = (rangeId) => {
     setActiveRange(rangeId);

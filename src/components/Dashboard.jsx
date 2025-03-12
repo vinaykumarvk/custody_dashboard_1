@@ -103,7 +103,7 @@ const Dashboard = () => {
     const { startDate, endDate } = filterParams;
     
     // If 'all' is selected, use all data
-    if (filterParams.range === 'all') {
+    if (filterParams.range.toLowerCase() === 'all') {
       setFilteredVolumeData(volumeData);
       setFilteredTradeCountData(tradeCountData);
       return;
@@ -111,19 +111,36 @@ const Dashboard = () => {
     
     // Apply date filters
     const filteredVolume = volumeData.filter(item => {
+      // Parse the date string to ensure proper comparison
       const itemDate = new Date(item.date);
+      
+      // Log some dates for debugging
+      if (Math.random() < 0.05) { // Only log ~5% of items to avoid console spam
+        console.log(`Trading volume date check (${item.date}):`, {
+          itemDateObj: itemDate,
+          startDate: startDate,
+          endDate: endDate,
+          passesFilter: (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate)
+        });
+      }
+      
       return (!startDate || itemDate >= startDate) && 
              (!endDate || itemDate <= endDate);
     });
     
     const filteredCount = tradeCountData.filter(item => {
+      // Parse the date string to ensure proper comparison
       const itemDate = new Date(item.date);
       return (!startDate || itemDate >= startDate) && 
              (!endDate || itemDate <= endDate);
     });
     
-    setFilteredVolumeData(filteredVolume);
-    setFilteredTradeCountData(filteredCount);
+    console.log(`Filtered volume data: ${filteredVolume.length} of ${volumeData.length} items`);
+    console.log(`Filtered count data: ${filteredCount.length} of ${tradeCountData.length} items`);
+    
+    // If we get no data after filtering, use the original data (failsafe)
+    setFilteredVolumeData(filteredVolume.length > 0 ? filteredVolume : volumeData);
+    setFilteredTradeCountData(filteredCount.length > 0 ? filteredCount : tradeCountData);
   };
   
   // Handle AUC History filter changes
@@ -145,7 +162,7 @@ const Dashboard = () => {
     });
     
     // If 'all' is selected or no history data, use all data
-    if (range === 'all' || !aucHistory || aucHistory.length === 0) {
+    if (range.toLowerCase() === 'all' || !aucHistory || aucHistory.length === 0) {
       setFilteredAucHistoryData(aucHistory || []);
       return;
     }
@@ -191,7 +208,7 @@ const Dashboard = () => {
     });
     
     // If there's no history or we want all data, return empty array to use default data
-    if (!tradesByAssetHistory || tradesByAssetHistory.length === 0 || range === 'all') {
+    if (!tradesByAssetHistory || tradesByAssetHistory.length === 0 || range.toLowerCase() === 'all') {
       console.log('Using default trades by asset data (all time or no history)');
       setFilteredTradesByAssetData([]);
       return;
