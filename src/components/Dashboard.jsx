@@ -367,16 +367,46 @@ const Dashboard = () => {
       return;
     }
     
-    // Get the most recent day's data
-    const mostRecentDay = filteredHistory[filteredHistory.length - 1];
+    // Instead of just using the most recent day's data, calculate daily average for each asset class
+    // First, create a map to store totals for each asset class
+    const assetTotals = new Map();
+    const assetDays = new Map();
     
-    // If we have valid data, use it
-    if (mostRecentDay && mostRecentDay.assets && mostRecentDay.assets.length > 0) {
-      console.log('Using most recent day assets data:', mostRecentDay.date);
-      setFilteredTradesByAssetData(mostRecentDay.assets);
+    // Process each day's data
+    filteredHistory.forEach(day => {
+      if (day.assets && day.assets.length > 0) {
+        day.assets.forEach(asset => {
+          // Initialize or update the asset totals
+          if (!assetTotals.has(asset.label)) {
+            assetTotals.set(asset.label, 0);
+            assetDays.set(asset.label, 0);
+          }
+          
+          assetTotals.set(asset.label, assetTotals.get(asset.label) + asset.value);
+          assetDays.set(asset.label, assetDays.get(asset.label) + 1);
+        });
+      }
+    });
+    
+    // Convert the totals into an array of asset data with daily averages
+    const aggregatedAssetData = Array.from(assetTotals.entries()).map(([label, total]) => {
+      const days = assetDays.get(label);
+      return {
+        label,
+        value: Math.round(total / (days || 1)) // Average per day, avoid division by zero
+      };
+    });
+    
+    // Sort by value (descending) to show most active asset classes first
+    aggregatedAssetData.sort((a, b) => b.value - a.value);
+    
+    console.log(`Aggregated asset data from ${filteredHistory.length} days:`, aggregatedAssetData);
+    
+    if (aggregatedAssetData.length > 0) {
+      setFilteredTradesByAssetData(aggregatedAssetData);
     } else {
-      // Otherwise, use default data
-      console.log('No assets data in most recent day, using default');
+      // If no data, use empty array
+      console.log('No asset data after aggregation, using empty array');
       setFilteredTradesByAssetData([]);
     }
   };
@@ -771,6 +801,7 @@ const Dashboard = () => {
     ]
   };
 
+  // Trades by Asset Class chart data - using filtered data from the specified time period
   const tradesByAssetChartData = {
     labels: (filteredTradesByAssetData.length > 0 ? filteredTradesByAssetData : tradesByAssetClass || [])
       .map(item => item.label),
@@ -779,7 +810,14 @@ const Dashboard = () => {
         label: 'Trades by Asset Class',
         data: (filteredTradesByAssetData.length > 0 ? filteredTradesByAssetData : tradesByAssetClass || [])
           .map(item => item.value),
-        backgroundColor: '#007C75',
+        backgroundColor: [
+          '#007C75',  // Primary green
+          '#009E94',  // Light green
+          '#006560',  // Dark green
+          '#00AEA4',  // Lighter green
+          '#005550',  // Darker green
+        ],
+        borderWidth: 0,
       }
     ]
   };
