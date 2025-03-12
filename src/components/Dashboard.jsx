@@ -45,7 +45,7 @@ const Dashboard = () => {
   const [filteredVolumeData, setFilteredVolumeData] = useState([]);
   const [filteredTradeCountData, setFilteredTradeCountData] = useState([]);
   const [filteredAucHistoryData, setFilteredAucHistoryData] = useState([]);
-  const [filteredTradesByAssetClassData, setFilteredTradesByAssetClassData] = useState([]);
+  const [filteredTradesByAssetData, setFilteredTradesByAssetData] = useState([]);
   
   // State for individual filters
   const [aucHistoryFilterParams, setAucHistoryFilterParams] = useState({
@@ -168,7 +168,7 @@ const Dashboard = () => {
   const applyTradesByAssetFilter = (tradesByAssetHistory, filterParams) => {
     // This function would filter time-based trades by asset class data
     // For now, we'll just store the filter parameters for future implementation
-    setFilteredTradesByAssetClassData(tradesByAssetHistory || []);
+    setFilteredTradesByAssetData(tradesByAssetHistory || []);
   };
   
   const handleRowClick = (trade) => {
@@ -401,16 +401,18 @@ const Dashboard = () => {
     ]
   };
   
-  // AUC history chart data
+  // AUC history chart data - using filtered data if available
   const aucHistoryData = {
-    labels: assetsUnderCustody?.history?.map(item => {
-      const [year, month] = item.month.split('-');
-      return `${month}/${year.slice(2)}`;
-    }) || [],
+    labels: (filteredAucHistoryData.length > 0 ? filteredAucHistoryData : assetsUnderCustody?.history || [])
+      .map(item => {
+        const [year, month] = item.month.split('-');
+        return `${month}/${year.slice(2)}`;
+      }),
     datasets: [
       {
         label: 'Assets Under Custody',
-        data: assetsUnderCustody?.history?.map(item => item.value) || [],
+        data: (filteredAucHistoryData.length > 0 ? filteredAucHistoryData : assetsUnderCustody?.history || [])
+          .map(item => item.value),
         fill: true,
         tension: 0.4,
         backgroundColor: 'rgba(0, 124, 117, 0.2)',
@@ -438,11 +440,13 @@ const Dashboard = () => {
   };
 
   const tradesByAssetChartData = {
-    labels: tradesByAssetClass.map(item => item.label),
+    labels: (filteredTradesByAssetData.length > 0 ? filteredTradesByAssetData : tradesByAssetClass || [])
+      .map(item => item.label),
     datasets: [
       {
         label: 'Trades by Asset Class',
-        data: tradesByAssetClass.map(item => item.value),
+        data: (filteredTradesByAssetData.length > 0 ? filteredTradesByAssetData : tradesByAssetClass || [])
+          .map(item => item.value),
         backgroundColor: '#007C75',
       }
     ]
