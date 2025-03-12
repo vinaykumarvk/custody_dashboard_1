@@ -44,6 +44,20 @@ const Dashboard = () => {
   });
   const [filteredVolumeData, setFilteredVolumeData] = useState([]);
   const [filteredTradeCountData, setFilteredTradeCountData] = useState([]);
+  const [filteredAucHistoryData, setFilteredAucHistoryData] = useState([]);
+  const [filteredTradesByAssetClassData, setFilteredTradesByAssetClassData] = useState([]);
+  
+  // State for individual filters
+  const [aucHistoryFilterParams, setAucHistoryFilterParams] = useState({
+    startDate: null,
+    endDate: new Date(),
+    range: '30d'
+  });
+  const [tradesByAssetFilterParams, setTradesByAssetFilterParams] = useState({
+    startDate: null,
+    endDate: new Date(),
+    range: '30d'
+  });
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -60,6 +74,14 @@ const Dashboard = () => {
         
         // Set initial filtered data
         applyDateFilter(processedData.tradingVolumeHistory, processedData.tradeCountHistory, filterParams);
+        
+        // Initialize AUC history data filter
+        applyAucHistoryFilter(processedData.assetsUnderCustody?.history || [], aucHistoryFilterParams);
+        
+        // Initialize trades by asset class filter if there's time-based data
+        if (processedData.tradesByAssetClassHistory) {
+          applyTradesByAssetFilter(processedData.tradesByAssetClassHistory, tradesByAssetFilterParams);
+        }
       } catch (err) {
         console.error('Error loading dashboard data:', err);
         setError('Failed to load dashboard data');
@@ -102,6 +124,51 @@ const Dashboard = () => {
     
     setFilteredVolumeData(filteredVolume);
     setFilteredTradeCountData(filteredCount);
+  };
+  
+  // Handle AUC History filter changes
+  const handleAucHistoryFilterChange = (newFilterParams) => {
+    setAucHistoryFilterParams(newFilterParams);
+    if (data && data.assetsUnderCustody && data.assetsUnderCustody.history) {
+      applyAucHistoryFilter(data.assetsUnderCustody.history, newFilterParams);
+    }
+  };
+  
+  // Apply filters to AUC history data
+  const applyAucHistoryFilter = (aucHistory, filterParams) => {
+    const { startDate, endDate } = filterParams;
+    
+    // If 'all' is selected or no history data, use all data
+    if (filterParams.range === 'all' || !aucHistory || aucHistory.length === 0) {
+      setFilteredAucHistoryData(aucHistory || []);
+      return;
+    }
+    
+    // For monthly data, we need to convert month strings to dates for comparison
+    const filteredAuc = aucHistory.filter(item => {
+      const [year, month] = item.month.split('-');
+      // Create a date object for the first day of the month
+      const itemDate = new Date(parseInt(year), parseInt(month) - 1, 1);
+      return (!startDate || itemDate >= startDate) && 
+             (!endDate || itemDate <= endDate);
+    });
+    
+    setFilteredAucHistoryData(filteredAuc);
+  };
+  
+  // Handle Trades by Asset Class filter changes
+  const handleTradesByAssetFilterChange = (newFilterParams) => {
+    setTradesByAssetFilterParams(newFilterParams);
+    if (data && data.tradesByAssetClassHistory) {
+      applyTradesByAssetFilter(data.tradesByAssetClassHistory, newFilterParams);
+    }
+  };
+  
+  // Apply filters to Trades by Asset Class data (if time-based data is available)
+  const applyTradesByAssetFilter = (tradesByAssetHistory, filterParams) => {
+    // This function would filter time-based trades by asset class data
+    // For now, we'll just store the filter parameters for future implementation
+    setFilteredTradesByAssetClassData(tradesByAssetHistory || []);
   };
   
   const handleRowClick = (trade) => {
@@ -577,8 +644,9 @@ const Dashboard = () => {
         </div>
         <div className="col-md-9 col-sm-6">
           <div className="card">
-            <div className="card-header">
+            <div className="card-header d-flex justify-content-between align-items-center">
               <h2>AUC History</h2>
+              <DateRangeFilter onFilterChange={handleAucHistoryFilterChange} />
             </div>
             <div className="card-body">
               <Chart 
@@ -807,8 +875,9 @@ const Dashboard = () => {
         </div>
         <div className="col-md-6">
           <div className="card">
-            <div className="card-header">
+            <div className="card-header d-flex justify-content-between align-items-center">
               <h2>Trades by Asset Class</h2>
+              <DateRangeFilter onFilterChange={handleTradesByAssetFilterChange} />
             </div>
             <div className="card-body">
               <Chart 
