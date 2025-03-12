@@ -213,16 +213,22 @@ const Dashboard = () => {
     let filteredData = [];
     const rangeLower = range.toLowerCase();
     
-    if (rangeLower === '7d' || rangeLower === '30d') {
-      // For 7 and 30 day ranges, just show the most recent N months
-      const monthsToShow = rangeLower === '7d' ? 3 : 6;
-      filteredData = aucHistory.slice(-monthsToShow);
-      console.log(`Using most recent ${monthsToShow} months of AUC data for ${rangeLower} filter`);
+    // For AUC data, which is monthly, we need to determine how many months to show
+    // to properly represent the time periods
+    if (rangeLower === '7d') {
+      // For 7d, show just 1 month (most recent)
+      filteredData = aucHistory.slice(-1);
+      console.log(`Using most recent 1 month of AUC data for 7d filter`);
     } 
+    else if (rangeLower === '30d') {
+      // For 30d, show 1 month since we're looking at a 30-day period
+      filteredData = aucHistory.slice(-1);
+      console.log(`Using most recent 1 month of AUC data for 30d filter`);
+    }
     else if (rangeLower === '90d') {
-      // For 90d, show 12 months 
-      filteredData = aucHistory.slice(-12);
-      console.log(`Using most recent 12 months of AUC data for 90d filter`);
+      // For 90d, show 3 months (quarter)
+      filteredData = aucHistory.slice(-3);
+      console.log(`Using most recent 3 months of AUC data for 90d filter`);
     }
     else if (rangeLower === 'ytd') {
       // For YTD, show all months in current year
