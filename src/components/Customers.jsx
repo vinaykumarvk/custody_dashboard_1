@@ -196,37 +196,38 @@ const Customers = () => {
               </div>
               <div className="card-body">
                 {data.customers_monthly && (
-                  <Line 
-                    data={prepareCustomerGrowthChartData()} 
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                        legend: {
-                          position: 'right',
-                          labels: {
-                            boxWidth: 15,
-                            padding: 10
-                          }
-                        }
-                      },
-                      scales: {
-                        y: {
-                          beginAtZero: true,
-                          grid: {
-                            drawBorder: false,
-                            borderDash: [2, 2]
+                  <div style={{ height: '250px', maxHeight: '250px', position: 'relative' }}>
+                    <Line 
+                      data={prepareCustomerGrowthChartData()} 
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: {
+                            position: 'right',
+                            labels: {
+                              boxWidth: 15,
+                              padding: 10
+                            }
                           }
                         },
-                        x: {
-                          grid: {
-                            display: false
+                        scales: {
+                          y: {
+                            beginAtZero: true,
+                            grid: {
+                              drawBorder: false,
+                              borderDash: [2, 2]
+                            }
+                          },
+                          x: {
+                            grid: {
+                              display: false
+                            }
                           }
                         }
-                      }
-                    }}
-                    height="250px"
-                  />
+                      }}
+                    />
+                  </div>
                 )}
               </div>
             </div>
@@ -239,31 +240,32 @@ const Customers = () => {
               </div>
               <div className="card-body">
                 {data.customer_segments && (
-                  <Pie 
-                    data={prepareCustomerSegmentsChartData()}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                        legend: {
-                          position: 'right',
-                          labels: {
-                            boxWidth: 15,
-                            padding: 10
-                          }
-                        },
-                        tooltip: {
-                          callbacks: {
-                            label: (context) => {
-                              const segment = data.customer_segments[context.dataIndex];
-                              return `${segment.segment}: ${formatNumber(segment.count)} (${formatPercentage(segment.percentage)})`;
+                  <div style={{ height: '250px', maxHeight: '250px', position: 'relative' }}>
+                    <Pie 
+                      data={prepareCustomerSegmentsChartData()}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: {
+                            position: 'right',
+                            labels: {
+                              boxWidth: 15,
+                              padding: 10
+                            }
+                          },
+                          tooltip: {
+                            callbacks: {
+                              label: (context) => {
+                                const segment = data.customer_segments[context.dataIndex];
+                                return `${segment.segment}: ${formatNumber(segment.count)} (${formatPercentage(segment.percentage)})`;
+                              }
                             }
                           }
                         }
-                      }
-                    }}
-                    height="250px"
-                  />
+                      }}
+                    />
+                  </div>
                 )}
               </div>
             </div>
@@ -278,33 +280,34 @@ const Customers = () => {
               </div>
               <div className="card-body">
                 {data.customers_by_region && (
-                  <Bar 
-                    data={prepareCustomersByRegionChartData()}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      indexAxis: 'y',
-                      plugins: {
-                        legend: {
-                          display: false
-                        }
-                      },
-                      scales: {
-                        x: {
-                          grid: {
-                            drawBorder: false,
-                            borderDash: [2, 2]
-                          }
-                        },
-                        y: {
-                          grid: {
+                  <div style={{ height: '250px', maxHeight: '250px', position: 'relative' }}>
+                    <Bar 
+                      data={prepareCustomersByRegionChartData()}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        plugins: {
+                          legend: {
                             display: false
                           }
+                        },
+                        scales: {
+                          x: {
+                            grid: {
+                              drawBorder: false,
+                              borderDash: [2, 2]
+                            }
+                          },
+                          y: {
+                            grid: {
+                              display: false
+                            }
+                          }
                         }
-                      }
-                    }}
-                    height="250px"
-                  />
+                      }}
+                    />
+                  </div>
                 )}
               </div>
             </div>
