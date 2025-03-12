@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title } from 'chart.js';
-import { Bar, Pie, Line } from 'react-chartjs-2';
+import { Bar, Pie, Line, Doughnut } from 'react-chartjs-2';
 
 // Register Chart.js components
 ChartJS.register(
@@ -57,6 +57,8 @@ const Chart = ({ type, data, options, height = '250px' }) => {
         return <Pie data={data} options={mergedOptions} />;
       case 'line':
         return <Line data={data} options={mergedOptions} />;
+      case 'doughnut':
+        return <Doughnut data={data} options={mergedOptions} />;
       default:
         return <div className="alert alert-warning">Unsupported chart type: {type}</div>;
     }
