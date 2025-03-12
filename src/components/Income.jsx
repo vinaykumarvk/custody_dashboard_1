@@ -139,12 +139,6 @@ const Income = () => {
     <div className="income-dashboard">
       <div className="dashboard-header">
         <h1>Income Dashboard</h1>
-        <div className="date-range-selector">
-          <button className={dateRange === '3m' ? 'active' : ''} onClick={() => setDateRange('3m')}>3 Months</button>
-          <button className={dateRange === '6m' ? 'active' : ''} onClick={() => setDateRange('6m')}>6 Months</button>
-          <button className={dateRange === '12m' ? 'active' : ''} onClick={() => setDateRange('12m')}>12 Months</button>
-          <button className={dateRange === 'all' ? 'active' : ''} onClick={() => setDateRange('all')}>All</button>
-        </div>
       </div>
       
       {/* Metrics summary */}
@@ -194,7 +188,15 @@ const Income = () => {
           <div className="col-md-8">
             <div className="card">
               <div className="card-header">
-                <h2>Income History</h2>
+                <div className="d-flex justify-content-between align-items-center">
+                  <h2>Income History</h2>
+                  <div className="date-range-selector">
+                    <button className={dateRange === '3m' ? 'active' : ''} onClick={() => setDateRange('3m')}>3 Months</button>
+                    <button className={dateRange === '6m' ? 'active' : ''} onClick={() => setDateRange('6m')}>6 Months</button>
+                    <button className={dateRange === '12m' ? 'active' : ''} onClick={() => setDateRange('12m')}>12 Months</button>
+                    <button className={dateRange === 'all' ? 'active' : ''} onClick={() => setDateRange('all')}>All</button>
+                  </div>
+                </div>
               </div>
               <div className="card-body">
                 {data.income_monthly && (
