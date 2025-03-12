@@ -148,8 +148,8 @@ const Income = () => {
       </div>
       
       {/* Metrics summary */}
-      <div className="row">
-        <div className="col-md-3">
+      <div className="row g-3 mb-4 equal-height">
+        <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Total Income YTD" 
             value={formatCurrency(data.total_income_ytd)}
@@ -159,7 +159,7 @@ const Income = () => {
             valueClassName={data.total_income_ytd > 1000000 ? 'smaller-value' : ''}
           />
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Income MTD" 
             value={formatCurrency(data.total_income_mtd)}
@@ -168,7 +168,7 @@ const Income = () => {
             color="#28A745"
           />
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="YoY Growth" 
             value={formatPercentage(data.income_growth_yoy)}
@@ -177,7 +177,7 @@ const Income = () => {
             color="#17A2B8"
           />
         </div>
-        <div className="col-md-3">
+        <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Outstanding Fees" 
             value={formatCurrency(data.fees_outstanding)}
@@ -190,9 +190,9 @@ const Income = () => {
       </div>
       
       <div className="dashboard-content">
-        <div className="row">
-          <div className="col-8">
-            <div className="card mb-4">
+        <div className="row g-3 mb-4 equal-height">
+          <div className="col-md-8">
+            <div className="card">
               <div className="card-header">
                 <h2>Income History</h2>
               </div>
@@ -244,8 +244,8 @@ const Income = () => {
             </div>
           </div>
           
-          <div className="col-4">
-            <div className="card mb-4">
+          <div className="col-md-4">
+            <div className="card">
               <div className="card-header">
                 <h2>Income by Service</h2>
               </div>
@@ -282,9 +282,9 @@ const Income = () => {
           </div>
         </div>
         
-        <div className="row">
-          <div className="col-4">
-            <div className="card mb-4">
+        <div className="row g-3 mb-4 equal-height">
+          <div className="col-md-4">
+            <div className="card">
               <div className="card-header">
                 <h2>Income by Region</h2>
               </div>
@@ -332,8 +332,8 @@ const Income = () => {
             </div>
           </div>
           
-          <div className="col-8">
-            <div className="card mb-4">
+          <div className="col-md-8">
+            <div className="card">
               <div className="card-header">
                 <h2>Top Revenue Customers</h2>
                 <button className="btn-view-all">View All</button>
