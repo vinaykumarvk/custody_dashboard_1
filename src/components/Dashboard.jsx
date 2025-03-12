@@ -208,51 +208,65 @@ const Dashboard = () => {
       return;
     }
     
-    // For AUC data, we choose a different approach for different time ranges
-    // because we're dealing with monthly data
+    // Now that AUC data is daily (not monthly), we can use similar filtering logic as other charts
     let filteredData = [];
     const rangeLower = range.toLowerCase();
     
-    // For AUC data, which is monthly, we need to determine how many months to show
-    // to properly represent the time periods
     if (rangeLower === '7d') {
-      // For 7d, show just 1 month (most recent)
-      filteredData = aucHistory.slice(-1);
-      console.log(`Using most recent 1 month of AUC data for 7d filter`);
+      // For 7d, get the most recent 7 days
+      filteredData = aucHistory.slice(-7);
+      console.log(`Using most recent 7 days of AUC data for 7d filter`);
     } 
     else if (rangeLower === '30d') {
-      // For 30d, show 1 month since we're looking at a 30-day period
-      filteredData = aucHistory.slice(-1);
-      console.log(`Using most recent 1 month of AUC data for 30d filter`);
+      // For 30d, get the most recent 30 days
+      filteredData = aucHistory.slice(-30);
+      console.log(`Using most recent 30 days of AUC data for 30d filter`);
     }
     else if (rangeLower === '90d') {
-      // For 90d, show 3 months (quarter)
-      filteredData = aucHistory.slice(-3);
-      console.log(`Using most recent 3 months of AUC data for 90d filter`);
+      // For 90d, get the most recent 90 days
+      filteredData = aucHistory.slice(-90);
+      console.log(`Using most recent 90 days of AUC data for 90d filter`);
     }
     else if (rangeLower === 'ytd') {
-      // For YTD, show all months in current year
+      // For YTD, filter to the current year
       const currentYear = new Date().getFullYear();
       filteredData = aucHistory.filter(item => {
-        const [year] = item.month.split('-').map(num => parseInt(num, 10));
-        return year === currentYear;
+        // Support both new and old format
+        if (item.date) {
+          const date = new Date(item.date);
+          return date.getFullYear() === currentYear;
+        } else if (item.month) {
+          const [year] = item.month.split('-').map(num => parseInt(num, 10));
+          return year === currentYear;
+        }
+        return false;
       });
-      console.log(`Filtered to ${filteredData.length} months in current year for YTD filter`);
+      console.log(`Filtered to ${filteredData.length} days in current year for YTD filter`);
     }
     else {
       // For any other filter, try to use the date range (this is the original approach)
       filteredData = aucHistory.filter(item => {
-        const [year, month] = item.month.split('-').map(num => parseInt(num, 10));
-        // Create a date object for the first day of the month
-        const itemDate = new Date(year, month - 1, 1);
+        let itemDate;
         
-        // Debug log
-        console.log(`Comparing month ${item.month}:`, {
-          itemDate: itemDate.toISOString(),
-          passesFilter: (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate),
-          startCheck: !startDate || itemDate >= startDate,
-          endCheck: !endDate || itemDate <= endDate
-        });
+        // Support both new and old format
+        if (item.date) {
+          itemDate = new Date(item.date);
+        } else if (item.month) {
+          const [year, month] = item.month.split('-').map(num => parseInt(num, 10));
+          itemDate = new Date(year, month - 1, 1);
+        } else {
+          return false;
+        }
+        
+        // Debug log (sample only 1% to avoid console flooding)
+        if (Math.random() < 0.01) {
+          console.log(`Comparing date:`, {
+            itemDate: itemDate.toISOString(),
+            passesFilter: (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate),
+            startCheck: !startDate || itemDate >= startDate,
+            endCheck: !endDate || itemDate <= endDate
+          });
+        }
         
         return (!startDate || itemDate >= startDate) && 
                (!endDate || itemDate <= endDate);
@@ -388,27 +402,30 @@ const Dashboard = () => {
     // Extract Assets Under Custody (AUC) data
     let assetsUnderCustody = apiData.assetsUnderCustody;
     
-    if (!assetsUnderCustody || !assetsUnderCustody.history || assetsUnderCustody.history.length < 12) {
-      // Generate 24 months of AUC history if not provided
+    if (!assetsUnderCustody || !assetsUnderCustody.history || assetsUnderCustody.history.length < 180) {
+      // Generate 180 days of AUC history (approximately 6 months) if not provided
       const today = new Date();
       const auc_history = [];
       
-      // Start from 24 months ago
-      for (let i = 0; i < 24; i++) {
-        const monthOffset = 24 - i - 1; // Count backwards from 24 months ago
+      // Start from 180 days ago
+      for (let i = 0; i < 180; i++) {
+        const dayOffset = 180 - i - 1; // Count backwards from 180 days ago
         const historyDate = new Date(today);
-        historyDate.setMonth(historyDate.getMonth() - monthOffset);
+        historyDate.setDate(historyDate.getDate() - dayOffset);
         
         // Create a base AUC value with an upward trend and some seasonality
-        const monthIndex = historyDate.getMonth();
+        const dayOfYear = Math.floor((historyDate - new Date(historyDate.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
         const baseValue = 3500000000000; // Base value 
-        const trendFactor = 1 + (i * 0.01); // 1% growth per month
-        const seasonalFactor = 1 + 0.05 * Math.sin((monthIndex / 12) * 2 * Math.PI); // Seasonal variation
+        const trendFactor = 1 + (i * 0.001); // 0.1% growth per day
+        const seasonalFactor = 1 + 0.05 * Math.sin((dayOfYear / 365) * 2 * Math.PI); // Seasonal variation
         
-        const value = Math.round(baseValue * trendFactor * seasonalFactor);
+        // Add some daily fluctuation
+        const dailyFluctuation = 1 + (Math.random() * 0.002 - 0.001); // +/- 0.1%
+        
+        const value = Math.round(baseValue * trendFactor * seasonalFactor * dailyFluctuation);
         
         auc_history.push({
-          month: `${historyDate.getFullYear()}-${String(historyDate.getMonth() + 1).padStart(2, '0')}`,
+          date: historyDate.toISOString().split('T')[0], // Format as YYYY-MM-DD
           value: value
         });
       }
@@ -711,8 +728,15 @@ const Dashboard = () => {
   const aucHistoryData = {
     labels: (filteredAucHistoryData.length > 0 ? filteredAucHistoryData : assetsUnderCustody?.history || [])
       .map(item => {
-        const [year, month] = item.month.split('-');
-        return `${month}/${year.slice(2)}`;
+        // Handle both old (month) and new (date) format
+        if (item.date) {
+          const date = new Date(item.date);
+          return `${date.getMonth() + 1}/${date.getDate()}`;
+        } else if (item.month) {
+          const [year, month] = item.month.split('-');
+          return `${month}/${year.slice(2)}`;
+        }
+        return '';
       }),
     datasets: [
       {
