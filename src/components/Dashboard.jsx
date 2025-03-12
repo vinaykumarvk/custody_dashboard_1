@@ -164,11 +164,39 @@ const Dashboard = () => {
     }
   };
   
-  // Apply filters to Trades by Asset Class data (if time-based data is available)
+  // Apply filters to Trades by Asset Class data
   const applyTradesByAssetFilter = (tradesByAssetHistory, filterParams) => {
-    // This function would filter time-based trades by asset class data
-    // For now, we'll just store the filter parameters for future implementation
-    setFilteredTradesByAssetData(tradesByAssetHistory || []);
+    // If there's no history or we want all data, return empty array to use default data
+    if (!tradesByAssetHistory || tradesByAssetHistory.length === 0 || filterParams.range === 'all') {
+      setFilteredTradesByAssetData([]);
+      return;
+    }
+    
+    const { startDate, endDate } = filterParams;
+    
+    // Filter history by date range
+    const filteredHistory = tradesByAssetHistory.filter(item => {
+      const itemDate = new Date(item.date);
+      return (!startDate || itemDate >= startDate) && 
+             (!endDate || itemDate <= endDate);
+    });
+    
+    // If we have no data after filtering, use default data
+    if (filteredHistory.length === 0) {
+      setFilteredTradesByAssetData([]);
+      return;
+    }
+    
+    // Get the most recent day's data
+    const mostRecentDay = filteredHistory[filteredHistory.length - 1];
+    
+    // If we have valid data, use it
+    if (mostRecentDay && mostRecentDay.assets && mostRecentDay.assets.length > 0) {
+      setFilteredTradesByAssetData(mostRecentDay.assets);
+    } else {
+      // Otherwise, use default data
+      setFilteredTradesByAssetData([]);
+    }
   };
   
   const handleRowClick = (trade) => {
@@ -190,11 +218,50 @@ const Dashboard = () => {
     const totalIncome = parseFloat(apiData.monthlyIncome || apiData.total_income) || 0;
     
     // Extract Assets Under Custody (AUC) data
-    const assetsUnderCustody = apiData.assetsUnderCustody || {
-      total: 0,
-      byAssetClass: [],
-      history: []
-    };
+    let assetsUnderCustody = apiData.assetsUnderCustody;
+    
+    if (!assetsUnderCustody || !assetsUnderCustody.history || assetsUnderCustody.history.length < 12) {
+      // Generate 24 months of AUC history if not provided
+      const today = new Date();
+      const auc_history = [];
+      
+      // Start from 24 months ago
+      for (let i = 0; i < 24; i++) {
+        const monthOffset = 24 - i - 1; // Count backwards from 24 months ago
+        const historyDate = new Date(today);
+        historyDate.setMonth(historyDate.getMonth() - monthOffset);
+        
+        // Create a base AUC value with an upward trend and some seasonality
+        const monthIndex = historyDate.getMonth();
+        const baseValue = 3500000000000; // Base value 
+        const trendFactor = 1 + (i * 0.01); // 1% growth per month
+        const seasonalFactor = 1 + 0.05 * Math.sin((monthIndex / 12) * 2 * Math.PI); // Seasonal variation
+        
+        const value = Math.round(baseValue * trendFactor * seasonalFactor);
+        
+        auc_history.push({
+          month: `${historyDate.getFullYear()}-${String(historyDate.getMonth() + 1).padStart(2, '0')}`,
+          value: value
+        });
+      }
+      
+      // Use existing AUC object if available or create a new one
+      assetsUnderCustody = assetsUnderCustody || {
+        total: 4259873651294, // Default total
+        byAssetClass: [
+          { label: 'Equities', value: 1893284574325 },
+          { label: 'Fixed Income', value: 1532753514466 },
+          { label: 'Alternative Assets', value: 532484206412 },
+          { label: 'Cash & Equivalents', value: 301351356091 }
+        ],
+        history: auc_history
+      };
+      
+      // If AUC exists but history is missing or too short, replace with generated history
+      if (assetsUnderCustody.history === undefined || assetsUnderCustody.history.length < 12) {
+        assetsUnderCustody.history = auc_history;
+      }
+    }
     
     // Extract customer segments data from API
     const customerSegments = apiData.customerSegments || [
@@ -210,15 +277,25 @@ const Dashboard = () => {
     } else if (apiData.trade_monthly && apiData.trade_monthly.length > 0) {
       tradeMonthlyData = apiData.trade_monthly;
     } else {
-      // Generate mock trade data with consistent dates for the past 14 days
+      // Generate mock trade data with consistent dates for the past 6 months
       const today = new Date();
-      tradeMonthlyData = Array(14).fill(0).map((_, index) => {
+      const numberOfDays = 180; // Approximately 6 months of data
+      tradeMonthlyData = Array(numberOfDays).fill(0).map((_, index) => {
         const date = new Date(today);
-        date.setDate(date.getDate() - (13 - index)); // Going backward from 14 days ago to today
+        date.setDate(date.getDate() - (numberOfDays - 1 - index)); // Going backward from 180 days ago to today
+        
+        // Create more realistic values with seasonal patterns
+        const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+        const seasonalFactor = 1 + 0.3 * Math.sin(dayOfYear * Math.PI / 180); // Seasonal variation
+        
+        // Base values with trend and seasonality
+        const baseTrades = 1000 + index * 0.5; // Slight upward trend
+        const baseVolume = 150000000 + index * 50000; // Slight upward trend
+        
         return {
           date: date.toISOString().split('T')[0],
-          total_trades: 1200 - (index * 25) + Math.floor(Math.random() * 200), // Values between 850-1400 with some randomness
-          trade_volume: 180000000 - (index * 5000000) + Math.floor(Math.random() * 10000000) // Values with trend and some randomness
+          total_trades: Math.round(baseTrades * seasonalFactor + Math.floor(Math.random() * 200)), // Add randomness
+          trade_volume: Math.round(baseVolume * seasonalFactor + Math.floor(Math.random() * 10000000)) // Add randomness
         };
       });
     }
@@ -247,6 +324,65 @@ const Dashboard = () => {
           { label: 'FX', value: 15 },
           { label: 'Fund', value: 10 }
         ];
+      }
+    }
+    
+    // Generate a time-series of trades by asset class for filtering
+    const tradesByAssetClassHistory = [];
+    
+    // If time-based data isn't already provided, generate it for the past 6 months
+    if (!apiData.tradesByAssetClassHistory || apiData.tradesByAssetClassHistory.length === 0) {
+      const today = new Date();
+      const assetTypes = ['Equity', 'Fixed Income', 'FX', 'Fund', 'Commodity'];
+      
+      // Generate 180 days of data (approx 6 months)
+      for (let i = 0; i < 180; i++) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - (180 - i - 1));
+        
+        // For each day, generate data for each asset class
+        const dayData = {
+          date: date.toISOString().split('T')[0],
+          assets: []
+        };
+        
+        // Generate data for each asset type with seasonality
+        assetTypes.forEach((asset, index) => {
+          const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+          
+          // Create asset-specific seasonality
+          let seasonalFactor;
+          switch(asset) {
+            case 'Equity':
+              // More equity trading in Q1 and Q4
+              seasonalFactor = 1 + 0.4 * Math.sin((dayOfYear + 90) * Math.PI / 180);
+              break;
+            case 'Fixed Income':
+              // More bond trading in Q2
+              seasonalFactor = 1 + 0.3 * Math.sin((dayOfYear + 180) * Math.PI / 180);
+              break;
+            case 'FX':
+              // More FX trading around fiscal year ends
+              seasonalFactor = 1 + 0.5 * Math.cos(dayOfYear * Math.PI / 90);
+              break;
+            default:
+              // Random seasonality for other assets
+              seasonalFactor = 1 + 0.2 * Math.sin(dayOfYear * Math.PI / 120);
+          }
+          
+          // Base value depends on asset type popularity
+          const baseValue = [40, 30, 20, 10, 5][index] * seasonalFactor;
+          
+          // Add some random variation
+          const value = Math.round(baseValue + Math.random() * 8 - 4);
+          
+          dayData.assets.push({
+            label: asset,
+            value: Math.max(0, value) // Ensure no negative values
+          });
+        });
+        
+        tradesByAssetClassHistory.push(dayData);
       }
     }
     
@@ -317,6 +453,7 @@ const Dashboard = () => {
       assetsUnderCustody: assetsUnderCustody,
       customerSegments,
       tradesByAssetClass,
+      tradesByAssetClassHistory,
       recentTrades,
       tradingVolumeHistory,
       tradeCountHistory
@@ -362,6 +499,7 @@ const Dashboard = () => {
     dealProcessing,
     customerSegments,
     tradesByAssetClass,
+    tradesByAssetClassHistory,
     monthlyIncome,
     incomeByService,
     recentTrades,
