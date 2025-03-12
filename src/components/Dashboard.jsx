@@ -136,10 +136,16 @@ const Dashboard = () => {
   
   // Apply filters to AUC history data
   const applyAucHistoryFilter = (aucHistory, filterParams) => {
-    const { startDate, endDate } = filterParams;
+    const { startDate, endDate, range } = filterParams;
+    
+    console.log('AUC Filter Params:', {
+      range, 
+      startDate: startDate ? startDate.toISOString() : null,
+      endDate: endDate ? endDate.toISOString() : null
+    });
     
     // If 'all' is selected or no history data, use all data
-    if (filterParams.range === 'all' || !aucHistory || aucHistory.length === 0) {
+    if (range === 'all' || !aucHistory || aucHistory.length === 0) {
       setFilteredAucHistoryData(aucHistory || []);
       return;
     }
@@ -149,10 +155,20 @@ const Dashboard = () => {
       const [year, month] = item.month.split('-');
       // Create a date object for the first day of the month
       const itemDate = new Date(parseInt(year), parseInt(month) - 1, 1);
+      
+      // Debug log
+      console.log(`Comparing month ${item.month}:`, {
+        itemDate: itemDate.toISOString(),
+        passesFilter: (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate),
+        startCheck: !startDate || itemDate >= startDate,
+        endCheck: !endDate || itemDate <= endDate
+      });
+      
       return (!startDate || itemDate >= startDate) && 
              (!endDate || itemDate <= endDate);
     });
     
+    console.log(`Filtered AUC data: ${filteredAuc.length} items`);
     setFilteredAucHistoryData(filteredAuc);
   };
   
@@ -166,23 +182,45 @@ const Dashboard = () => {
   
   // Apply filters to Trades by Asset Class data
   const applyTradesByAssetFilter = (tradesByAssetHistory, filterParams) => {
+    const { startDate, endDate, range } = filterParams;
+    
+    console.log('Trades By Asset Filter Params:', {
+      range, 
+      startDate: startDate ? startDate.toISOString() : null,
+      endDate: endDate ? endDate.toISOString() : null
+    });
+    
     // If there's no history or we want all data, return empty array to use default data
-    if (!tradesByAssetHistory || tradesByAssetHistory.length === 0 || filterParams.range === 'all') {
+    if (!tradesByAssetHistory || tradesByAssetHistory.length === 0 || range === 'all') {
+      console.log('Using default trades by asset data (all time or no history)');
       setFilteredTradesByAssetData([]);
       return;
     }
     
-    const { startDate, endDate } = filterParams;
-    
     // Filter history by date range
     const filteredHistory = tradesByAssetHistory.filter(item => {
       const itemDate = new Date(item.date);
-      return (!startDate || itemDate >= startDate) && 
+      const passes = (!startDate || itemDate >= startDate) && 
              (!endDate || itemDate <= endDate);
+      
+      if (tradesByAssetHistory.length < 10 || Math.random() < 0.01) {
+        // Log a sample of items for debugging (to avoid flooding console)
+        console.log(`Comparing date ${item.date}:`, {
+          itemDate: itemDate.toISOString(),
+          passesFilter: passes,
+          startCheck: !startDate || itemDate >= startDate,
+          endCheck: !endDate || itemDate <= endDate
+        });
+      }
+      
+      return passes;
     });
+    
+    console.log(`Filtered trades history: ${filteredHistory.length} days of data`);
     
     // If we have no data after filtering, use default data
     if (filteredHistory.length === 0) {
+      console.log('No data in range, using default trades by asset data');
       setFilteredTradesByAssetData([]);
       return;
     }
@@ -192,9 +230,11 @@ const Dashboard = () => {
     
     // If we have valid data, use it
     if (mostRecentDay && mostRecentDay.assets && mostRecentDay.assets.length > 0) {
+      console.log('Using most recent day assets data:', mostRecentDay.date);
       setFilteredTradesByAssetData(mostRecentDay.assets);
     } else {
       // Otherwise, use default data
+      console.log('No assets data in most recent day, using default');
       setFilteredTradesByAssetData([]);
     }
   };
@@ -555,6 +595,8 @@ const Dashboard = () => {
         tension: 0.4,
         backgroundColor: 'rgba(0, 124, 117, 0.2)',
         borderColor: '#007C75',
+        pointRadius: 0, // Remove points from the line
+        pointHoverRadius: 5, // Show points on hover only
       }
     ]
   };
@@ -603,6 +645,8 @@ const Dashboard = () => {
         tension: 0.4,
         backgroundColor: 'rgba(0, 124, 117, 0.2)',
         borderColor: '#007C75',
+        pointRadius: 0, // Remove points from the line
+        pointHoverRadius: 5, // Show points on hover only
       }
     ]
   };
@@ -620,6 +664,8 @@ const Dashboard = () => {
         tension: 0.4,
         backgroundColor: 'rgba(0, 124, 117, 0.2)',
         borderColor: '#007C75',
+        pointRadius: 0, // Remove points from the line
+        pointHoverRadius: 5, // Show points on hover only
       }
     ]
   };

@@ -19,6 +19,8 @@ const DateRangeFilter = ({ options = [], onFilterChange }) => {
     { id: 'all', label: 'All Time' }
   ];
   
+  console.log('DateRangeFilter initialized with options:', defaultOptions);
+  
   // Use provided options or fall back to defaults
   const filterOptions = options.length > 0 ? options : defaultOptions;
   
@@ -33,7 +35,12 @@ const DateRangeFilter = ({ options = [], onFilterChange }) => {
     const endDate = new Date();
     let startDate = null;
     
-    switch (rangeId) {
+    console.log(`Filter change requested: ${rangeId}`);
+    
+    // Convert to lowercase for case-insensitive comparison
+    const rangeIdLower = rangeId.toLowerCase();
+    
+    switch (rangeIdLower) {
       case '7d':
         startDate = new Date();
         startDate.setDate(startDate.getDate() - 7);
@@ -54,6 +61,7 @@ const DateRangeFilter = ({ options = [], onFilterChange }) => {
         startDate = null;
         break;
       default:
+        console.log(`Unrecognized range ID: ${rangeId}`);
         // Default to 30 days
         startDate = new Date();
         startDate.setDate(startDate.getDate() - 30);
