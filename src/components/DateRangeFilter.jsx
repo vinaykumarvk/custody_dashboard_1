@@ -6,10 +6,13 @@ import React, { useState } from 'react';
  * @param {Object} props Component props
  * @param {string} props.activeRange Currently active range
  * @param {Function} props.onFilterChange Function to call when range changes
+ * @param {Function} props.onChange Alternative callback name for range changes
  * @param {Array} props.options Array of options with id and label
  * @returns {JSX.Element} Date range filter component
  */
-const DateRangeFilter = ({ options = [], onFilterChange }) => {
+const DateRangeFilter = ({ options = [], onFilterChange, onChange }) => {
+  // Support both onFilterChange and onChange props for backward compatibility
+  const handleChange = onChange || onFilterChange;
   // Default options if none provided
   const defaultOptions = [
     { id: '7d', label: '7 Days' },
@@ -75,11 +78,21 @@ const DateRangeFilter = ({ options = [], onFilterChange }) => {
     }
     
     // Call parent component's filter change handler
-    onFilterChange({
-      startDate,
-      endDate,
-      range: rangeId
-    });
+    if (handleChange) {
+      // If onChange was passed directly to a setState function, just pass the ID
+      if (typeof onChange === 'function' && !onFilterChange) {
+        onChange(rangeId);
+      } else {
+        // Otherwise pass the full object
+        handleChange({
+          startDate,
+          endDate,
+          range: rangeId
+        });
+      }
+    } else {
+      console.warn('DateRangeFilter: No change handler provided (onFilterChange or onChange)');
+    }
   };
   
   return (
