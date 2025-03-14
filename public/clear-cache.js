@@ -1,6 +1,6 @@
 /**
  * Clear Browser Cache and Storage Script
- * Use this to reset any cached Angular resources
+ * Use this to reset any cached application resources
  */
 
 function clearAppCache() {

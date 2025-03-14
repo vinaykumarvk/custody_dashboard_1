@@ -32,12 +32,6 @@ const App = () => {
     // Apply a custom attribute to identify React-rendered content
     document.body.setAttribute('data-react-app', 'true');
     
-    // Check for any Angular elements that might exist
-    const angularElements = document.querySelectorAll('[ng-view], [ng-app], [ng-controller]');
-    if (angularElements.length > 0) {
-      console.warn('Angular elements still detected after React mount:', angularElements);
-    }
-    
     // Add responsive sidebar handling
     const handleResize = () => {
       if (window.innerWidth < 768) {
