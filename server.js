@@ -53,83 +53,29 @@ pool.query('SELECT NOW()', (err, res) => {
   }
 });
 
-// Initialize the database with tables
+// Initialize the database with Drizzle ORM schema
 const initializeDatabase = async () => {
   try {
-    // Create notifications table
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS notifications (
-        id SERIAL PRIMARY KEY,
-        type VARCHAR(50) NOT NULL,
-        message TEXT NOT NULL,
-        time VARCHAR(100) NOT NULL,
-        read BOOLEAN DEFAULT FALSE,
-        category VARCHAR(100) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // Create dashboard_metrics table
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS dashboard_metrics (
-        id SERIAL PRIMARY KEY,
-        total_customers INTEGER NOT NULL,
-        active_customers INTEGER NOT NULL,
-        monthly_growth DECIMAL(10,2) NOT NULL,
-        total_income DECIMAL(15,2) NOT NULL,
-        category VARCHAR(100) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // Create monthly_data table for time series data
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS monthly_data (
-        id SERIAL PRIMARY KEY,
-        date DATE NOT NULL,
-        category VARCHAR(100) NOT NULL,
-        metric VARCHAR(100) NOT NULL,
-        value DECIMAL(15,2) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // Create reports table
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS reports (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        category VARCHAR(100) NOT NULL,
-        description TEXT,
-        available_formats TEXT[] NOT NULL,
-        last_generated TIMESTAMP,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // Create scheduled_reports table
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS scheduled_reports (
-        id SERIAL PRIMARY KEY,
-        schedule_id VARCHAR(100) NOT NULL,
-        report_name VARCHAR(255) NOT NULL,
-        frequency VARCHAR(50) NOT NULL,
-        next_run TIMESTAMP NOT NULL,
-        recipients INTEGER NOT NULL,
-        format VARCHAR(50) NOT NULL,
-        created_by VARCHAR(100) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    console.log('Database tables created');
-    
-    // Check if data needs to be populated
-    const { rows } = await pool.query('SELECT COUNT(*) FROM notifications');
-    if (parseInt(rows[0].count) === 0) {
-      console.log('Populating database with initial data...');
-      await populateSampleData();
+    // Check if tables exist
+    try {
+      // Try to query the customers table to check if schema is already created
+      await db.select().from(schema.customers).limit(1);
+      console.log('Database schema already exists');
+    } catch (error) {
+      // If tables don't exist, run the migration to create them
+      console.log('Creating database schema...');
+      
+      // Run the migration using the migrate.js script
+      const { migrate } = require('./server/migrate');
+      await migrate();
+      
+      // Seed initial data
+      console.log('Seeding initial data...');
+      const { seed } = require('./server/seed');
+      await seed();
     }
+    
+    console.log('Database initialization completed');
   } catch (error) {
     console.error('Error initializing database:', error);
   }
@@ -1407,7 +1353,156 @@ app.delete('/api/upload/:id', async (req, res) => {
   }
 });
 
-// Start the server
+// New API endpoints that use our Drizzle ORM schema
+// Get dashboard data using our Drizzle ORM models
+app.get('/api/v2/dashboard', async (req, res) => {
+  try {
+    // Use the storage helper to get dashboard summary data
+    const dashboardData = await storage.getDashboardSummary();
+    
+    // Get assets under custody data with date filtering
+    const filterParams = req.query.filter ? JSON.parse(req.query.filter) : { range: '30d' };
+    
+    // Set default date range if needed
+    if (filterParams.range && !filterParams.startDate) {
+      const endDate = filterParams.endDate ? new Date(filterParams.endDate) : new Date();
+      let startDate = new Date(endDate);
+      
+      if (filterParams.range === '7d') {
+        startDate.setDate(endDate.getDate() - 7);
+      } else if (filterParams.range === '30d') {
+        startDate.setDate(endDate.getDate() - 30);
+      } else if (filterParams.range === '90d') {
+        startDate.setDate(endDate.getDate() - 90);
+      } else if (filterParams.range === 'ytd') {
+        startDate = new Date(endDate.getFullYear(), 0, 1); // Jan 1 of current year
+      }
+      // 'all' range doesn't modify dates
+      
+      filterParams.startDate = startDate;
+      filterParams.endDate = endDate;
+    }
+    
+    // Get filtered data from storage helpers
+    let aucData = await storage.getAssetsUnderCustody(filterParams);
+    let tradesByAssetData = await storage.getTradesByAsset(filterParams);
+    
+    // Format AUC historical data
+    const formattedAucData = aucData.map(item => ({
+      date: item.date,
+      value: item.totalValue
+    }));
+    
+    // Aggregate trades by asset data
+    const assetClassCounts = {};
+    
+    tradesByAssetData.forEach(item => {
+      if (!assetClassCounts[item.assetClass]) {
+        assetClassCounts[item.assetClass] = 0;
+      }
+      assetClassCounts[item.assetClass] += item.tradeCount;
+    });
+    
+    const aggregatedTradesByAsset = Object.keys(assetClassCounts).map(assetClass => ({
+      label: assetClass,
+      value: assetClassCounts[assetClass]
+    }));
+    
+    // Format dashboard response
+    const formattedDashboardData = {
+      ...dashboardData,
+      assetsUnderCustody: {
+        ...dashboardData.assetsUnderCustody,
+        history: formattedAucData
+      },
+      tradesByAsset: aggregatedTradesByAsset
+    };
+    
+    console.log('Processed dashboard data:', formattedDashboardData);
+    
+    res.json(formattedDashboardData);
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch dashboard data',
+      details: error.message 
+    });
+  }
+});
+
+// Get trades data using our Drizzle ORM models
+app.get('/api/v2/trades', async (req, res) => {
+  try {
+    // Parse query parameters
+    const filters = {
+      assetClass: req.query.assetClass,
+      status: req.query.status,
+      type: req.query.type,
+      settlementStatus: req.query.settlementStatus,
+      limit: req.query.limit ? parseInt(req.query.limit) : undefined
+    };
+    
+    // Add date filters if provided
+    if (req.query.startDate) {
+      filters.startDate = new Date(req.query.startDate);
+    }
+    
+    if (req.query.endDate) {
+      filters.endDate = new Date(req.query.endDate);
+    }
+    
+    // Get trades with filters
+    const trades = await storage.getTrades(filters);
+    
+    res.json(trades);
+  } catch (error) {
+    console.error('Error fetching trades data:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch trades data',
+      details: error.message 
+    });
+  }
+});
+
+// Get corporate actions data using our Drizzle ORM models
+app.get('/api/v2/corporate-actions', async (req, res) => {
+  try {
+    // Parse query parameters
+    const filters = {
+      type: req.query.type,
+      status: req.query.status,
+      priority: req.query.priority
+    };
+    
+    // Get corporate actions with filters
+    const corporateActions = await storage.getCorporateActions(filters);
+    
+    res.json(corporateActions);
+  } catch (error) {
+    console.error('Error fetching corporate actions data:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch corporate actions data',
+      details: error.message 
+    });
+  }
+});
+
+// Get customers data using our Drizzle ORM models
+app.get('/api/v2/customers', async (req, res) => {
+  try {
+    // Get all customers
+    const customers = await storage.getCustomers();
+    
+    res.json(customers);
+  } catch (error) {
+    console.error('Error fetching customers data:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch customers data',
+      details: error.message 
+    });
+  }
+});
+
 // Add fallback route for client-side routing (SPA)
 app.get('*', (req, res) => {
   // Exclude API routes from the fallback
@@ -1419,6 +1514,15 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+// Initialize the database before starting the server
+initializeDatabase()
+  .then(() => {
+    // Start the server
+    app.listen(port, '0.0.0.0', () => {
+      console.log(`Server running on port ${port}`);
+    });
+  })
+  .catch(error => {
+    console.error('Failed to initialize database:', error);
+    process.exit(1);
+  });
