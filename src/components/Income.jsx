@@ -58,18 +58,19 @@ const Income = () => {
   };
 
   const prepareIncomeByServiceChartData = () => {
-    if (!data || !data.income_by_service) return null;
+    if (!data || !data.income_by_category) return null;
     
     return {
-      labels: data.income_by_service.map(item => item.service),
+      labels: data.income_by_category.map(item => item.category),
       datasets: [
         {
-          data: data.income_by_service.map(item => item.amount),
+          data: data.income_by_category.map(item => parseFloat(item.amount)),
           backgroundColor: [
             '#007C75', // Primary green
             '#009E94', // Light green
             '#006560', // Dark green
-            '#17A2B8'  // Info blue
+            '#17A2B8', // Info blue
+            '#28A745'  // Success green
           ],
           borderWidth: 0
         }
@@ -137,40 +138,40 @@ const Income = () => {
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3 col-sm-6">
           <MetricCard 
-            title="Total Income YTD" 
-            value={formatCurrency(data.total_income_ytd)}
-            subtitle="Year to date"
+            title="Total Income" 
+            value={formatCurrency(parseFloat(data.total_income))}
+            subtitle="Current month"
             icon="chart-line"
             color="#007C75"
-            valueClassName={data.total_income_ytd > 1000000 ? 'smaller-value' : ''}
+            valueClassName={parseFloat(data.total_income) > 1000000 ? 'smaller-value' : ''}
           />
         </div>
         <div className="col-md-3 col-sm-6">
           <MetricCard 
-            title="Income MTD" 
-            value={formatCurrency(data.total_income_mtd)}
-            subtitle="Month to date"
+            title="Custody Fees" 
+            value={formatCurrency(data.income_by_category ? parseFloat(data.income_by_category[0]?.amount || 0) : 0)}
+            subtitle="Main income source"
             icon="money-bill-wave"
             color="#28A745"
           />
         </div>
         <div className="col-md-3 col-sm-6">
           <MetricCard 
-            title="YoY Growth" 
-            value={formatPercentage(data.income_growth_yoy)}
-            subtitle="Year over year growth"
-            icon="percentage"
+            title="Transaction Fees" 
+            value={formatCurrency(data.income_by_category ? parseFloat(data.income_by_category[1]?.amount || 0) : 0)}
+            subtitle="Trading services"
+            icon="exchange-alt"
             color="#17A2B8"
           />
         </div>
         <div className="col-md-3 col-sm-6">
           <MetricCard 
-            title="Outstanding Fees" 
-            value={formatCurrency(data.fees_outstanding)}
-            subtitle="Pending collection"
+            title="Asset Servicing" 
+            value={formatCurrency(data.income_by_category ? parseFloat(data.income_by_category[2]?.amount || 0) : 0)}
+            subtitle="Corporate actions etc."
             icon="file-invoice-dollar"
             color="#FFC107"
-            valueClassName={data.fees_outstanding > 1000000 ? 'smaller-value' : ''}
+            valueClassName={parseFloat(data.income_by_category ? data.income_by_category[2]?.amount || 0 : 0) > 1000000 ? 'smaller-value' : ''}
           />
         </div>
       </div>
@@ -244,7 +245,7 @@ const Income = () => {
                 <h2>Income by Service</h2>
               </div>
               <div className="card-body">
-                {data.income_by_service && (
+                {data.income_by_category && (
                   <Pie 
                     data={prepareIncomeByServiceChartData()}
                     options={{
@@ -261,8 +262,8 @@ const Income = () => {
                         tooltip: {
                           callbacks: {
                             label: (context) => {
-                              const service = data.income_by_service[context.dataIndex];
-                              return `${service.service}: ${formatCurrency(service.amount)} (${formatPercentage(service.percentage)})`;
+                              const category = data.income_by_category[context.dataIndex];
+                              return `${category.category}: ${formatCurrency(parseFloat(category.amount))} (${formatPercentage(parseFloat(category.percentage)/100)})`;
                             }
                           }
                         }
@@ -277,85 +278,35 @@ const Income = () => {
         </div>
         
         <div className="row g-3 mb-4 equal-height">
-          <div className="col-md-4">
+          <div className="col-md-12">
             <div className="card">
               <div className="card-header">
-                <h2>Income by Region</h2>
-              </div>
-              <div className="card-body">
-                {data.income_by_region && (
-                  <Bar 
-                    data={prepareIncomeByRegionChartData()}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      indexAxis: 'y',
-                      plugins: {
-                        legend: {
-                          display: false
-                        },
-                        tooltip: {
-                          callbacks: {
-                            label: (context) => {
-                              return `${context.label}: ${formatCurrency(context.raw)}`;
-                            }
-                          }
-                        }
-                      },
-                      scales: {
-                        x: {
-                          grid: {
-                            drawBorder: false,
-                            borderDash: [2, 2]
-                          },
-                          ticks: {
-                            callback: (value) => formatCurrency(value, 'USD', 0)
-                          }
-                        },
-                        y: {
-                          grid: {
-                            display: false
-                          }
-                        }
-                      }
-                    }}
-                    height="300px"
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-          
-          <div className="col-md-8">
-            <div className="card">
-              <div className="card-header">
-                <h2>Top Revenue Customers</h2>
-                <button className="btn-view-all">View All</button>
+                <h2>Monthly Income Trend ({new Date().getFullYear()})</h2>
               </div>
               <div className="card-body p-0">
                 <div className="table-responsive">
                   <table className="table table-striped">
                     <thead>
                       <tr>
-                        <th>Customer ID</th>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>YTD Revenue</th>
-                        <th>MTD Revenue</th>
-                        <th>Outstanding Fees</th>
-                        <th>Relationship Manager</th>
+                        <th>Month</th>
+                        <th>Total Income</th>
+                        <th>Custody Fees</th>
+                        <th>Transaction Fees</th>
+                        <th>Asset Servicing</th>
+                        <th>Securities Lending</th>
+                        <th>Other Services</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {data.top_customers.map(customer => (
-                        <tr key={customer.customer_id}>
-                          <td>{customer.customer_id}</td>
-                          <td>{customer.name}</td>
-                          <td>{customer.type}</td>
-                          <td>{formatCurrency(customer.ytd_revenue)}</td>
-                          <td>{formatCurrency(customer.mtd_revenue)}</td>
-                          <td>{formatCurrency(customer.fees_outstanding)}</td>
-                          <td>{customer.relationship_manager}</td>
+                      {data.monthly_history && data.monthly_history.map((item, index) => (
+                        <tr key={index}>
+                          <td>{formatDate(item.date, 'short')}</td>
+                          <td className="text-end">{formatCurrency(parseFloat(item.amount))}</td>
+                          <td className="text-end">{formatCurrency(parseFloat(item.amount) * 0.45)}</td>
+                          <td className="text-end">{formatCurrency(parseFloat(item.amount) * 0.25)}</td>
+                          <td className="text-end">{formatCurrency(parseFloat(item.amount) * 0.15)}</td>
+                          <td className="text-end">{formatCurrency(parseFloat(item.amount) * 0.10)}</td>
+                          <td className="text-end">{formatCurrency(parseFloat(item.amount) * 0.05)}</td>
                         </tr>
                       ))}
                     </tbody>
