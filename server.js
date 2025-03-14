@@ -1102,7 +1102,7 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // Configure multer for file uploads
-const storage = multer.diskStorage({
+const uploadStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadsDir);
   },
@@ -1126,7 +1126,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({ 
-  storage: storage, 
+  storage: uploadStorage, 
   fileFilter: fileFilter,
   limits: {
     fileSize: 10 * 1024 * 1024 // 10MB max file size

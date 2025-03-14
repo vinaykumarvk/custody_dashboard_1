@@ -87,18 +87,53 @@ export const fetchData = async (resourceType, debug = false) => {
     throw new Error(`Unknown resource type: ${resourceType}`);
   }
 
-  // ALWAYS use mock data as requested
-  console.log(`Using mock data for ${resourceType}`);
+  // Check if API is available
+  const isApiAvailable = await checkApiHealth(debug);
   
-  try {
-    const mockData = await mockApiCall(resourceType);
-    if (debug) {
-      console.log(`${resourceType} mock data loaded:`, mockData);
+  if (isApiAvailable) {
+    // API is available, use it
+    try {
+      console.log(`Fetching ${resourceType} from API`);
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS[resourceType]}`);
+      
+      if (!response.ok) {
+        throw new Error(`API responded with status ${response.status}`);
+      }
+      
+      const data = await response.json();
+      if (debug) {
+        console.log(`${resourceType} data loaded from API:`, data);
+      }
+      return data;
+    } catch (apiError) {
+      console.error(`API request failed for ${resourceType}:`, apiError);
+      console.log(`Falling back to mock data for ${resourceType}`);
+      
+      try {
+        const mockData = await mockApiCall(resourceType);
+        if (debug) {
+          console.log(`${resourceType} mock data loaded:`, mockData);
+        }
+        return mockData;
+      } catch (mockError) {
+        console.error(`Mock API failed:`, mockError);
+        throw new Error(`Error fetching ${resourceType} data`);
+      }
     }
-    return mockData;
-  } catch (mockError) {
-    console.error(`Mock API failed:`, mockError);
-    throw new Error(`Error fetching ${resourceType} mock data`);
+  } else {
+    // API is not available, use mock data
+    console.log(`API not available, using mock data for ${resourceType}`);
+    
+    try {
+      const mockData = await mockApiCall(resourceType);
+      if (debug) {
+        console.log(`${resourceType} mock data loaded:`, mockData);
+      }
+      return mockData;
+    } catch (mockError) {
+      console.error(`Mock API failed:`, mockError);
+      throw new Error(`Error fetching ${resourceType} mock data`);
+    }
   }
 };
 
@@ -108,9 +143,32 @@ export const fetchData = async (resourceType, debug = false) => {
  * @returns {Promise<Object>} - Promise that resolves to the API response
  */
 export const markNotificationAsRead = async (id) => {
-  // ALWAYS use mock data as requested
-  console.log(`Using mock success for marking notification ${id} as read`);
-  return { success: true, mock: true, id };
+  const isApiAvailable = await checkApiHealth();
+  
+  if (isApiAvailable) {
+    try {
+      console.log(`Marking notification ${id} as read via API`);
+      const response = await fetch(`${API_BASE_URL}/notifications/${id}/read`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API responded with status ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error(`API request failed for marking notification as read:`, error);
+      console.log(`Falling back to mock success for notification ${id}`);
+      return { success: true, mock: true, id };
+    }
+  } else {
+    console.log(`API not available, using mock success for notification ${id}`);
+    return { success: true, mock: true, id };
+  }
 };
 
 /**
@@ -118,7 +176,30 @@ export const markNotificationAsRead = async (id) => {
  * @returns {Promise<Object>} - Promise that resolves to the API response
  */
 export const markAllNotificationsAsRead = async () => {
-  // ALWAYS use mock data as requested
-  console.log(`Using mock success for marking all notifications as read`);
-  return { success: true, mock: true, allMarkedAsRead: true };
+  const isApiAvailable = await checkApiHealth();
+  
+  if (isApiAvailable) {
+    try {
+      console.log(`Marking all notifications as read via API`);
+      const response = await fetch(`${API_BASE_URL}/notifications/read-all`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API responded with status ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error(`API request failed for marking all notifications as read:`, error);
+      console.log(`Falling back to mock success`);
+      return { success: true, mock: true, allMarkedAsRead: true };
+    }
+  } else {
+    console.log(`API not available, using mock success for marking all notifications as read`);
+    return { success: true, mock: true, allMarkedAsRead: true };
+  }
 };

@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { db } = require('./db');
+const { db, pool } = require('./db');
 const schema = require('../shared/schema');
 
 async function seed() {
@@ -8,14 +8,28 @@ async function seed() {
   try {
     // Check if we have existing data
     try {
-      const customersCount = await db.select({ count: 'count(*)' }).from(schema.customers);
-      if (customersCount.length > 0 && parseInt(customersCount[0].count) > 0) {
-        console.log('Database already has data, skipping seed');
+      const { rows: tables } = await pool.query(`
+        SELECT tablename FROM pg_tables WHERE schemaname = 'public'
+      `);
+      
+      const tableNames = tables.map(t => t.tablename);
+      
+      if (!tableNames.includes('customers')) {
+        console.log('Customer table doesn\'t exist yet, skipping seed');
+        return true;
+      }
+      
+      const { rows: customersCount } = await pool.query(`
+        SELECT COUNT(*) FROM customers
+      `);
+      
+      if (parseInt(customersCount[0].count) > 0) {
+        console.log('Database already has customer data, skipping seed');
         return true;
       }
     } catch (error) {
       // Tables probably don't exist yet, continue with seeding
-      console.log('Tables not yet created, proceeding with seeding');
+      console.log('Error checking existing data, will try seeding:', error.message);
     }
     
     // Seed customers
@@ -53,9 +67,24 @@ async function seed() {
       }
     ];
     
-    // Insert customers
+    // Check if customers already exist and insert them if not
     for (const customer of customers) {
-      await db.insert(schema.customers).values(customer);
+      try {
+        const { rows } = await pool.query(
+          `SELECT COUNT(*) FROM customers WHERE account_number = $1`,
+          [customer.accountNumber]
+        );
+        
+        if (parseInt(rows[0].count) === 0) {
+          await pool.query(
+            `INSERT INTO customers (name, account_number, type, status) 
+             VALUES ($1, $2, $3, $4)`,
+            [customer.name, customer.accountNumber, customer.type, customer.status]
+          );
+        }
+      } catch (error) {
+        console.log(`Error seeding customer ${customer.name}:`, error.message);
+      }
     }
     
     // Seed accounts
@@ -63,55 +92,110 @@ async function seed() {
     let customerIndex = 0;
     for (let i = 0; i < 10; i++) {
       const customerId = (customerIndex % 5) + 1; // 1-5
-      await db.insert(schema.accounts).values({
-        customerId: customerId,
-        accountNumber: `A-2000${i}`,
-        type: i % 3 === 0 ? 'Custody' : i % 3 === 1 ? 'Trading' : 'Settlement',
-        status: 'active'
-      });
+      const accountNumber = `A-2000${i}`;
+      
+      try {
+        // Check if account already exists
+        const { rows } = await pool.query(
+          `SELECT COUNT(*) FROM accounts WHERE account_number = $1`,
+          [accountNumber]
+        );
+        
+        if (parseInt(rows[0].count) === 0) {
+          // Insert new account
+          await pool.query(
+            `INSERT INTO accounts (customer_id, account_number, type, status) 
+             VALUES ($1, $2, $3, $4)`,
+            [
+              customerId,
+              accountNumber,
+              i % 3 === 0 ? 'Custody' : i % 3 === 1 ? 'Trading' : 'Settlement',
+              'active'
+            ]
+          );
+        }
+      } catch (error) {
+        console.log(`Error seeding account ${accountNumber}:`, error.message);
+      }
+      
       customerIndex++;
     }
     
     // Seed trades
     console.log('Seeding trades...');
-    const assetClasses = ['Equities', 'Fixed Income', 'Commodities', 'FX', 'Funds'];
-    const exchanges = ['NYSE', 'NASDAQ', 'LSE', 'TSE', 'HKEX'];
-    const settlementLocations = ['DTC', 'Euroclear', 'Clearstream', 'JASDEC', 'HKSCC'];
-    const statuses = ['Completed', 'Pending', 'Failed'];
     
-    for (let i = 0; i < 50; i++) {
-      const customerId = (i % 5) + 1; // 1-5
-      const customerName = customers[customerId - 1].name;
-      const assetClass = assetClasses[i % assetClasses.length];
-      const tradeDate = new Date();
-      tradeDate.setDate(tradeDate.getDate() - (i % 30)); // Last 30 days
+    // Check if trades table has data
+    try {
+      const { rows: tradesCount } = await pool.query(`
+        SELECT COUNT(*) FROM trades LIMIT 1
+      `);
       
-      const settlementDate = new Date(tradeDate);
-      settlementDate.setDate(settlementDate.getDate() + 2); // T+2 settlement
-      
-      const price = 100 + (i * 5); // Varies from 100 to 345
-      const quantity = 1000 + (i * 100); // Varies from 1000 to 5900
-      const amount = price * quantity;
-      
-      const status = statuses[i % statuses.length];
-      
-      await db.insert(schema.trades).values({
-        tradeId: `T-${100000 + i}`,
-        tradeDate: tradeDate.toISOString(),
-        customerId: customerId,
-        customerName: customerName,
-        assetName: `${['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'FB'][i % 5]} ${assetClass}`,
-        assetClass: assetClass,
-        amount: amount,
-        quantity: quantity,
-        price: price,
-        type: i % 2 === 0 ? 'Buy' : 'Sell',
-        status: status,
-        settlementDate: settlementDate.toISOString(),
-        settlementStatus: status === 'Completed' ? 'Completed' : status === 'Pending' ? 'Pending' : 'Failed',
-        exchange: exchanges[i % exchanges.length],
-        settlementLocation: settlementLocations[i % settlementLocations.length]
-      });
+      if (parseInt(tradesCount[0].count) > 0) {
+        console.log('Trades table already has data, skipping trade seeding');
+      } else {
+        const assetClasses = ['Equities', 'Fixed Income', 'Commodities', 'FX', 'Funds'];
+        const exchanges = ['NYSE', 'NASDAQ', 'LSE', 'TSE', 'HKEX'];
+        const settlementLocations = ['DTC', 'Euroclear', 'Clearstream', 'JASDEC', 'HKSCC'];
+        const statuses = ['Completed', 'Pending', 'Failed'];
+        
+        for (let i = 0; i < 50; i++) {
+          const customerId = (i % 5) + 1; // 1-5
+          const customerName = customers[customerId - 1].name;
+          const assetClass = assetClasses[i % assetClasses.length];
+          const tradeDate = new Date();
+          tradeDate.setDate(tradeDate.getDate() - (i % 30)); // Last 30 days
+          
+          const settlementDate = new Date(tradeDate);
+          settlementDate.setDate(settlementDate.getDate() + 2); // T+2 settlement
+          
+          const price = 100 + (i * 5); // Varies from 100 to 345
+          const quantity = 1000 + (i * 100); // Varies from 1000 to 5900
+          const amount = price * quantity;
+          
+          const status = statuses[i % statuses.length];
+          const tradeId = `T-${100000 + i}`;
+          
+          try {
+            // Check if trade exists by ID
+            const { rows } = await pool.query(
+              `SELECT COUNT(*) FROM trades WHERE trade_id = $1`,
+              [tradeId]
+            );
+            
+            if (parseInt(rows[0].count) === 0) {
+              // Insert new trade
+              await pool.query(`
+                INSERT INTO trades (
+                  trade_id, trade_date, customer_id, customer_name, 
+                  asset_name, asset_class, amount, quantity, price, 
+                  type, status, settlement_date, settlement_status, 
+                  exchange, settlement_location
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+              `, [
+                tradeId,
+                tradeDate.toISOString(),
+                customerId,
+                customerName,
+                `${['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'FB'][i % 5]} ${assetClass}`,
+                assetClass,
+                amount,
+                quantity,
+                price,
+                i % 2 === 0 ? 'Buy' : 'Sell',
+                status,
+                settlementDate.toISOString(),
+                status === 'Completed' ? 'Completed' : status === 'Pending' ? 'Pending' : 'Failed',
+                exchanges[i % exchanges.length],
+                settlementLocations[i % settlementLocations.length]
+              ]);
+            }
+          } catch (error) {
+            console.log(`Error seeding trade ${tradeId}:`, error.message);
+          }
+        }
+      }
+    } catch (error) {
+      console.log('Error checking trades table:', error.message);
     }
     
     // Seed corporate actions
