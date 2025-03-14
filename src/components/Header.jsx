@@ -18,21 +18,12 @@ const Header = ({ userName = 'Smart Bank Admin', toggleSidebar, sidebarOpen }) =
         if (Array.isArray(data)) {
           setNotifications(data);
         } else {
-          console.warn('Notifications API did not return an array:', data);
-          // Use fallback data from mock API
-          const mockData = await import('../utils').then(module => module.mockApiCall('notifications'));
-          setNotifications(Array.isArray(mockData) ? mockData : []);
+          console.error('Notifications API did not return an array:', data);
+          setNotifications([]);
         }
       } catch (error) {
         console.error('Error fetching notifications:', error);
-        // Use fallback data from mock API
-        try {
-          const mockData = await import('../utils').then(module => module.mockApiCall('notifications'));
-          setNotifications(Array.isArray(mockData) ? mockData : []);
-        } catch (mockError) {
-          console.error('Failed to load mock notifications data:', mockError);
-          setNotifications([]);
-        }
+        setNotifications([]);
       } finally {
         setLoading(false);
       }
