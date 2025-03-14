@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const path = require('path');
@@ -9,6 +8,10 @@ const fs = require('fs');
 
 // Load environment variables
 dotenv.config();
+
+// Import database and storage functions
+const { db, pool } = require('./server/db');
+const storage = require('./server/storage');
 
 // Create Express app
 const app = express();
@@ -39,13 +42,6 @@ app.get('/bundle.js', (req, res) => {
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   next();
-});
-
-
-
-// Create PostgreSQL connection pool
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
 });
 
 // Test database connection
