@@ -6,6 +6,18 @@ async function seed() {
   console.log('Starting database seeding...');
   
   try {
+    // Check if we have existing data
+    try {
+      const customersCount = await db.select({ count: 'count(*)' }).from(schema.customers);
+      if (customersCount.length > 0 && parseInt(customersCount[0].count) > 0) {
+        console.log('Database already has data, skipping seed');
+        return true;
+      }
+    } catch (error) {
+      // Tables probably don't exist yet, continue with seeding
+      console.log('Tables not yet created, proceeding with seeding');
+    }
+    
     // Seed customers
     console.log('Seeding customers...');
     const customers = [
@@ -197,10 +209,19 @@ async function seed() {
     }
     
     console.log('Seeding completed successfully!');
+    return true;
   } catch (error) {
     console.error('Seeding failed:', error);
-    process.exit(1);
+    throw error;
   }
 }
 
-seed();
+// Export for use in server.js
+module.exports = { seed };
+
+// Run if called directly
+if (require.main === module) {
+  seed()
+    .then(() => process.exit(0))
+    .catch(() => process.exit(1));
+}
