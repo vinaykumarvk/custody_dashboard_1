@@ -273,24 +273,7 @@ export const generateChartConfig = (type, customConfig = {}) => {
   };
 };
 
-/**
- * Simulates an API call for development purposes
- * @param {string} endpoint - The API endpoint
- * @param {object} options - Request options
- * @returns {Promise} Promise with mock data
- */
-export const mockApiCall = (endpoint, options = {}) => {
-  // This is a simulated delay to mimic API calls
-  const delay = options.delay || Math.random() * 500 + 300;
-  
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // You can add specific mock data based on the endpoint
-      // or import from a separate file
-      resolve(getMockData(endpoint));
-    }, delay);
-  });
-};
+
 
 /**
  * Returns mock data for different endpoints
