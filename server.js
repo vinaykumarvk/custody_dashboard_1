@@ -1089,6 +1089,358 @@ app.get('/api/corporate_actions', async (req, res) => {
   }
 });
 
+// API endpoint for customers
+app.get('/api/customers', async (req, res) => {
+  try {
+    // Create customers table if it doesn't exist
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS customers (
+        id SERIAL PRIMARY KEY,
+        customer_id VARCHAR(10) NOT NULL,
+        name VARCHAR(100) NOT NULL,
+        type VARCHAR(50) NOT NULL,
+        onboarding_date TIMESTAMP NOT NULL,
+        status VARCHAR(20) NOT NULL,
+        region VARCHAR(50),
+        industry VARCHAR(50),
+        account_manager VARCHAR(100),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Create accounts table if it doesn't exist
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS accounts (
+        id SERIAL PRIMARY KEY,
+        account_id VARCHAR(20) NOT NULL,
+        customer_id INTEGER REFERENCES customers(id),
+        name VARCHAR(100) NOT NULL,
+        type VARCHAR(50) NOT NULL,
+        currency VARCHAR(3) DEFAULT 'USD',
+        status VARCHAR(20) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Check if we need to populate sample data
+    const { rows } = await pool.query('SELECT COUNT(*) FROM customers');
+    if (parseInt(rows[0].count) === 0) {
+      // Generate sample customers
+      const customerNames = [
+        'BlackRock Inc.', 'Vanguard Group', 'Fidelity Investments', 'State Street Global',
+        'PIMCO', 'Goldman Sachs Asset Management', 'JP Morgan Asset Management', 'T. Rowe Price',
+        'Morgan Stanley Investment Management', 'Capital Group', 'BNY Mellon', 'Northern Trust',
+        'Wellington Management', 'Invesco', 'Amundi', 'Legal & General', 'UBS Asset Management',
+        'Allianz Global Investors', 'AXA Investment Managers', 'Franklin Templeton'
+      ];
+      
+      const customerTypes = ['Asset Manager', 'Hedge Fund', 'Pension Fund', 'Insurance Company', 'Bank'];
+      const regions = ['North America', 'Europe', 'Asia Pacific', 'Latin America', 'Middle East'];
+      const industries = ['Financial Services', 'Technology', 'Healthcare', 'Energy', 'Manufacturing'];
+      const statuses = ['Active', 'Onboarding', 'Inactive'];
+      const accountManagers = ['John Smith', 'Emily Johnson', 'Michael Chen', 'Sarah Williams', 'David Rodriguez'];
+      
+      // Insert customers
+      for (let i = 0; i < customerNames.length; i++) {
+        const customerId = `C-${10000 + i}`;
+        const name = customerNames[i];
+        const type = customerTypes[Math.floor(Math.random() * customerTypes.length)];
+        const status = statuses[Math.floor(Math.random() * statuses.length)];
+        const region = regions[Math.floor(Math.random() * regions.length)];
+        const industry = industries[Math.floor(Math.random() * industries.length)];
+        const accountManager = accountManagers[Math.floor(Math.random() * accountManagers.length)];
+        
+        // Random onboarding date within the last 2 years
+        const daysAgo = Math.floor(Math.random() * 730); // 2 years in days
+        const onboardingDate = new Date();
+        onboardingDate.setDate(onboardingDate.getDate() - daysAgo);
+        
+        const { rows: customerResult } = await pool.query(`
+          INSERT INTO customers (customer_id, name, type, onboarding_date, status, region, industry, account_manager)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+          RETURNING id
+        `, [customerId, name, type, onboardingDate, status, region, industry, accountManager]);
+        
+        const customerId_db = customerResult[0].id;
+        
+        // Create 1-3 accounts for each customer
+        const numAccounts = Math.floor(Math.random() * 3) + 1;
+        const accountTypes = ['Custody', 'Trading', 'Settlement', 'Reporting'];
+        const currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CHF'];
+        
+        for (let j = 0; j < numAccounts; j++) {
+          const accountId = `AC-${100000 + (i * 10) + j}`;
+          const accountName = `${name} ${accountTypes[j % accountTypes.length]} Account`;
+          const accountType = accountTypes[j % accountTypes.length];
+          const currency = currencies[Math.floor(Math.random() * currencies.length)];
+          const accountStatus = status; // Match customer status
+          
+          await pool.query(`
+            INSERT INTO accounts (account_id, customer_id, name, type, currency, status)
+            VALUES ($1, $2, $3, $4, $5, $6)
+          `, [accountId, customerId_db, accountName, accountType, currency, accountStatus]);
+        }
+      }
+      
+      console.log('Sample customer data created');
+    }
+    
+    // Query customers with their accounts
+    const { rows: customers } = await pool.query(`
+      SELECT c.*, json_agg(a.*) as accounts
+      FROM customers c
+      LEFT JOIN accounts a ON c.id = a.customer_id
+      GROUP BY c.id
+      ORDER BY c.name ASC
+    `);
+    
+    // Format the response
+    const formattedCustomers = customers.map(customer => {
+      // Calculate some metrics
+      const activeAccounts = customer.accounts.filter(account => account.status === 'Active').length;
+      const totalAssets = Math.random() * 10000000000; // Random AUC for demo purposes
+      
+      return {
+        id: customer.customer_id,
+        name: customer.name,
+        type: customer.type,
+        onboarding_date: customer.onboarding_date,
+        status: customer.status,
+        region: customer.region,
+        industry: customer.industry,
+        account_manager: customer.account_manager,
+        accounts: customer.accounts,
+        metrics: {
+          active_accounts: activeAccounts,
+          total_accounts: customer.accounts.length,
+          assets_under_custody: totalAssets,
+          last_activity: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000) // Random date in last 30 days
+        }
+      };
+    });
+    
+    res.json({
+      status: 'success',
+      data: formattedCustomers
+    });
+  } catch (error) {
+    console.error('Error fetching customers data:', error);
+    res.status(500).json({ error: 'Failed to fetch customers data' });
+  }
+});
+
+// API endpoint for settlements
+app.get('/api/settlements', async (req, res) => {
+  try {
+    // Create settlements table if it doesn't exist
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS settlements (
+        id SERIAL PRIMARY KEY,
+        settlement_id VARCHAR(10) NOT NULL,
+        trade_id VARCHAR(10),
+        customer_id VARCHAR(10) NOT NULL,
+        customer_name VARCHAR(100) NOT NULL,
+        asset_class VARCHAR(50) NOT NULL,
+        asset_name VARCHAR(100) NOT NULL,
+        amount DECIMAL(15,2) NOT NULL,
+        settlement_date TIMESTAMP NOT NULL,
+        value_date TIMESTAMP,
+        status VARCHAR(20) NOT NULL,
+        location VARCHAR(50),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Check if we need to populate sample data
+    const { rows } = await pool.query('SELECT COUNT(*) FROM settlements');
+    if (parseInt(rows[0].count) === 0) {
+      // Get customer data to use for settlements
+      const { rows: customers } = await pool.query(`
+        SELECT customer_id, name FROM customers LIMIT 20
+      `);
+      
+      if (customers.length === 0) {
+        throw new Error('No customers found. Please create customers first.');
+      }
+      
+      // Generate sample settlements
+      const assetClasses = ['Equities', 'Fixed Income', 'FX', 'Commodities', 'Funds'];
+      const assetNames = [
+        'Apple Inc. (AAPL)', 'Microsoft Corp. (MSFT)', 'US Treasury 10Y (T10Y)', 
+        'Gold Futures (GC)', 'S&P 500 ETF (SPY)', 'Google (GOOGL)', 'Amazon (AMZN)',
+        'JP Morgan (JPM)', 'UK Gilts 5Y', 'EUR/USD FX Forward', 'Brent Crude Oil',
+        'BlackRock Global Fund', 'Vanguard Total Market ETF'
+      ];
+      const statuses = ['Settled', 'Pending', 'Failed'];
+      const locations = ['DTC', 'Euroclear', 'Clearstream', 'JASDEC', 'HKSCC'];
+      
+      // Create 100 sample settlements
+      for (let i = 0; i < 100; i++) {
+        const settlementId = `S-${100000 + i}`;
+        const tradeId = `T-${200000 + i}`;
+        const customerIndex = Math.floor(Math.random() * customers.length);
+        const customer = customers[customerIndex];
+        const assetClass = assetClasses[Math.floor(Math.random() * assetClasses.length)];
+        const assetName = assetNames[Math.floor(Math.random() * assetNames.length)];
+        
+        // Random amount between 10,000 and 10,000,000
+        const amount = parseFloat((Math.random() * 9990000 + 10000).toFixed(2));
+        
+        // Random date in the last 30 days for settlement date
+        const daysAgo = Math.floor(Math.random() * 30);
+        const settlementDate = new Date();
+        settlementDate.setDate(settlementDate.getDate() - daysAgo);
+        
+        // Value date is typically the same or 1 day after settlement
+        const valueDate = new Date(settlementDate);
+        valueDate.setDate(valueDate.getDate() + (Math.random() > 0.5 ? 1 : 0));
+        
+        const status = statuses[Math.floor(Math.random() * statuses.length)];
+        const location = locations[Math.floor(Math.random() * locations.length)];
+        
+        await pool.query(`
+          INSERT INTO settlements (
+            settlement_id, trade_id, customer_id, customer_name, 
+            asset_class, asset_name, amount, settlement_date, 
+            value_date, status, location
+          )
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        `, [
+          settlementId, tradeId, customer.customer_id, customer.name,
+          assetClass, assetName, amount, settlementDate,
+          valueDate, status, location
+        ]);
+      }
+      
+      console.log('Sample settlements data created');
+    }
+    
+    // Query settlements data
+    const { rows: settlements } = await pool.query(`
+      SELECT * FROM settlements 
+      ORDER BY settlement_date DESC
+      LIMIT 100
+    `);
+    
+    res.json({
+      status: 'success',
+      data: settlements
+    });
+  } catch (error) {
+    console.error('Error fetching settlements data:', error);
+    res.status(500).json({ error: 'Failed to fetch settlements data' });
+  }
+});
+
+// API endpoint for income
+app.get('/api/income', async (req, res) => {
+  try {
+    // Create income table if it doesn't exist
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS income (
+        id SERIAL PRIMARY KEY,
+        category VARCHAR(50) NOT NULL,
+        amount DECIMAL(15,2) NOT NULL,
+        percentage DECIMAL(5,2) NOT NULL,
+        year INTEGER NOT NULL,
+        month INTEGER NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Check if we need to populate sample data
+    const { rows } = await pool.query('SELECT COUNT(*) FROM income');
+    if (parseInt(rows[0].count) === 0) {
+      // Generate sample income data for the last 12 months
+      const categories = [
+        { name: 'Custody Fees', basePercentage: 45 },
+        { name: 'Transaction Fees', basePercentage: 25 },
+        { name: 'Asset Servicing', basePercentage: 15 },
+        { name: 'Securities Lending', basePercentage: 10 },
+        { name: 'Other Services', basePercentage: 5 }
+      ];
+      
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth() + 1; // 1-12
+      
+      // Start from 12 months ago
+      for (let i = 0; i < 12; i++) {
+        let year = currentYear;
+        let month = currentMonth - i;
+        
+        if (month <= 0) {
+          month += 12;
+          year--;
+        }
+        
+        // Base income amount with growth over time
+        // More recent months have higher income
+        const baseAmount = 4500000 + (i * 100000);
+        
+        // Process each category for the month
+        for (const category of categories) {
+          // Vary the percentage slightly per month (±2%)
+          const percentageVariation = (Math.random() * 4) - 2;
+          const percentage = Math.max(1, Math.min(90, category.basePercentage + percentageVariation));
+          
+          // Calculate amount based on percentage
+          const amount = baseAmount * (percentage / 100);
+          
+          await pool.query(`
+            INSERT INTO income (category, amount, percentage, year, month)
+            VALUES ($1, $2, $3, $4, $5)
+          `, [category.name, amount, percentage, year, month]);
+        }
+      }
+      
+      console.log('Sample income data created');
+    }
+    
+    // Query income data
+    const { rows: currentMonthData } = await pool.query(`
+      SELECT 
+        category, 
+        amount, 
+        percentage
+      FROM income
+      WHERE year = EXTRACT(YEAR FROM CURRENT_DATE) AND month = EXTRACT(MONTH FROM CURRENT_DATE)
+      ORDER BY amount DESC
+    `);
+    
+    // Calculate total income for the current month
+    const { rows: totalData } = await pool.query(`
+      SELECT SUM(amount) as total_income
+      FROM income
+      WHERE year = EXTRACT(YEAR FROM CURRENT_DATE) AND month = EXTRACT(MONTH FROM CURRENT_DATE)
+    `);
+    
+    const totalIncome = totalData[0]?.total_income || 0;
+    
+    // Get monthly history (total per month)
+    const { rows: monthlyHistory } = await pool.query(`
+      SELECT 
+        to_date(year || '-' || month || '-01', 'YYYY-MM-DD') as date,
+        SUM(amount) as amount
+      FROM income
+      GROUP BY year, month
+      ORDER BY year ASC, month ASC
+    `);
+    
+    res.json({
+      status: 'success',
+      data: {
+        total_income: totalIncome,
+        income_by_category: currentMonthData,
+        monthly_history: monthlyHistory
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching income data:', error);
+    res.status(500).json({ error: 'Failed to fetch income data' });
+  }
+});
+
 // Start the server
 // Fallback route for client-side routing - should be placed after all API routes
 app.get('*', (req, res) => {
