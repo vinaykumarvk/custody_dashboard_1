@@ -1,4 +1,4 @@
-// Run complete database setup (migration + seeding)
+// Run complete database setup (migration + seeding + historical data)
 async function setupDatabase() {
   try {
     console.log('Starting database setup...');
@@ -10,6 +10,11 @@ async function setupDatabase() {
     // Run seeding
     await require('./server/seed').seed();
     console.log('Database seeding completed');
+    
+    // Inject historical data
+    console.log('Injecting historical data...');
+    await require('./server/inject-historical-data').injectHistoricalData();
+    console.log('Historical data injection completed');
     
     console.log('Database setup completed successfully!');
     return true;
