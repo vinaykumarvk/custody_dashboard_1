@@ -30,10 +30,10 @@ const Income = () => {
   }, []);
   
   const prepareIncomeHistoryChartData = () => {
-    if (!data || !data.income_monthly) return null;
+    if (!data || !data.monthly_history) return null;
     
     // Filter data based on selected date range
-    let filteredData = [...data.income_monthly];
+    let filteredData = [...data.monthly_history];
     if (dateRange === '3m') {
       filteredData = filteredData.slice(-3);
     } else if (dateRange === '6m') {
@@ -47,17 +47,9 @@ const Income = () => {
       datasets: [
         {
           label: 'Total Income',
-          data: filteredData.map(item => item.total_income),
+          data: filteredData.map(item => parseFloat(item.amount)),
           borderColor: '#007C75',
           backgroundColor: 'rgba(0, 124, 117, 0.1)',
-          fill: true,
-          tension: 0.4
-        },
-        {
-          label: 'New Income',
-          data: filteredData.map(item => item.new_income),
-          borderColor: '#17A2B8',
-          backgroundColor: 'rgba(23, 162, 184, 0.1)',
           fill: true,
           tension: 0.4
         }
@@ -199,7 +191,7 @@ const Income = () => {
                 </div>
               </div>
               <div className="card-body">
-                {data.income_monthly && (
+                {data.monthly_history && (
                   <Line 
                     data={prepareIncomeHistoryChartData()} 
                     options={{
