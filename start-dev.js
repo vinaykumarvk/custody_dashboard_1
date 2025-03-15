@@ -58,21 +58,7 @@ async function buildApp() {
 
 // Start both the backend API server and frontend server
 async function startServers() {
-  // Set up the database
-  const dbSetupSuccess = await setupDatabase();
-  if (!dbSetupSuccess) {
-    console.error('Failed to set up database, proceeding with caution');
-    // We'll continue even if DB setup fails, as the API might work with existing DB
-  }
-  
-  // Build the application first
-  const buildSuccess = await buildApp();
-  if (!buildSuccess) {
-    console.error('Failed to build application, exiting');
-    process.exit(1);
-  }
-  
-  console.log('Starting servers...');
+  console.log('Starting servers directly...');
   
   // Start the Express backend API server
   const apiServer = spawn('node', ['server.js'], {
@@ -100,6 +86,20 @@ async function startServers() {
   console.log('Development servers started:');
   console.log('- API server running on port 3000');
   console.log('- Frontend running on port 5000 (with API proxy)');
+  
+  // Execute database setup in the background
+  setupDatabase().then(dbSetupSuccess => {
+    if (!dbSetupSuccess) {
+      console.error('Failed to set up database, but servers are already running');
+    }
+    
+    // Build the application in the background
+    buildApp().then(buildSuccess => {
+      if (!buildSuccess) {
+        console.error('Failed to build application, but servers are already running');
+      }
+    });
+  });
 }
 
 // Start the servers
