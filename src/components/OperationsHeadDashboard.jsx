@@ -938,14 +938,14 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
       </div>
       
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-6 col-sm-6">
+        <div className="col-md-2 col-sm-6">
           <MetricCard 
             title="Total Trades" 
             value={formatNumber(totalTrades, false)} 
             icon="exchange-alt"
           />
         </div>
-        <div className="col-md-6 col-sm-6">
+        <div className="col-md-2 col-sm-6">
           <MetricCard 
             title="Trading Volume" 
             value={formatCurrency(tradingVolume, 'USD', 0)} 
@@ -953,15 +953,7 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             valueClassName="smaller-value"
           />
         </div>
-      </div>
-
-      {/* TRADE PROCESSING SECTION */}
-      <div className="section-header">
-        <h2>Trade Processing</h2>
-      </div>
-      
-      <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-2 col-sm-6">
           <MetricCard 
             title="Successful Trades" 
             value={formatNumber(data?.dealProcessing?.completed || 0, false)} 
@@ -969,7 +961,7 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             color="#28A745"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-2 col-sm-6">
           <MetricCard 
             title="Failed Trades" 
             value={formatNumber(data?.dealProcessing?.failed || 0, false)} 
@@ -977,7 +969,7 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             color="#DC3545"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-2 col-sm-6">
           <MetricCard 
             title="Pending Trades" 
             value={formatNumber(data?.dealProcessing?.pending || pendingTrades, false)} 
@@ -985,13 +977,117 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             color="#FFC107"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-2 col-sm-6">
           <MetricCard 
             title="Open Events" 
             value={formatNumber(openEvents, false)} 
             icon="exclamation-circle"
             color="#DC3545"
           />
+        </div>
+      </div>
+
+      {/* Trading Volume History */}
+      <div className="row g-3 mb-4 equal-height">
+        <div className="col-md-12">
+          <div className="card">
+            <div className="card-header d-flex justify-content-between align-items-center">
+              <h2>Trading Volume History</h2>
+              <DateRangeFilter onFilterChange={handleDateFilterChange} />
+            </div>
+            <div className="card-body">
+              <Chart 
+                type="line"
+                data={tradingVolumeChartData}
+                height="300px"
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: false,
+                      grace: "5%",
+                      ticks: {
+                        callback: function(value) {
+                          return formatCurrency(value, 'USD', 0);
+                        }
+                      }
+                    }
+                  },
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: function(context) {
+                          return formatCurrency(context.raw, 'USD', 0);
+                        }
+                      }
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Trade Count and Asset Class */}
+      <div className="row g-3 mb-4 equal-height">
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-header d-flex justify-content-between align-items-center">
+              <h2>Trade Count History</h2>
+              <DateRangeFilter onFilterChange={handleDateFilterChange} />
+            </div>
+            <div className="card-body">
+              <Chart 
+                type="line"
+                data={tradeCountChartData}
+                height="250px"
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: false,
+                      grace: '5%',
+                      ticks: {
+                        precision: 0
+                      }
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-header d-flex justify-content-between align-items-center">
+              <h2>Trades by Asset Class</h2>
+              <DateRangeFilter onFilterChange={handleTradesByAssetFilterChange} />
+            </div>
+            <div className="card-body">
+              <Chart 
+                type="bar"
+                data={tradesByAssetChartData}
+                height="250px"
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        precision: 0
+                      }
+                    }
+                  },
+                  barPercentage: 0.6,
+                  categoryPercentage: 0.8
+                }}
+              />
+            </div>
+          </div>
         </div>
       </div>
       
@@ -1035,48 +1131,9 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
         </div>
       </div>
 
-      {/* Charts row */}
+      {/* Charts row - Moved to Operations Overview */}
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-8">
-          <div className="card">
-            <div className="card-header d-flex justify-content-between align-items-center">
-              <h2>Trading Volume History</h2>
-              <DateRangeFilter onFilterChange={handleDateFilterChange} />
-            </div>
-            <div className="card-body">
-              <Chart 
-                type="line"
-                data={tradingVolumeChartData}
-                height="300px"
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  scales: {
-                    y: {
-                      beginAtZero: false,
-                      grace: "5%",
-                      ticks: {
-                        callback: function(value) {
-                          return formatCurrency(value, 'USD', 0);
-                        }
-                      }
-                    }
-                  },
-                  plugins: {
-                    tooltip: {
-                      callbacks: {
-                        label: function(context) {
-                          return formatCurrency(context.raw, 'USD', 0);
-                        }
-                      }
-                    }
-                  }
-                }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="col-md-4">
+        <div className="col-md-12">
           <div className="card">
             <div className="card-header">
               <h2>Customer Segments</h2>
