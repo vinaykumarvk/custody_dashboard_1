@@ -1449,16 +1449,16 @@ app.get('/api/corporate-actions', async (req, res) => {
       CREATE TABLE IF NOT EXISTS corporate_actions (
         id SERIAL PRIMARY KEY,
         action_id VARCHAR(20) NOT NULL,
-        type VARCHAR(50) NOT NULL,
+        action_type VARCHAR(50) NOT NULL,
+        security_id VARCHAR(20) NOT NULL,
         security_name VARCHAR(100) NOT NULL,
-        issuer VARCHAR(100) NOT NULL,
         announcement_date TIMESTAMP NOT NULL,
         record_date TIMESTAMP NOT NULL,
-        effective_date TIMESTAMP,
-        status VARCHAR(50) NOT NULL,
+        payment_date TIMESTAMP,
+        status VARCHAR(20) NOT NULL,
         description TEXT,
-        priority VARCHAR(20),
-        requires_election BOOLEAN DEFAULT false,
+        impact_value DECIMAL(15,4),
+        currency VARCHAR(3) DEFAULT 'USD',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -1538,17 +1538,26 @@ app.get('/api/corporate-actions', async (req, res) => {
           description = `Plan to repurchase ${amount} billion in shares`;
         }
         
+        // Create a security ID
+        const securityId = `S-${10000 + i}`;
+        
+        // Calculate impact value
+        let impactValue = null;
+        if (type === 'Dividend') {
+          impactValue = (Math.random() * 5 + 0.1);
+        } else if (type === 'Stock Split') {
+          impactValue = [2, 3, 4, 5, 10][Math.floor(Math.random() * 5)];
+        }
+        
         await pool.query(`
           INSERT INTO corporate_actions (
-            action_id, type, security_name, issuer, announcement_date,
-            record_date, effective_date, status, description, priority,
-            requires_election
+            action_id, action_type, security_id, security_name, announcement_date,
+            record_date, payment_date, status, description, impact_value
           )
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
         `, [
-          actionId, type, security, issuer, announcementDate,
-          recordDate, effectiveDate, status, description, priority,
-          requiresElection
+          actionId, type, securityId, security, announcementDate,
+          recordDate, effectiveDate, status, description, impactValue
         ]);
       }
       
@@ -1568,53 +1577,53 @@ app.get('/api/corporate-actions', async (req, res) => {
       GROUP BY status
     `);
     
-    // Get counts by type
+    // Get counts by action_type
     const { rows: typeCounts } = await pool.query(`
-      SELECT type, COUNT(*) as count
+      SELECT action_type, COUNT(*) as count
       FROM corporate_actions
-      GROUP BY type
+      GROUP BY action_type
     `);
     
-    // Count mandatory vs. voluntary actions
-    const { rows: mandatoryCount } = await pool.query(`
+    // Count by action type
+    const { rows: dividendCount } = await pool.query(`
       SELECT COUNT(*) as count
       FROM corporate_actions
-      WHERE requires_election = false
+      WHERE action_type = 'Dividend'
     `);
     
     const { rows: voluntaryCount } = await pool.query(`
       SELECT COUNT(*) as count
       FROM corporate_actions
-      WHERE requires_election = true
+      WHERE action_type IN ('Rights Issue', 'Tender Offer')
     `);
     
-    // Count high priority actions
-    const { rows: highPriorityCount } = await pool.query(`
+    // Count high impact actions
+    const { rows: highImpactCount } = await pool.query(`
       SELECT COUNT(*) as count
       FROM corporate_actions
-      WHERE priority = 'High'
+      WHERE impact_value > 5.0
     `);
     
-    // Count pending elections
-    const { rows: pendingElectionsCount } = await pool.query(`
+    // Count pending actions
+    const { rows: pendingCount } = await pool.query(`
       SELECT COUNT(*) as count
       FROM corporate_actions
-      WHERE requires_election = true AND status = 'Pending'
+      WHERE status = 'Pending'
     `);
     
     // Format response data
     const responseData = {
       totalActions: actions.length,
-      mandatoryActions: parseInt(mandatoryCount[0].count),
+      dividendActions: parseInt(dividendCount[0].count),
       voluntaryActions: parseInt(voluntaryCount[0].count),
-      highPriorityActions: parseInt(highPriorityCount[0].count),
-      pendingElections: parseInt(pendingElectionsCount[0].count),
+      highImpactActions: parseInt(highImpactCount[0].count),
+      pendingActions: parseInt(pendingCount[0].count),
       statusBreakdown: statusCounts.map(item => ({
         status: item.status,
         count: parseInt(item.count)
       })),
       typeBreakdown: typeCounts.map(item => ({
-        type: item.type,
+        type: item.action_type,
         count: parseInt(item.count)
       })),
       recentActions: actions.slice(0, 10)

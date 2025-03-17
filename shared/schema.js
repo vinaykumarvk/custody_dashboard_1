@@ -44,16 +44,17 @@ const trades = pgTable('trades', {
 // Corporate Actions table
 const corporateActions = pgTable('corporate_actions', {
   id: serial('id').primaryKey(),
-  actionId: varchar('action_id', { length: 50 }).notNull().unique(),
-  type: varchar('type', { length: 50 }).notNull(), // Dividend, Stock Split, Rights Issue, etc.
-  assetName: varchar('asset_name', { length: 255 }).notNull(),
-  mandatory: boolean('mandatory').notNull().default(true),
-  announcementDate: date('announcement_date').notNull(),
-  recordDate: date('record_date'),
-  paymentDate: date('payment_date'),
-  status: varchar('status', { length: 20 }).notNull(), // Announced, Pending, Completed, Processing
-  priority: varchar('priority', { length: 10 }).notNull().default('normal'), // high, normal, low
-  pendingElection: boolean('pending_election').notNull().default(false),
+  actionId: varchar('action_id', { length: 20 }).notNull().unique(),
+  actionType: varchar('action_type', { length: 50 }).notNull(), // Dividend, Stock Split, Rights Issue, etc.
+  securityId: varchar('security_id', { length: 20 }).notNull(),
+  securityName: varchar('security_name', { length: 100 }).notNull(),
+  announcementDate: timestamp('announcement_date').notNull(),
+  recordDate: timestamp('record_date').notNull(),
+  paymentDate: timestamp('payment_date'),
+  status: varchar('status', { length: 20 }).notNull(), // Announced, Pending, Completed, Cancelled
+  description: text('description'),
+  impactValue: real('impact_value'),
+  currency: varchar('currency', { length: 3 }).default('USD'),
   createdAt: timestamp('created_at').defaultNow()
 });
 
