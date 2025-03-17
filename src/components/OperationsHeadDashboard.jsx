@@ -1085,11 +1085,12 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
         </div>
       </div>
 
-      {/* Assets Under Custody metrics */}
+      {/* ASSETS UNDER CUSTODY SECTION */}
+      <div className="section-header">
+        <h2>Assets Under Custody</h2>
+      </div>
+      
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-12">
-          <h2 className="section-header">Assets Under Custody</h2>
-        </div>
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Total AUC" 
@@ -1202,7 +1203,11 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
 
       {/* Note: Corporate Actions section moved to dedicated CorporateActions page */}
 
-      {/* More charts row */}
+      {/* TRADING ANALYTICS SECTION */}
+      <div className="section-header">
+        <h2>Trading Analytics</h2>
+      </div>
+      
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-6">
           <div className="card">
@@ -1263,7 +1268,11 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
         </div>
       </div>
 
-      {/* Income by Service Chart & Top Customers Table */}
+      {/* REVENUE ANALYSIS SECTION */}
+      <div className="section-header">
+        <h2>Revenue Analysis</h2>
+      </div>
+      
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-7">
           <div className="card">
@@ -1376,7 +1385,11 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
         </div>
       </div>
       
-      {/* Corporate Actions Pie Chart */}
+      {/* CORPORATE ACTIONS DETAILS SECTION */}
+      <div className="section-header">
+        <h2>Corporate Actions Details</h2>
+      </div>
+      
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-5">
           <div className="card">
