@@ -1108,7 +1108,12 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
         <h1>Business Head Dashboard</h1>
         <DateRangeFilter onFilterChange={handleDateFilterChange} />
       </div>
-      {/* Header cards row */}
+      
+      {/* CUSTOMER SECTION */}
+      <div className="section-header">
+        <h2>Customer Metrics</h2>
+      </div>
+      
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-4 col-sm-4">
           <MetricCard 
@@ -1136,7 +1141,11 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
         </div>
       </div>
 
-      {/* Income metrics row */}
+      {/* REVENUE SECTION */}
+      <div className="section-header">
+        <h2>Revenue Performance</h2>
+      </div>
+      
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-6 col-sm-6">
           <MetricCard 
@@ -1158,12 +1167,12 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
         </div>
       </div>
 
-      {/* Income History Chart */}
+      {/* Revenue Analysis */}
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-8">
           <div className="card">
             <div className="card-header d-flex justify-content-between align-items-center">
-              <h2>Income History</h2>
+              <h3>Income History by Service</h3>
               <DateRangeFilter onFilterChange={handleIncomeHistoryFilterChange} />
             </div>
             <div className="card-body">
@@ -1218,7 +1227,7 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
         <div className="col-md-4">
           <div className="card h-100">
             <div className="card-header">
-              <h2>Top Customers by Revenue</h2>
+              <h3>Top Customers by Revenue</h3>
             </div>
             <div className="card-body p-0">
               <div className="table-responsive">
@@ -1332,11 +1341,12 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
         </div>
       </div>
 
-      {/* Assets Under Custody metrics */}
+      {/* ASSETS SECTION */}
+      <div className="section-header">
+        <h2>Assets Under Custody</h2>
+      </div>
+      
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-12">
-          <h2 className="section-header">Assets Under Custody</h2>
-        </div>
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Total AUC" 
@@ -1348,7 +1358,7 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
         <div className="col-md-9 col-sm-6">
           <div className="card">
             <div className="card-header d-flex justify-content-between align-items-center">
-              <h2>AUC History</h2>
+              <h3>AUC History</h3>
               <DateRangeFilter onFilterChange={handleAucHistoryFilterChange} />
             </div>
             <div className="card-body">
@@ -1394,7 +1404,7 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
         <div className="col-md-6">
           <div className="card">
             <div className="card-header">
-              <h2>AUC by Asset Class</h2>
+              <h3>AUC by Asset Class</h3>
             </div>
             <div className="card-body">
               <Chart 
@@ -1428,7 +1438,7 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
         <div className="col-md-6">
           <div className="card h-100">
             <div className="card-header">
-              <h2>AUC Metrics</h2>
+              <h3>AUC Metrics</h3>
             </div>
             <div className="card-body">
               <div className="row gy-3">
@@ -1447,14 +1457,17 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
         </div>
       </div>
 
-      {/* Note: Corporate Actions section moved to dedicated CorporateActions page */}
+      {/* TRADING SECTION */}
+      <div className="section-header">
+        <h2>Trading Activity</h2>
+      </div>
 
       {/* Trades by Asset Class chart */}
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-12">
           <div className="card">
             <div className="card-header d-flex justify-content-between align-items-center">
-              <h2>Trades by Asset Class</h2>
+              <h3>Trades by Asset Class</h3>
               <DateRangeFilter onFilterChange={handleTradesByAssetFilterChange} />
             </div>
             <div className="card-body">
