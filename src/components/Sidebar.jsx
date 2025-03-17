@@ -4,7 +4,7 @@ const Sidebar = ({ isOpen, onClose, activePage, onPageChange }) => {
   const menuItems = [
     { id: 'dashboard', label: 'Business Head Dashboard', icon: 'tachometer-alt' },
     { id: 'operations-head-dashboard', label: 'Operations Head Dashboard', icon: 'tasks' },
-    { id: 'operations-statistics', label: 'Operations Statistics', icon: 'chart-bar' }
+    { id: 'operations-statistics', label: 'Operations Dashboard', icon: 'chart-bar' }
   ];
 
   const handleMenuClick = (pageId) => {

@@ -135,7 +135,7 @@ const OperationsStatistics = () => {
   return (
     <div className="operations-statistics">
       <div className="page-header">
-        <h1>Operations</h1>
+        <h1>Operations Dashboard</h1>
       </div>
       
       {/* ACTIVITIES SECTION */}
