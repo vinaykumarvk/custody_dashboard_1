@@ -899,7 +899,12 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
         <h1>Operations Head Dashboard</h1>
         <DateRangeFilter onFilterChange={handleDateFilterChange} />
       </div>
-      {/* Customer metrics row */}
+      
+      {/* OPERATIONS OVERVIEW SECTION */}
+      <div className="section-header">
+        <h2>Operations Overview</h2>
+      </div>
+      
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3 col-sm-6">
           <MetricCard 
@@ -934,7 +939,11 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
         </div>
       </div>
 
-      {/* Trade Status cards row */}
+      {/* TRADE PROCESSING SECTION */}
+      <div className="section-header">
+        <h2>Trade Processing</h2>
+      </div>
+      
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3 col-sm-6">
           <MetricCard 
@@ -970,7 +979,11 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
         </div>
       </div>
       
-      {/* Corporate Actions metrics row */}
+      {/* CORPORATE ACTIONS SECTION */}
+      <div className="section-header">
+        <h2>Corporate Actions</h2>
+      </div>
+      
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3 col-sm-6">
           <MetricCard 
