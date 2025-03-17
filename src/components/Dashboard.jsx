@@ -73,6 +73,12 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
         const processedData = processApiData(dashboardData);
         console.log('Processed dashboard data:', processedData);
         setData(processedData);
+
+        // Initialize filtered income history when data is loaded
+        if (processedData && processedData.incomeHistory && processedData.incomeHistory.length > 0) {
+          setFilteredIncomeHistory(processedData.incomeHistory);
+        }
+        
         setLoading(false);
         
         // Set initial filtered data
@@ -880,12 +886,7 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
     ]
   };
 
-  // Initialize filtered income history when the income history data is loaded
-  useEffect(() => {
-    if (data && data.incomeHistory && data.incomeHistory.length > 0) {
-      setFilteredIncomeHistory(data.incomeHistory);
-    }
-  }, [data]);
+  // Income history is initialized in the main useEffect when data is loaded
   
   // Function to handle income history filter changes
   const handleIncomeHistoryFilterChange = (newFilterParams) => {
