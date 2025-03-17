@@ -900,13 +900,20 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
         <DateRangeFilter onFilterChange={handleDateFilterChange} />
       </div>
       
-      {/* OPERATIONS OVERVIEW SECTION */}
+      {/* CUSTOMER METRICS SECTION */}
       <div className="section-header">
-        <h2>Operations Overview</h2>
+        <h2>Customer Metrics</h2>
       </div>
       
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-4 col-sm-4">
+          <MetricCard 
+            title="Total Customers" 
+            value={formatNumber(totalCustomers, false)} 
+            icon="users"
+          />
+        </div>
+        <div className="col-md-4 col-sm-4">
           <MetricCard 
             title="Active Customers" 
             value={formatNumber(activeCustomers, false)} 
@@ -914,22 +921,31 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             icon="user-check"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-4 col-sm-4">
           <MetricCard 
             title="New Customers (MTD)" 
             value={formatNumber(data?.newCustomersMtd || 0, false)} 
+            subtitle="Month to date"
             icon="user-plus"
-            color="#28A745"
+            color="#17A2B8"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
+      </div>
+      
+      {/* OPERATIONS OVERVIEW SECTION */}
+      <div className="section-header">
+        <h2>Operations Overview</h2>
+      </div>
+      
+      <div className="row g-3 mb-4 equal-height">
+        <div className="col-md-6 col-sm-6">
           <MetricCard 
             title="Total Trades" 
             value={formatNumber(totalTrades, false)} 
             icon="exchange-alt"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-6 col-sm-6">
           <MetricCard 
             title="Trading Volume" 
             value={formatCurrency(tradingVolume, 'USD', 0)} 
