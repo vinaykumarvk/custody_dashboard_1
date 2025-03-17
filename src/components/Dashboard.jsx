@@ -426,6 +426,54 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
     const incomeMtd = parseFloat(apiData.incomeMtd || apiData.income_mtd) || 1842392.25; // Use default value if not provided
     const outstandingFees = parseFloat(apiData.outstandingFees || apiData.outstanding_fees) || 327650.50; // Use default value if not provided
     
+    // Income history by service type
+    let incomeHistory = apiData.incomeHistory || [];
+    
+    // If income history is not provided, create some sample data for demonstration
+    if (!incomeHistory || incomeHistory.length === 0) {
+      const today = new Date();
+      incomeHistory = [];
+      
+      // Create 12 months of income history
+      for (let i = 0; i < 12; i++) {
+        const monthOffset = 11 - i; // Count backwards from 11 months ago
+        const historyDate = new Date(today);
+        historyDate.setMonth(historyDate.getMonth() - monthOffset);
+        
+        // Define service types and their base values
+        const services = [
+          { name: 'Custody', value: 850000 + Math.random() * 100000 },
+          { name: 'Settlement', value: 450000 + Math.random() * 80000 },
+          { name: 'Tax Services', value: 350000 + Math.random() * 70000 },
+          { name: 'Corporate Actions', value: 250000 + Math.random() * 60000 },
+          { name: 'Reporting', value: 150000 + Math.random() * 40000 }
+        ];
+        
+        // Calculate total for the month
+        const total = services.reduce((sum, service) => sum + service.value, 0);
+        
+        incomeHistory.push({
+          date: historyDate.toISOString(),
+          services: services,
+          total: total
+        });
+      }
+    }
+    
+    // Top customers by revenue
+    let topCustomersByRevenue = apiData.topCustomersByRevenue || [];
+    
+    // If top customers are not provided, create sample data
+    if (!topCustomersByRevenue || topCustomersByRevenue.length === 0) {
+      topCustomersByRevenue = [
+        { id: 1, name: 'Global Investments Ltd', revenue: 1245000, change: 8.5 },
+        { id: 2, name: 'Fidelity Partners', revenue: 987000, change: 4.2 },
+        { id: 3, name: 'Vanguard Capital', revenue: 875000, change: -2.1 },
+        { id: 4, name: 'BlackRock Asset Mgmt', revenue: 743000, change: 6.7 },
+        { id: 5, name: 'State Street Global', revenue: 690000, change: 1.2 }
+      ];
+    }
+    
     // Extract Assets Under Custody (AUC) data
     let assetsUnderCustody = apiData.assetsUnderCustody;
     
@@ -641,63 +689,67 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
     // Get open events count 
     const openEvents = apiData.openEvents || 15;
     
-    // Generate income history by service
-    const incomeHistory = [];
-    const services = ['Custody', 'Settlements', 'Corporate Actions', 'Reporting', 'Other'];
-    
-    // Create income history for the past 12 months
-    for (let i = 0; i < 12; i++) {
-      const date = new Date();
-      date.setMonth(date.getMonth() - (11 - i));
+    // If income history was not populated above from the API, we'll use the values we create here
+    if (!incomeHistory || incomeHistory.length === 0) {
+      // Generate income history by service
+      const services = ['Custody', 'Settlements', 'Corporate Actions', 'Reporting', 'Other'];
       
-      const monthData = {
-        date: date.toISOString().split('T')[0],
-        total: 0,
-        services: []
-      };
-      
-      // Create data for each service with realistic growth and seasonal patterns
-      services.forEach((service, index) => {
-        // Base values with different weights for different services
-        const baseValues = [300000, 250000, 200000, 150000, 100000];
-        const baseValue = baseValues[index] * (1 + (i * 0.02)); // 2% growth per month
+      // Create income history for the past 12 months
+      for (let i = 0; i < 12; i++) {
+        const date = new Date();
+        date.setMonth(date.getMonth() - (11 - i));
         
-        // Add seasonality - some services have different seasonal patterns
-        const month = date.getMonth();
-        let seasonalFactor = 1;
+        const monthData = {
+          date: date.toISOString().split('T')[0],
+          total: 0,
+          services: []
+        };
         
-        if (service === 'Corporate Actions') {
-          // More corporate actions in Q1 and Q4 (dividend seasons)
-          seasonalFactor = (month < 3 || month > 9) ? 1.2 : 0.9;
-        } else if (service === 'Settlements') {
-          // More settlement activity around quarter-ends
-          seasonalFactor = ((month + 1) % 3 === 0) ? 1.15 : 0.95;
-        }
-        
-        // Add some randomness (±5%)
-        const randomFactor = 0.95 + (Math.random() * 0.1);
-        
-        const value = Math.round(baseValue * seasonalFactor * randomFactor);
-        
-        monthData.services.push({
-          name: service,
-          value: value
+        // Create data for each service with realistic growth and seasonal patterns
+        services.forEach((service, index) => {
+          // Base values with different weights for different services
+          const baseValues = [300000, 250000, 200000, 150000, 100000];
+          const baseValue = baseValues[index] * (1 + (i * 0.02)); // 2% growth per month
+          
+          // Add seasonality - some services have different seasonal patterns
+          const month = date.getMonth();
+          let seasonalFactor = 1;
+          
+          if (service === 'Corporate Actions') {
+            // More corporate actions in Q1 and Q4 (dividend seasons)
+            seasonalFactor = (month < 3 || month > 9) ? 1.2 : 0.9;
+          } else if (service === 'Settlements') {
+            // More settlement activity around quarter-ends
+            seasonalFactor = ((month + 1) % 3 === 0) ? 1.15 : 0.95;
+          }
+          
+          // Add some randomness (±5%)
+          const randomFactor = 0.95 + (Math.random() * 0.1);
+          
+          const value = Math.round(baseValue * seasonalFactor * randomFactor);
+          
+          monthData.services.push({
+            name: service,
+            value: value
+          });
+          
+          monthData.total += value;
         });
         
-        monthData.total += value;
-      });
-      
-      incomeHistory.push(monthData);
+        incomeHistory.push(monthData);
+      }
     }
     
-    // Generate top customers by revenue
-    const topCustomersByRevenue = [
-      { id: 'C-1001', name: 'BlackRock Asset Management', revenue: 423650.75, change: 5.2, accountManager: 'Sarah Johnson' },
-      { id: 'C-1042', name: 'Vanguard Group', revenue: 386420.50, change: 3.8, accountManager: 'Michael Chen' },
-      { id: 'C-1183', name: 'Fidelity Investments', revenue: 352840.25, change: 4.5, accountManager: 'Emma Rodriguez' },
-      { id: 'C-1276', name: 'State Street Global Advisors', revenue: 312750.80, change: -1.2, accountManager: 'James Wilson' },
-      { id: 'C-1358', name: 'JPMorgan Asset Management', revenue: 287530.40, change: 2.7, accountManager: 'David Thompson' }
-    ];
+    // If top customers by revenue was not populated from the API above, we'll use the values we create here
+    if (!topCustomersByRevenue || topCustomersByRevenue.length === 0) {
+      topCustomersByRevenue = [
+        { id: 'C-1001', name: 'BlackRock Asset Management', revenue: 423650.75, change: 5.2, accountManager: 'Sarah Johnson' },
+        { id: 'C-1042', name: 'Vanguard Group', revenue: 386420.50, change: 3.8, accountManager: 'Michael Chen' },
+        { id: 'C-1183', name: 'Fidelity Investments', revenue: 352840.25, change: 4.5, accountManager: 'Emma Rodriguez' },
+        { id: 'C-1276', name: 'State Street Global Advisors', revenue: 312750.80, change: -1.2, accountManager: 'James Wilson' },
+        { id: 'C-1358', name: 'JPMorgan Asset Management', revenue: 287530.40, change: 2.7, accountManager: 'David Thompson' }
+      ];
+    }
     
     // Return processed data
     return {
