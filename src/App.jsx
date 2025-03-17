@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
+import OperationsHeadDashboard from './components/OperationsHeadDashboard';
 import CorporateActions from './components/CorporateActions';
 import Trades from './components/Trades';
 import Settlements from './components/Settlements';
@@ -11,7 +12,6 @@ import Reports from './components/Reports';
 import Settings from './components/Settings';
 import OperationsAlerts from './components/OperationsAlerts';
 import OperationsStatistics from './components/OperationsStatistics';
-// Business Head Dashboard is now integrated into the main Dashboard component
 import './assets/styles.css';
 
 const App = () => {
@@ -60,8 +60,8 @@ const App = () => {
     switch (activePage) {
       case 'dashboard':
         return <Dashboard />;
-      case 'business-head-dashboard':
-        return <BusinessHeadDashboard />;
+      case 'operations-head-dashboard':
+        return <OperationsHeadDashboard />;
       case 'trades':
         return <Trades />;
       case 'settlements':
