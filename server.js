@@ -1256,7 +1256,7 @@ app.get('/api/settlements', async (req, res) => {
     if (parseInt(rows[0].count) === 0) {
       // Get customer data to use for settlements
       const { rows: customers } = await pool.query(`
-        SELECT customer_id, name FROM customers LIMIT 20
+        SELECT id as customer_id, name FROM customers LIMIT 20
       `);
       
       if (customers.length === 0) {
