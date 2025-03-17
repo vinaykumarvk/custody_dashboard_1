@@ -857,14 +857,14 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
       </div>
       {/* Header cards row */}
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-6 col-sm-6">
           <MetricCard 
             title="Total Customers" 
             value={formatNumber(totalCustomers, false)} 
             icon="users"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-6 col-sm-6">
           <MetricCard 
             title="Active Customers" 
             value={formatNumber(activeCustomers, false)} 
@@ -872,14 +872,11 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
             icon="user-check"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
-          <MetricCard 
-            title="Total Accounts" 
-            value={formatNumber(totalAccounts, false)} 
-            icon="folder-open"
-          />
-        </div>
-        <div className="col-md-3 col-sm-6">
+      </div>
+
+      {/* Monthly Income row */}
+      <div className="row g-3 mb-4 equal-height">
+        <div className="col-md-12 col-sm-12">
           <MetricCard 
             title="Monthly Income" 
             value={formatCurrency(monthlyIncome)} 
@@ -889,83 +886,9 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
         </div>
       </div>
 
-      {/* Trading metrics row */}
+      {/* Customer Segments chart */}
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-3 col-sm-6">
-          <MetricCard 
-            title="Total Trades" 
-            value={formatNumber(totalTrades, false)} 
-            icon="exchange-alt"
-          />
-        </div>
-        <div className="col-md-3 col-sm-6">
-          <MetricCard 
-            title="Trading Volume" 
-            value={formatCurrency(tradingVolume, 'USD', 0)} 
-            icon="dollar-sign"
-            valueClassName="smaller-value"
-          />
-        </div>
-        <div className="col-md-3 col-sm-6">
-          <MetricCard 
-            title="Pending Trades" 
-            value={formatNumber(pendingTrades, false)} 
-            icon="clock"
-            color="#FFC107"
-          />
-        </div>
-        <div className="col-md-3 col-sm-6">
-          <MetricCard 
-            title="Open Events" 
-            value={formatNumber(openEvents, false)} 
-            icon="exclamation-circle"
-            color="#DC3545"
-          />
-        </div>
-      </div>
-
-      {/* Charts row */}
-      <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-8">
-          <div className="card">
-            <div className="card-header d-flex justify-content-between align-items-center">
-              <h2>Trading Volume History</h2>
-              <DateRangeFilter onFilterChange={handleDateFilterChange} />
-            </div>
-            <div className="card-body">
-              <Chart 
-                type="line"
-                data={tradingVolumeChartData}
-                height="300px"
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  scales: {
-                    y: {
-                      beginAtZero: false,
-                      grace: "5%",
-                      ticks: {
-                        callback: function(value) {
-                          return formatCurrency(value, 'USD', 0);
-                        }
-                      }
-                    }
-                  },
-                  plugins: {
-                    tooltip: {
-                      callbacks: {
-                        label: function(context) {
-                          return formatCurrency(context.raw, 'USD', 0);
-                        }
-                      }
-                    }
-                  }
-                }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="col-md-4">
+        <div className="col-md-12">
           <div className="card">
             <div className="card-header">
               <h2>Customer Segments</h2>
@@ -1107,37 +1030,9 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
 
       {/* Note: Corporate Actions section moved to dedicated CorporateActions page */}
 
-      {/* More charts row */}
+      {/* Trades by Asset Class chart */}
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-6">
-          <div className="card">
-            <div className="card-header d-flex justify-content-between align-items-center">
-              <h2>Trade Count History</h2>
-              <DateRangeFilter onFilterChange={handleDateFilterChange} />
-            </div>
-            <div className="card-body">
-              <Chart 
-                type="line"
-                data={tradeCountChartData}
-                height="250px"
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  scales: {
-                    y: {
-                      beginAtZero: false,
-                      grace: '5%',
-                      ticks: {
-                        precision: 0
-                      }
-                    }
-                  }
-                }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="col-md-6">
+        <div className="col-md-12">
           <div className="card">
             <div className="card-header d-flex justify-content-between align-items-center">
               <h2>Trades by Asset Class</h2>
