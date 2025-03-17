@@ -32,7 +32,7 @@ const statusValueStyle = {
   fontWeight: '500'
 };
 
-const Dashboard = () => {
+const Dashboard = () => { // This component serves as the Business Head Dashboard
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -851,6 +851,10 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
+      <div className="page-header mb-4">
+        <h1>Business Head Dashboard</h1>
+        <DateRangeFilter onFilterChange={handleDateFilterChange} />
+      </div>
       {/* Header cards row */}
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3 col-sm-6">
