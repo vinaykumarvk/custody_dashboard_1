@@ -2,8 +2,7 @@ import React from 'react';
 
 const Sidebar = ({ isOpen, onClose, activePage, onPageChange }) => {
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'tachometer-alt' },
-    { id: 'business-head-dashboard', label: 'Business Head Dashboard', icon: 'briefcase' },
+    { id: 'dashboard', label: 'Business Head Dashboard', icon: 'tachometer-alt' },
     { id: 'trades', label: 'Trades', icon: 'exchange-alt' },
     { id: 'customers', label: 'Customers', icon: 'users' },
     { id: 'income', label: 'Income', icon: 'chart-line' },

@@ -11,7 +11,7 @@ import Reports from './components/Reports';
 import Settings from './components/Settings';
 import OperationsAlerts from './components/OperationsAlerts';
 import OperationsStatistics from './components/OperationsStatistics';
-import BusinessHeadDashboard from './components/BusinessHeadDashboard';
+// Business Head Dashboard is now integrated into the main Dashboard component
 import './assets/styles.css';
 
 const App = () => {
