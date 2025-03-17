@@ -902,11 +902,18 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
       
       {/* OPERATIONS OVERVIEW SECTION */}
       <div className="section-header">
-        <h2>Operations Overview</h2>
+        <h2>Customer Metrics</h2>
       </div>
       
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-4 col-sm-6">
+          <MetricCard 
+            title="Total Customers" 
+            value={formatNumber(totalCustomers, false)} 
+            icon="users"
+          />
+        </div>
+        <div className="col-md-4 col-sm-6">
           <MetricCard 
             title="Active Customers" 
             value={formatNumber(activeCustomers, false)} 
@@ -914,7 +921,7 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             icon="user-check"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-4 col-sm-6">
           <MetricCard 
             title="New Customers (MTD)" 
             value={formatNumber(data?.newCustomersMtd || 0, false)} 
@@ -922,6 +929,13 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             color="#28A745"
           />
         </div>
+      </div>
+      
+      <div className="section-header">
+        <h2>Operations Overview</h2>
+      </div>
+      
+      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Total Trades" 
@@ -937,27 +951,11 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             valueClassName="smaller-value"
           />
         </div>
-      </div>
-
-      {/* TRADE PROCESSING SECTION */}
-      <div className="section-header">
-        <h2>Trade Processing</h2>
-      </div>
-      
-      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3 col-sm-6">
           <MetricCard 
-            title="Successful Trades" 
-            value={formatNumber(data?.dealProcessing?.completed || 0, false)} 
-            icon="check-circle"
-            color="#28A745"
-          />
-        </div>
-        <div className="col-md-3 col-sm-6">
-          <MetricCard 
-            title="Failed Trades" 
-            value={formatNumber(data?.dealProcessing?.failed || 0, false)} 
-            icon="times-circle"
+            title="Open Events" 
+            value={formatNumber(openEvents, false)} 
+            icon="exclamation-circle"
             color="#DC3545"
           />
         </div>
@@ -969,12 +967,32 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             color="#FFC107"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
+      </div>
+
+      {/* TRADE PROCESSING SECTION */}
+      <div className="row g-3 mb-4 equal-height">
+        <div className="col-md-4 col-sm-6">
           <MetricCard 
-            title="Open Events" 
-            value={formatNumber(openEvents, false)} 
-            icon="exclamation-circle"
+            title="Successful Trades" 
+            value={formatNumber(data?.dealProcessing?.completed || 0, false)} 
+            icon="check-circle"
+            color="#28A745"
+          />
+        </div>
+        <div className="col-md-4 col-sm-6">
+          <MetricCard 
+            title="Failed Trades" 
+            value={formatNumber(data?.dealProcessing?.failed || 0, false)} 
+            icon="times-circle"
             color="#DC3545"
+          />
+        </div>
+        <div className="col-md-4 col-sm-6">
+          <MetricCard 
+            title="Trade Success Rate" 
+            value={formatPercentage(data?.dealProcessing?.completed / totalTrades || 0, 1)}
+            icon="chart-line"
+            color="#17A2B8"
           />
         </div>
       </div>
@@ -985,7 +1003,7 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
       </div>
       
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-4 col-sm-6">
           <MetricCard 
             title="Mandatory Actions" 
             value={formatNumber(data?.corporateActions?.mandatory || 0, false)} 
@@ -993,7 +1011,7 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             color="#0D6EFD"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-4 col-sm-6">
           <MetricCard 
             title="Voluntary Actions" 
             value={formatNumber(data?.corporateActions?.voluntary || 0, false)} 
@@ -1001,20 +1019,12 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             color="#6610F2"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-4 col-sm-6">
           <MetricCard 
-            title="Pending Elections" 
-            value={formatNumber(data?.corporateActions?.pending_elections || 0, false)} 
+            title="Upcoming Actions" 
+            value={formatNumber((data?.corporateActions?.pending_elections || 0) + (data?.corporateActions?.upcoming || 0), false)} 
             icon="calendar-alt"
             color="#FFC107"
-          />
-        </div>
-        <div className="col-md-3 col-sm-6">
-          <MetricCard 
-            title="High Priority Actions" 
-            value={formatNumber(data?.corporateActions?.high_priority || 0, false)} 
-            icon="exclamation"
-            color="#DC3545"
           />
         </div>
       </div>
