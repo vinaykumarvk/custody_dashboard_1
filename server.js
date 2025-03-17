@@ -1629,9 +1629,23 @@ app.get('/api/corporate-actions', async (req, res) => {
       recentActions: actions.slice(0, 10)
     };
     
+    // Format the response to match the expected structure in the frontend
     res.json({
       status: 'success',
-      data: responseData
+      data: {
+        total_actions: responseData.totalActions,
+        high_priority: responseData.highImpactActions,
+        mandatory: responseData.dividendActions,
+        voluntary: responseData.voluntaryActions,
+        pending_elections: responseData.pendingActions,
+        upcoming_count: responseData.pendingActions,
+        status_breakdown: responseData.statusBreakdown,
+        action_types: responseData.typeBreakdown,
+        actions: responseData.recentActions,
+        upcoming_actions: responseData.recentActions.filter(action => 
+          action.status === 'Announced' || action.status === 'Pending'
+        )
+      }
     });
   } catch (error) {
     console.error('Error fetching corporate actions data:', error);
