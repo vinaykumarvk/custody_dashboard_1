@@ -61,6 +61,14 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
   
   // State for filtered income history data
   const [filteredIncomeHistory, setFilteredIncomeHistory] = useState([]);
+  
+  // State for customer growth history data filtering
+  const [customerGrowthFilterParams, setCustomerGrowthFilterParams] = useState({
+    startDate: null,
+    endDate: new Date(),
+    range: '30d'
+  });
+  const [filteredCustomerGrowthHistory, setFilteredCustomerGrowthHistory] = useState([]);
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -100,6 +108,11 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
 
     loadDashboardData();
   }, []);
+  
+  const handleCustomerGrowthFilterChange = (newFilterParams) => {
+    setCustomerGrowthFilterParams(newFilterParams);
+    applyCustomerGrowthFilter(customerGrowthHistory, newFilterParams);
+  };
   
   const handleDateFilterChange = (newFilterParams) => {
     setFilterParams(newFilterParams);
@@ -420,6 +433,56 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
     }
   };
   
+  // Apply filters to Customer Growth History data
+  const applyCustomerGrowthFilter = (growthHistory, filterParams) => {
+    const { startDate, endDate, range } = filterParams;
+    
+    // If 'all' is selected or empty data, use all data
+    if (range.toLowerCase() === 'all' || !growthHistory || growthHistory.length === 0) {
+      setFilteredCustomerGrowthHistory(growthHistory);
+      return;
+    }
+    
+    let filteredData = [];
+    const rangeLower = range.toLowerCase();
+    
+    if (rangeLower === '3m') {
+      // Last 3 months
+      filteredData = growthHistory.slice(-3);
+    } 
+    else if (rangeLower === '6m') {
+      // Last 6 months
+      filteredData = growthHistory.slice(-6);
+    }
+    else if (rangeLower === '1y') {
+      // Last 12 months
+      filteredData = growthHistory.slice(-12);
+    }
+    else if (rangeLower === 'ytd') {
+      // YTD: Current year only
+      const currentYear = new Date().getFullYear();
+      filteredData = growthHistory.filter(item => {
+        const date = new Date(item.date);
+        return date.getFullYear() === currentYear;
+      });
+    }
+    else {
+      // Default: filter by date range
+      filteredData = growthHistory.filter(item => {
+        const itemDate = new Date(item.date);
+        return (!startDate || itemDate >= startDate) && 
+               (!endDate || itemDate <= endDate);
+      });
+    }
+    
+    // If no data after filtering, use all data
+    if (filteredData.length === 0) {
+      setFilteredCustomerGrowthHistory(growthHistory);
+    } else {
+      setFilteredCustomerGrowthHistory(filteredData);
+    }
+  };
+
   // Functions for trade interactions removed (moved to Trades.jsx)
   
   /**
