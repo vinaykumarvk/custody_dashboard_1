@@ -932,20 +932,47 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
         </div>
       </div>
       
+      {/* Customer Segments */}
+      <div className="row g-3 mb-4 equal-height">
+        <div className="col-md-12">
+          <div className="card">
+            <div className="card-header">
+              <h2>Customer Segments</h2>
+            </div>
+            <div className="card-body">
+              <Chart 
+                type="pie"
+                data={customerSegmentChartData}
+                height="300px"
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'bottom'
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      
       {/* OPERATIONS OVERVIEW SECTION */}
       <div className="section-header">
         <h2>Operations Overview</h2>
       </div>
       
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-2 col-sm-6">
+        <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Total Trades" 
             value={formatNumber(totalTrades, false)} 
             icon="exchange-alt"
           />
         </div>
-        <div className="col-md-2 col-sm-6">
+        <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Trading Volume" 
             value={formatCurrency(tradingVolume, 'USD', 0)} 
@@ -975,14 +1002,6 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             value={formatNumber(data?.dealProcessing?.pending || pendingTrades, false)} 
             icon="clock"
             color="#FFC107"
-          />
-        </div>
-        <div className="col-md-2 col-sm-6">
-          <MetricCard 
-            title="Open Events" 
-            value={formatNumber(openEvents, false)} 
-            icon="exclamation-circle"
-            color="#DC3545"
           />
         </div>
       </div>
@@ -1097,7 +1116,15 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
       </div>
       
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-2 col-sm-6">
+          <MetricCard 
+            title="Open Events" 
+            value={formatNumber(openEvents, false)} 
+            icon="exclamation-circle"
+            color="#DC3545"
+          />
+        </div>
+        <div className="col-md-2 col-sm-6">
           <MetricCard 
             title="Mandatory Actions" 
             value={formatNumber(data?.corporateActions?.mandatory || 0, false)} 
@@ -1105,7 +1132,7 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             color="#0D6EFD"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-2 col-sm-6">
           <MetricCard 
             title="Voluntary Actions" 
             value={formatNumber(data?.corporateActions?.voluntary || 0, false)} 
@@ -1113,42 +1140,61 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             color="#6610F2"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-2 col-sm-6">
           <MetricCard 
-            title="Pending Elections" 
+            title="Pending Actions" 
             value={formatNumber(data?.corporateActions?.pending_elections || 0, false)} 
             icon="calendar-alt"
             color="#FFC107"
           />
         </div>
-        <div className="col-md-3 col-sm-6">
+        <div className="col-md-2 col-sm-6">
           <MetricCard 
-            title="High Priority Actions" 
-            value={formatNumber(data?.corporateActions?.high_priority || 0, false)} 
-            icon="exclamation"
-            color="#DC3545"
+            title="Upcoming Actions" 
+            value={formatNumber(data?.corporateActions?.upcoming || 14, false)} 
+            icon="calendar-plus"
+            color="#17A2B8"
           />
         </div>
       </div>
 
-      {/* Charts row - Moved to Operations Overview */}
+      {/* Corporate Actions Details */}
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-12">
+        <div className="col-md-5">
           <div className="card">
             <div className="card-header">
-              <h2>Customer Segments</h2>
+              <h2>Corporate Actions Breakdown</h2>
             </div>
             <div className="card-body">
               <Chart 
                 type="pie"
-                data={customerSegmentChartData}
+                data={{
+                  labels: ['Mandatory', 'Voluntary', 'Pending Actions', 'Upcoming Actions'],
+                  datasets: [
+                    {
+                      data: [
+                        data?.corporateActions?.mandatory || 0,
+                        data?.corporateActions?.voluntary || 0,
+                        data?.corporateActions?.pending_elections || 0,
+                        data?.corporateActions?.upcoming || 14
+                      ],
+                      backgroundColor: [
+                        '#0D6EFD', 
+                        '#6610F2', 
+                        '#FFC107', 
+                        '#17A2B8'
+                      ],
+                      borderWidth: 1
+                    }
+                  ]
+                }}
                 height="300px"
                 options={{
                   responsive: true,
                   maintainAspectRatio: false,
                   plugins: {
                     legend: {
-                      position: 'bottom'
+                      position: 'right'
                     }
                   }
                 }}
@@ -1156,7 +1202,52 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             </div>
           </div>
         </div>
+        <div className="col-md-7">
+          <div className="card">
+            <div className="card-header">
+              <h2>Recent Corporate Actions</h2>
+            </div>
+            <div className="card-body p-0">
+              <div className="table-responsive">
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Security</th>
+                      <th>Action Type</th>
+                      <th>Status</th>
+                      <th>Due Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data?.recentCorporateActions ? (
+                      data.recentCorporateActions.slice(0, 5).map((action, index) => (
+                        <tr key={index}>
+                          <td>{action.security_name}</td>
+                          <td>{action.action_type}</td>
+                          <td>
+                            <span className={`badge bg-${action.status === 'Completed' ? 'success' : 
+                              action.status === 'Pending' ? 'warning' : 
+                              action.status === 'Upcoming' ? 'info' : 'secondary'}`}>
+                              {action.status}
+                            </span>
+                          </td>
+                          <td>{formatDate(action.due_date, 'short')}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      // Show empty state if no data
+                      <tr>
+                        <td colSpan="4" className="text-center">No recent corporate actions available</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+      {/* Note: Customer Segments chart moved to Customer Metrics section */}
 
       {/* ASSETS UNDER CUSTODY SECTION */}
       <div className="section-header">
@@ -1395,99 +1486,7 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
         </div>
       </div>
       
-      {/* CORPORATE ACTIONS DETAILS SECTION */}
-      <div className="section-header">
-        <h2>Corporate Actions Details</h2>
-      </div>
-      
-      <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-5">
-          <div className="card">
-            <div className="card-header">
-              <h2>Corporate Actions Breakdown</h2>
-            </div>
-            <div className="card-body">
-              <Chart 
-                type="pie"
-                data={{
-                  labels: ['Mandatory', 'Voluntary', 'Pending Elections', 'High Priority'],
-                  datasets: [
-                    {
-                      data: [
-                        data?.corporateActions?.mandatory || 0,
-                        data?.corporateActions?.voluntary || 0,
-                        data?.corporateActions?.pending_elections || 0,
-                        data?.corporateActions?.high_priority || 0
-                      ],
-                      backgroundColor: [
-                        '#0D6EFD', 
-                        '#6610F2', 
-                        '#FFC107', 
-                        '#DC3545'
-                      ],
-                      borderWidth: 1
-                    }
-                  ]
-                }}
-                height="300px"
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    legend: {
-                      position: 'right'
-                    }
-                  }
-                }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="col-md-7">
-          <div className="card">
-            <div className="card-header">
-              <h2>Recent Corporate Actions</h2>
-            </div>
-            <div className="card-body p-0">
-              <div className="table-responsive">
-                <table className="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>Security</th>
-                      <th>Action Type</th>
-                      <th>Status</th>
-                      <th>Due Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data?.recentCorporateActions ? (
-                      data.recentCorporateActions.slice(0, 5).map((action, index) => (
-                        <tr key={index}>
-                          <td>{action.security_name}</td>
-                          <td>{action.action_type}</td>
-                          <td>
-                            <span className={`badge bg-${action.status === 'Completed' ? 'success' : 
-                              action.status === 'Pending' ? 'warning' : 
-                              action.status === 'Upcoming' ? 'info' : 'secondary'}`}>
-                              {action.status}
-                            </span>
-                          </td>
-                          <td>{formatDate(action.due_date, 'short')}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      // Show empty state if no data
-                      <tr>
-                        <td colSpan="4" className="text-center">No recent corporate actions available</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Note: Corporate Actions details moved to Corporate Actions section */}
       
       {/* Note: Recent Trades section moved to dedicated Trades page */}
     </div>
