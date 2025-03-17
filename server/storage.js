@@ -73,15 +73,11 @@ const getCorporateActions = async (filters = {}) => {
   
   // Apply filters
   if (filters.type) {
-    query = query.where(eq(schema.corporateActions.type, filters.type));
+    query = query.where(eq(schema.corporateActions.actionType, filters.type));
   }
   
   if (filters.status) {
     query = query.where(eq(schema.corporateActions.status, filters.status));
-  }
-  
-  if (filters.priority) {
-    query = query.where(eq(schema.corporateActions.priority, filters.priority));
   }
   
   // Order by announcement date (descending)
@@ -174,23 +170,24 @@ const getDashboardSummary = async () => {
     
     // Calculate corporate actions statistics
     const caStats = {
-      mandatory: corporateActions.filter(ca => ca.mandatory).length,
-      voluntary: corporateActions.filter(ca => !ca.mandatory).length,
+      mandatory: corporateActions.filter(ca => ca.actionType === 'Dividend' || ca.actionType === 'Stock Split').length,
+      voluntary: corporateActions.filter(ca => ca.actionType === 'Rights Issue' || ca.actionType === 'Tender Offer').length,
       total: corporateActions.length,
-      high_priority: corporateActions.filter(ca => ca.priority === 'high').length,
-      pending_elections: corporateActions.filter(ca => ca.pendingElection).length,
+      high_priority: corporateActions.filter(ca => ca.impactValue && ca.impactValue > 5.0).length,
+      pending_elections: corporateActions.filter(ca => ca.status === 'Pending').length,
       status: [
         { status: 'Completed', count: corporateActions.filter(ca => ca.status === 'Completed').length },
         { status: 'Pending', count: corporateActions.filter(ca => ca.status === 'Pending').length },
         { status: 'Announced', count: corporateActions.filter(ca => ca.status === 'Announced').length },
-        { status: 'Processing', count: corporateActions.filter(ca => ca.status === 'Processing').length }
+        { status: 'Cancelled', count: corporateActions.filter(ca => ca.status === 'Cancelled').length }
       ],
       types: [
-        { type: 'Dividend', count: corporateActions.filter(ca => ca.type === 'Dividend').length },
-        { type: 'Stock Split', count: corporateActions.filter(ca => ca.type === 'Stock Split').length },
-        { type: 'Rights Issue', count: corporateActions.filter(ca => ca.type === 'Rights Issue').length },
-        { type: 'Merger', count: corporateActions.filter(ca => ca.type === 'Merger').length },
-        { type: 'Redemption', count: corporateActions.filter(ca => ca.type === 'Redemption').length }
+        { type: 'Dividend', count: corporateActions.filter(ca => ca.actionType === 'Dividend').length },
+        { type: 'Stock Split', count: corporateActions.filter(ca => ca.actionType === 'Stock Split').length },
+        { type: 'Rights Issue', count: corporateActions.filter(ca => ca.actionType === 'Rights Issue').length },
+        { type: 'Merger', count: corporateActions.filter(ca => ca.actionType === 'Merger').length },
+        { type: 'Acquisition', count: corporateActions.filter(ca => ca.actionType === 'Acquisition').length },
+        { type: 'Tender Offer', count: corporateActions.filter(ca => ca.actionType === 'Tender Offer').length }
       ]
     };
     
