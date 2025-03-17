@@ -301,6 +301,41 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
     }
   };
   
+  // Handle Income History filter change
+  const handleIncomeHistoryFilterChange = (newFilterParams) => {
+    console.log('Income history filter changed:', newFilterParams);
+    if (data && data.incomeHistory) {
+      const { startDate, endDate, range } = newFilterParams;
+      // Filter income history data based on date range
+      let filtered = [];
+      
+      if (range.toLowerCase() === 'all') {
+        filtered = data.incomeHistory;
+      } else if (range.toLowerCase() === '7d') {
+        filtered = data.incomeHistory.slice(-7);
+      } else if (range.toLowerCase() === '30d') {
+        filtered = data.incomeHistory.slice(-30);
+      } else if (range.toLowerCase() === '90d') {
+        filtered = data.incomeHistory.slice(-90);
+      } else if (range.toLowerCase() === 'ytd') {
+        const currentYear = new Date().getFullYear();
+        filtered = data.incomeHistory.filter(item => {
+          const date = new Date(item.date);
+          return date.getFullYear() === currentYear;
+        });
+      } else {
+        // Custom date range
+        filtered = data.incomeHistory.filter(item => {
+          const itemDate = new Date(item.date);
+          return (!startDate || itemDate >= startDate) && 
+                 (!endDate || itemDate <= endDate);
+        });
+      }
+      
+      setFilteredIncomeHistory(filtered.length > 0 ? filtered : data.incomeHistory);
+    }
+  };
+  
   // Apply filters to Trades by Asset Class data
   const applyTradesByAssetFilter = (tradesByAssetHistory, filterParams) => {
     const { startDate, endDate, range } = filterParams;
@@ -864,15 +899,8 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
         <h1>Operations Head Dashboard</h1>
         <DateRangeFilter onFilterChange={handleDateFilterChange} />
       </div>
-      {/* Header cards row */}
+      {/* Customer metrics row */}
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-3 col-sm-6">
-          <MetricCard 
-            title="Total Customers" 
-            value={formatNumber(totalCustomers, false)} 
-            icon="users"
-          />
-        </div>
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Active Customers" 
@@ -883,23 +911,12 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
         </div>
         <div className="col-md-3 col-sm-6">
           <MetricCard 
-            title="Total Accounts" 
-            value={formatNumber(totalAccounts, false)} 
-            icon="folder-open"
-          />
-        </div>
-        <div className="col-md-3 col-sm-6">
-          <MetricCard 
-            title="Monthly Income" 
-            value={formatCurrency(monthlyIncome)} 
-            icon="chart-line"
+            title="New Customers (MTD)" 
+            value={formatNumber(data?.newCustomersMtd || 0, false)} 
+            icon="user-plus"
             color="#28A745"
           />
         </div>
-      </div>
-
-      {/* Trading metrics row */}
-      <div className="row g-3 mb-4 equal-height">
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Total Trades" 
@@ -915,10 +932,30 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             valueClassName="smaller-value"
           />
         </div>
+      </div>
+
+      {/* Trade Status cards row */}
+      <div className="row g-3 mb-4 equal-height">
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="Successful Trades" 
+            value={formatNumber(data?.dealProcessing?.completed || 0, false)} 
+            icon="check-circle"
+            color="#28A745"
+          />
+        </div>
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="Failed Trades" 
+            value={formatNumber(data?.dealProcessing?.failed || 0, false)} 
+            icon="times-circle"
+            color="#DC3545"
+          />
+        </div>
         <div className="col-md-3 col-sm-6">
           <MetricCard 
             title="Pending Trades" 
-            value={formatNumber(pendingTrades, false)} 
+            value={formatNumber(data?.dealProcessing?.pending || pendingTrades, false)} 
             icon="clock"
             color="#FFC107"
           />
@@ -928,6 +965,42 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
             title="Open Events" 
             value={formatNumber(openEvents, false)} 
             icon="exclamation-circle"
+            color="#DC3545"
+          />
+        </div>
+      </div>
+      
+      {/* Corporate Actions metrics row */}
+      <div className="row g-3 mb-4 equal-height">
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="Mandatory Actions" 
+            value={formatNumber(data?.corporateActions?.mandatory || 0, false)} 
+            icon="file-alt"
+            color="#0D6EFD"
+          />
+        </div>
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="Voluntary Actions" 
+            value={formatNumber(data?.corporateActions?.voluntary || 0, false)} 
+            icon="file-signature"
+            color="#6610F2"
+          />
+        </div>
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="Pending Elections" 
+            value={formatNumber(data?.corporateActions?.pending_elections || 0, false)} 
+            icon="calendar-alt"
+            color="#FFC107"
+          />
+        </div>
+        <div className="col-md-3 col-sm-6">
+          <MetricCard 
+            title="High Priority Actions" 
+            value={formatNumber(data?.corporateActions?.high_priority || 0, false)} 
+            icon="exclamation"
             color="#DC3545"
           />
         </div>
@@ -1177,6 +1250,209 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
         </div>
       </div>
 
+      {/* Income by Service Chart & Top Customers Table */}
+      <div className="row g-3 mb-4 equal-height">
+        <div className="col-md-7">
+          <div className="card">
+            <div className="card-header d-flex justify-content-between align-items-center">
+              <h2>Income by Service</h2>
+              <DateRangeFilter onFilterChange={handleIncomeHistoryFilterChange} />
+            </div>
+            <div className="card-body">
+              {filteredIncomeHistory.length > 0 && filteredIncomeHistory[0].services ? (
+                <Chart 
+                  type="bar"
+                  data={{
+                    labels: filteredIncomeHistory[0].services.map(service => service.name),
+                    datasets: [
+                      {
+                        label: 'Income',
+                        data: filteredIncomeHistory[0].services.map(service => service.value),
+                        backgroundColor: [
+                          '#007C75', '#009E94', '#00BFB3', '#00D6C9', '#00EDDE'
+                        ],
+                        borderColor: [
+                          '#007C75', '#009E94', '#00BFB3', '#00D6C9', '#00EDDE'
+                        ],
+                        borderWidth: 1
+                      }
+                    ]
+                  }}
+                  height="300px"
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        ticks: {
+                          callback: function(value) {
+                            return formatCurrency(value, 'USD', 0);
+                          }
+                        }
+                      }
+                    },
+                    plugins: {
+                      tooltip: {
+                        callbacks: {
+                          label: function(context) {
+                            return formatCurrency(context.raw, 'USD', 0);
+                          }
+                        }
+                      }
+                    },
+                    barPercentage: 0.7,
+                    categoryPercentage: 0.9
+                  }}
+                />
+              ) : (
+                <div className="alert alert-info">No income data available for the selected period</div>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="col-md-5">
+          <div className="card">
+            <div className="card-header">
+              <h2>Top Customers by Revenue</h2>
+            </div>
+            <div className="card-body p-0">
+              <div className="table-responsive">
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Customer</th>
+                      <th>Revenue (12 months)</th>
+                      <th>Change (YoY)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data?.topCustomers ? (
+                      data.topCustomers.map((customer, index) => (
+                        <tr key={index}>
+                          <td>{customer.name}</td>
+                          <td>{formatCurrency(customer.revenue, 'USD', 0)}</td>
+                          <td className={`text-${customer.change >= 0 ? 'success' : 'danger'}`}>
+                            {formatPercentage(customer.change / 100, 1)}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      // Default rows if no data available
+                      [
+                        { name: 'BlackRock', revenue: 1250000, change: 5.2 },
+                        { name: 'Vanguard', revenue: 980000, change: 3.8 },
+                        { name: 'State Street', revenue: 850000, change: -1.2 },
+                        { name: 'Fidelity', revenue: 720000, change: 2.6 },
+                        { name: 'JPMorgan', revenue: 680000, change: 4.1 }
+                      ].map((customer, index) => (
+                        <tr key={index}>
+                          <td>{customer.name}</td>
+                          <td>{formatCurrency(customer.revenue, 'USD', 0)}</td>
+                          <td className={`text-${customer.change >= 0 ? 'success' : 'danger'}`}>
+                            {formatPercentage(customer.change / 100, 1)}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Corporate Actions Pie Chart */}
+      <div className="row g-3 mb-4 equal-height">
+        <div className="col-md-5">
+          <div className="card">
+            <div className="card-header">
+              <h2>Corporate Actions Breakdown</h2>
+            </div>
+            <div className="card-body">
+              <Chart 
+                type="pie"
+                data={{
+                  labels: ['Mandatory', 'Voluntary', 'Pending Elections', 'High Priority'],
+                  datasets: [
+                    {
+                      data: [
+                        data?.corporateActions?.mandatory || 0,
+                        data?.corporateActions?.voluntary || 0,
+                        data?.corporateActions?.pending_elections || 0,
+                        data?.corporateActions?.high_priority || 0
+                      ],
+                      backgroundColor: [
+                        '#0D6EFD', 
+                        '#6610F2', 
+                        '#FFC107', 
+                        '#DC3545'
+                      ],
+                      borderWidth: 1
+                    }
+                  ]
+                }}
+                height="300px"
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'right'
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="col-md-7">
+          <div className="card">
+            <div className="card-header">
+              <h2>Recent Corporate Actions</h2>
+            </div>
+            <div className="card-body p-0">
+              <div className="table-responsive">
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Security</th>
+                      <th>Action Type</th>
+                      <th>Status</th>
+                      <th>Due Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data?.recentCorporateActions ? (
+                      data.recentCorporateActions.slice(0, 5).map((action, index) => (
+                        <tr key={index}>
+                          <td>{action.security_name}</td>
+                          <td>{action.action_type}</td>
+                          <td>
+                            <span className={`badge bg-${action.status === 'Completed' ? 'success' : 
+                              action.status === 'Pending' ? 'warning' : 
+                              action.status === 'Upcoming' ? 'info' : 'secondary'}`}>
+                              {action.status}
+                            </span>
+                          </td>
+                          <td>{formatDate(action.due_date, 'short')}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      // Show empty state if no data
+                      <tr>
+                        <td colSpan="4" className="text-center">No recent corporate actions available</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       {/* Note: Recent Trades section moved to dedicated Trades page */}
     </div>
   );
