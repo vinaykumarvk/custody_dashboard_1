@@ -95,6 +95,9 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
         // Initialize AUC history data filter
         applyAucHistoryFilter(processedData.assetsUnderCustody?.history || [], aucHistoryFilterParams);
         
+        // Initialize customer growth history data filter
+        applyCustomerGrowthFilter(customerGrowthHistory, customerGrowthFilterParams);
+        
         // Initialize trades by asset class filter if there's time-based data
         if (processedData.tradesByAssetClassHistory) {
           applyTradesByAssetFilter(processedData.tradesByAssetClassHistory, tradesByAssetFilterParams);
@@ -921,16 +924,22 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
     { date: '2025-03-01', totalCustomers: 19632, newCustomers: 182 }
   ];
   
+  // Initialize filteredCustomerGrowthHistory if it's undefined
+  // This prevents the "Cannot read properties of undefined (reading 'length')" error
+  if (!filteredCustomerGrowthHistory) {
+    setFilteredCustomerGrowthHistory(customerGrowthHistory || []);
+  }
+
   // Customer Growth History chart data
   const customerGrowthChartData = {
-    labels: customerGrowthHistory.map(item => {
+    labels: ((filteredCustomerGrowthHistory && filteredCustomerGrowthHistory.length > 0) ? filteredCustomerGrowthHistory : customerGrowthHistory).map(item => {
       const date = new Date(item.date);
       return `${date.getMonth() + 1}/${date.getFullYear().toString().substr(2)}`;
     }),
     datasets: [
       {
         label: 'Total Customers',
-        data: customerGrowthHistory.map(item => item.totalCustomers),
+        data: ((filteredCustomerGrowthHistory && filteredCustomerGrowthHistory.length > 0) ? filteredCustomerGrowthHistory : customerGrowthHistory).map(item => item.totalCustomers),
         borderColor: '#007C75',
         backgroundColor: 'rgba(0, 124, 117, 0.1)',
         fill: true,
@@ -939,7 +948,7 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
       },
       {
         label: 'New Customers',
-        data: customerGrowthHistory.map(item => item.newCustomers),
+        data: ((filteredCustomerGrowthHistory && filteredCustomerGrowthHistory.length > 0) ? filteredCustomerGrowthHistory : customerGrowthHistory).map(item => item.newCustomers),
         borderColor: '#17A2B8',
         backgroundColor: 'rgba(23, 162, 184, 0.1)',
         fill: true,
@@ -1209,7 +1218,7 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
           <div className="card">
             <div className="card-header d-flex justify-content-between align-items-center">
               <h3>Customer Growth History</h3>
-              <DateRangeFilter onFilterChange={handleDateFilterChange} />
+              <DateRangeFilter onFilterChange={handleCustomerGrowthFilterChange} />
             </div>
             <div className="card-body">
               <Chart 
