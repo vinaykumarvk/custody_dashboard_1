@@ -1276,70 +1276,7 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
 
       {/* Note: Corporate Actions section moved to dedicated CorporateActions page */}
 
-      {/* TRADING ANALYTICS SECTION */}
-      <div className="section-header">
-        <h2>Trading Analytics</h2>
-      </div>
-      
-      <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-6">
-          <div className="card">
-            <div className="card-header d-flex justify-content-between align-items-center">
-              <h2>Trade Count History</h2>
-              <DateRangeFilter onFilterChange={handleDateFilterChange} />
-            </div>
-            <div className="card-body">
-              <Chart 
-                type="line"
-                data={tradeCountChartData}
-                height="250px"
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  scales: {
-                    y: {
-                      beginAtZero: false,
-                      grace: '5%',
-                      ticks: {
-                        precision: 0
-                      }
-                    }
-                  }
-                }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="col-md-6">
-          <div className="card">
-            <div className="card-header d-flex justify-content-between align-items-center">
-              <h2>Trades by Asset Class</h2>
-              <DateRangeFilter onFilterChange={handleTradesByAssetFilterChange} />
-            </div>
-            <div className="card-body">
-              <Chart 
-                type="bar"
-                data={tradesByAssetChartData}
-                height="250px"
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                      ticks: {
-                        precision: 0
-                      }
-                    }
-                  },
-                  barPercentage: 0.6,
-                  categoryPercentage: 0.8
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Note: Trading Analytics moved to Operations Overview */}
 
       {/* REVENUE ANALYSIS SECTION */}
       <div className="section-header">
