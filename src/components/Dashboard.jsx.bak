@@ -882,28 +882,28 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
 
   // Initialize filtered income history when the income history data is loaded
   useEffect(() => {
-    if (data && data.incomeHistory && data.incomeHistory.length > 0) {
-      setFilteredIncomeHistory(data.incomeHistory);
+    if (incomeHistory && incomeHistory.length > 0) {
+      setFilteredIncomeHistory(incomeHistory);
     }
-  }, [data]);
+  }, [incomeHistory]);
   
   // Function to handle income history filter changes
   const handleIncomeHistoryFilterChange = (newFilterParams) => {
     console.log('Income history filter changed:', newFilterParams);
     
-    if (!data || !data.incomeHistory || data.incomeHistory.length === 0) {
+    if (!incomeHistory || incomeHistory.length === 0) {
       setFilteredIncomeHistory([]);
       return;
     }
     
     // Apply filter based on date range
-    let filtered = [...data.incomeHistory];
+    let filtered = [...incomeHistory];
     
     if (newFilterParams.startDate || newFilterParams.endDate) {
       const startDate = newFilterParams.startDate ? new Date(newFilterParams.startDate) : null;
       const endDate = newFilterParams.endDate ? new Date(newFilterParams.endDate) : new Date();
       
-      filtered = data.incomeHistory.filter(item => {
+      filtered = incomeHistory.filter(item => {
         const itemDate = new Date(item.date);
         return (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate);
       });
@@ -1181,8 +1181,8 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
                         },
                         footer: function(tooltipItems) {
                           const index = tooltipItems[0].dataIndex;
-                          if (filteredIncomeHistory && filteredIncomeHistory[index]) {
-                            const total = filteredIncomeHistory[index].total;
+                          if (incomeHistory && incomeHistory[index]) {
+                            const total = incomeHistory[index].total;
                             return `Total: ${formatCurrency(total)}`;
                           }
                           return '';
