@@ -47,6 +47,9 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
   const [filteredAucHistoryData, setFilteredAucHistoryData] = useState([]);
   const [filteredTradesByAssetData, setFilteredTradesByAssetData] = useState([]);
   
+  // State for filtered income history data
+  const [filteredIncomeHistory, setFilteredIncomeHistory] = useState([]);
+  
   // State for individual filters
   const [aucHistoryFilterParams, setAucHistoryFilterParams] = useState({
     startDate: null,
@@ -70,6 +73,12 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
         const processedData = processApiData(dashboardData);
         console.log('Processed dashboard data:', processedData);
         setData(processedData);
+        
+        // Initialize filtered income history when data is loaded
+        if (processedData && processedData.incomeHistory && processedData.incomeHistory.length > 0) {
+          setFilteredIncomeHistory(processedData.incomeHistory);
+        }
+        
         setLoading(false);
         
         // Set initial filtered data
