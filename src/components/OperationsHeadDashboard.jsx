@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { formatNumber, formatCurrency } from '../utils';
+import { formatNumber, formatCurrency, formatPercentage, formatDate } from '../utils';
 import { fetchData } from '../services/api';
 import MetricCard from './MetricCard';
 import Chart from './Chart';
