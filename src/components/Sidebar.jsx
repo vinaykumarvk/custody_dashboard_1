@@ -4,14 +4,7 @@ const Sidebar = ({ isOpen, onClose, activePage, onPageChange }) => {
   const menuItems = [
     { id: 'dashboard', label: 'Business Head Dashboard', icon: 'tachometer-alt' },
     { id: 'operations-head-dashboard', label: 'Operations Head Dashboard', icon: 'tasks' },
-    { id: 'trades', label: 'Trades', icon: 'exchange-alt' },
-    { id: 'customers', label: 'Customers', icon: 'users' },
-    { id: 'income', label: 'Income', icon: 'chart-line' },
-    { id: 'corporate-actions', label: 'Corporate Actions', icon: 'building' },
-    { id: 'settlements', label: 'Settlements', icon: 'money-check-alt' },
-    { id: 'operations-statistics', label: 'Operations Statistics', icon: 'chart-bar' },
-    { id: 'reports', label: 'Reports', icon: 'file-alt' },
-    { id: 'settings', label: 'Settings', icon: 'cog' }
+    { id: 'operations-statistics', label: 'Operations Statistics', icon: 'chart-bar' }
   ];
 
   const handleMenuClick = (pageId) => {

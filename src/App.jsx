@@ -3,14 +3,6 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import OperationsHeadDashboard from './components/OperationsHeadDashboard';
-import CorporateActions from './components/CorporateActions';
-import Trades from './components/Trades';
-import Settlements from './components/Settlements';
-import Customers from './components/Customers';
-import Income from './components/Income';
-import Reports from './components/Reports';
-import Settings from './components/Settings';
-import OperationsAlerts from './components/OperationsAlerts';
 import OperationsStatistics from './components/OperationsStatistics';
 import './assets/styles.css';
 
@@ -62,24 +54,8 @@ const App = () => {
         return <Dashboard />;
       case 'operations-head-dashboard':
         return <OperationsHeadDashboard />;
-      case 'trades':
-        return <Trades />;
-      case 'settlements':
-        return <Settlements />;
-      case 'corporate-actions':
-        return <CorporateActions />;
-      case 'customers':
-        return <Customers />;
-      case 'income':
-        return <Income />;
-      case 'operations-alerts':
-        return <OperationsAlerts />;
       case 'operations-statistics':
         return <OperationsStatistics />;
-      case 'reports':
-        return <Reports />;
-      case 'settings':
-        return <Settings />;
       default:
         return <Dashboard />;
     }
