@@ -1410,20 +1410,18 @@ const OperationsHeadDashboard = () => { // Operations Head Dashboard
               <Chart 
                 type="pie"
                 data={{
-                  labels: ['Mandatory', 'Voluntary', 'Pending Elections', 'High Priority'],
+                  labels: ['Mandatory', 'Voluntary', 'Upcoming'],
                   datasets: [
                     {
                       data: [
                         data?.corporateActions?.mandatory || 0,
                         data?.corporateActions?.voluntary || 0,
-                        data?.corporateActions?.pending_elections || 0,
-                        data?.corporateActions?.high_priority || 0
+                        (data?.corporateActions?.pending_elections || 0) + (data?.corporateActions?.upcoming || 0)
                       ],
                       backgroundColor: [
                         '#0D6EFD', 
                         '#6610F2', 
-                        '#FFC107', 
-                        '#DC3545'
+                        '#FFC107'
                       ],
                       borderWidth: 1
                     }
