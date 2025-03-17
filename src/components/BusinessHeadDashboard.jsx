@@ -115,13 +115,13 @@ const BusinessHeadDashboard = () => {
   const outstandingFees = income.outstandingFees || 0;
   
   // Corporate actions metrics
-  const totalActions = corporateActions.totalActions || 0;
-  const mandatoryActions = corporateActions.mandatoryActions || 0;
-  const voluntaryActions = corporateActions.voluntaryActions || 0;
-  const upcomingActions = corporateActions.upcomingActions || 0;
-  const completedActions = corporateActions.completedActions || 0;
-  const pendingActions = corporateActions.pendingActions || 0;
-  const pendingElections = corporateActions.pendingElections || 0;
+  const totalActions = corporateActions.total_actions || corporateActions.totalActions || 0;
+  const mandatoryActions = corporateActions.mandatory || corporateActions.mandatoryActions || 0;
+  const voluntaryActions = corporateActions.voluntary || corporateActions.voluntaryActions || 0;
+  const upcomingActions = corporateActions.upcoming_count || corporateActions.upcomingActions || 0;
+  const completedActions = corporateActions.completed || corporateActions.completedActions || 0; 
+  const pendingActions = corporateActions.pending_elections || corporateActions.pendingActions || 0;
+  const pendingElections = corporateActions.pending_elections || corporateActions.pendingElections || 0;
   
   // Settlements metrics
   const totalSettlements = settlements.totalSettlements || 0;
@@ -536,13 +536,13 @@ const BusinessHeadDashboard = () => {
                 <h5 className="card-title">Actions by Type</h5>
               </div>
               <div className="card-body">
-                {corporateActions.actionsByType && (
+                {(corporateActions.action_types || corporateActions.actionsByType) && (
                   <Chart 
                     type="pie"
                     data={{
-                      labels: corporateActions.actionsByType.map(item => item.type),
+                      labels: (corporateActions.action_types || corporateActions.actionsByType || []).map(item => item.type || item.label),
                       datasets: [{
-                        data: corporateActions.actionsByType.map(item => item.count),
+                        data: (corporateActions.action_types || corporateActions.actionsByType || []).map(item => item.count || item.value),
                         backgroundColor: [
                           '#007c75', '#2c7be5', '#00d97e', '#39afd1', '#6b5eae', '#e63757'
                         ]
@@ -559,13 +559,13 @@ const BusinessHeadDashboard = () => {
                 <h5 className="card-title">Actions by Status</h5>
               </div>
               <div className="card-body">
-                {corporateActions.actionsByStatus && (
+                {(corporateActions.status_breakdown || corporateActions.actionsByStatus) && (
                   <Chart 
                     type="doughnut"
                     data={{
-                      labels: corporateActions.actionsByStatus.map(item => item.status),
+                      labels: (corporateActions.status_breakdown || corporateActions.actionsByStatus || []).map(item => item.status || item.label),
                       datasets: [{
-                        data: corporateActions.actionsByStatus.map(item => item.count),
+                        data: (corporateActions.status_breakdown || corporateActions.actionsByStatus || []).map(item => item.count || item.value),
                         backgroundColor: [
                           '#00d97e', '#f6c343', '#e63757', '#39afd1', '#95aac9'
                         ]
@@ -586,20 +586,20 @@ const BusinessHeadDashboard = () => {
                 <h5 className="card-title">Upcoming Actions</h5>
               </div>
               <div className="card-body">
-                {corporateActions.upcomingActions && (
+                {(corporateActions.upcoming_actions || corporateActions.upcomingActions || corporateActions.actions) && (
                   <DataTable 
-                    data={corporateActions.upcomingActionsList || []}
+                    data={corporateActions.upcoming_actions || corporateActions.upcomingActionsList || corporateActions.actions || []}
                     columns={[
                       { header: 'ID', accessor: 'id' },
-                      { header: 'Security', accessor: 'security' },
-                      { header: 'Type', accessor: 'type' },
-                      { header: 'Ex Date', accessor: 'exDate' },
-                      { header: 'Record Date', accessor: 'recordDate' },
-                      { header: 'Payment Date', accessor: 'paymentDate' },
-                      { header: 'Status', accessor: 'status', cell: (value) => (
+                      { header: 'Security', accessor: row => row.security_name || row.security || ''},
+                      { header: 'Type', accessor: row => row.action_type || row.type || ''},
+                      { header: 'Ex Date', accessor: row => row.announcement_date || row.exDate || ''},
+                      { header: 'Record Date', accessor: row => row.record_date || row.recordDate || ''},
+                      { header: 'Payment Date', accessor: row => row.payment_date || row.paymentDate || ''},
+                      { header: 'Status', accessor: row => row.status || '', cell: (value) => (
                         <span className={`badge bg-${
                           value === 'Completed' ? 'success' :
-                          value === 'Pending' ? 'warning' :
+                          value === 'Announced' || value === 'Pending' ? 'warning' :
                           value === 'In Progress' ? 'info' : 'secondary'
                         }`}>{value}</span>
                       )}
