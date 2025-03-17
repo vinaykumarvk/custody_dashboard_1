@@ -1106,7 +1106,6 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
     <div className="dashboard">
       <div className="page-header mb-4">
         <h1>Business Head Dashboard</h1>
-        <DateRangeFilter onFilterChange={handleDateFilterChange} />
       </div>
       
       {/* CUSTOMER SECTION */}
@@ -1145,8 +1144,9 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-12">
           <div className="card">
-            <div className="card-header">
+            <div className="card-header d-flex justify-content-between align-items-center">
               <h3>Customer Growth History</h3>
+              <DateRangeFilter onFilterChange={handleDateFilterChange} />
             </div>
             <div className="card-body">
               <Chart 
