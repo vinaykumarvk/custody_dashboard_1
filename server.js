@@ -1441,6 +1441,195 @@ app.get('/api/income', async (req, res) => {
   }
 });
 
+// API endpoint for corporate actions
+app.get('/api/corporate-actions', async (req, res) => {
+  try {
+    // Create corporate_actions table if it doesn't exist
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS corporate_actions (
+        id SERIAL PRIMARY KEY,
+        action_id VARCHAR(20) NOT NULL,
+        type VARCHAR(50) NOT NULL,
+        security_name VARCHAR(100) NOT NULL,
+        issuer VARCHAR(100) NOT NULL,
+        announcement_date TIMESTAMP NOT NULL,
+        record_date TIMESTAMP NOT NULL,
+        effective_date TIMESTAMP,
+        status VARCHAR(50) NOT NULL,
+        description TEXT,
+        priority VARCHAR(20),
+        requires_election BOOLEAN DEFAULT false,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Check if we need to populate sample data
+    const { rows } = await pool.query('SELECT COUNT(*) FROM corporate_actions');
+    if (parseInt(rows[0].count) === 0) {
+      // Generate sample corporate actions
+      const actionTypes = ['Stock Split', 'Dividend', 'Rights Issue', 'Merger', 'Acquisition', 'Spin-off', 'Tender Offer', 'Share Repurchase'];
+      const securities = [
+        'Apple Inc. (AAPL)', 'Microsoft Corp. (MSFT)', 'Amazon (AMZN)', 
+        'Google (GOOGL)', 'Facebook (META)', 'JP Morgan (JPM)', 
+        'Visa Inc (V)', 'Johnson & Johnson (JNJ)', 'Procter & Gamble (PG)',
+        'Berkshire Hathaway (BRK.A)', 'Tesla (TSLA)', 'Nvidia (NVDA)'
+      ];
+      const issuers = [
+        'Apple Inc.', 'Microsoft Corp.', 'Amazon.com Inc.', 
+        'Alphabet Inc.', 'Meta Platforms Inc.', 'JP Morgan Chase & Co.', 
+        'Visa Inc.', 'Johnson & Johnson', 'Procter & Gamble Co.',
+        'Berkshire Hathaway Inc.', 'Tesla Inc.', 'Nvidia Corp.'
+      ];
+      const statuses = ['Announced', 'Pending', 'Completed', 'Cancelled'];
+      const priorities = ['High', 'Medium', 'Low'];
+      
+      // Create 50 sample corporate actions
+      for (let i = 0; i < 50; i++) {
+        const actionId = `CA-${10000 + i}`;
+        const typeIndex = Math.floor(Math.random() * actionTypes.length);
+        const type = actionTypes[typeIndex];
+        const securityIndex = Math.floor(Math.random() * securities.length);
+        const security = securities[securityIndex];
+        const issuer = issuers[securityIndex];
+        
+        // Random dates
+        const now = new Date();
+        const daysAgo = Math.floor(Math.random() * 60); // 0-60 days ago
+        const announcementDate = new Date();
+        announcementDate.setDate(now.getDate() - daysAgo);
+        
+        const recordDate = new Date(announcementDate);
+        recordDate.setDate(announcementDate.getDate() + Math.floor(Math.random() * 14) + 3); // 3-17 days after announcement
+        
+        const effectiveDate = new Date(recordDate);
+        effectiveDate.setDate(recordDate.getDate() + Math.floor(Math.random() * 14) + 1); // 1-15 days after record date
+        
+        const status = daysAgo > 45 ? 'Completed' : 
+                      daysAgo > 30 ? 'Pending' : 
+                      daysAgo > 15 ? 'Announced' : 
+                      Math.random() > 0.9 ? 'Cancelled' : 'Announced';
+        
+        const priority = Math.random() > 0.7 ? 'High' : 
+                        Math.random() > 0.4 ? 'Medium' : 'Low';
+        
+        const requiresElection = type === 'Rights Issue' || 
+                                type === 'Tender Offer' || 
+                                (type === 'Dividend' && Math.random() > 0.7);
+        
+        let description = '';
+        if (type === 'Stock Split') {
+          const ratio = [2, 3, 4, 5, 10][Math.floor(Math.random() * 5)];
+          description = `${ratio}-for-1 stock split`;
+        } else if (type === 'Dividend') {
+          const amount = (Math.random() * 5 + 0.1).toFixed(2);
+          description = `Cash dividend of $${amount} per share`;
+        } else if (type === 'Rights Issue') {
+          description = 'Opportunity to purchase additional shares at a discount';
+        } else if (type === 'Merger' || type === 'Acquisition') {
+          const otherCompany = issuers[(securityIndex + 1) % issuers.length];
+          description = `${type} with ${otherCompany}`;
+        } else if (type === 'Spin-off') {
+          description = 'Creation of independent company from existing division';
+        } else if (type === 'Tender Offer') {
+          const premium = (Math.random() * 30 + 10).toFixed(1);
+          description = `Offer to purchase shares at ${premium}% premium`;
+        } else if (type === 'Share Repurchase') {
+          const amount = (Math.random() * 10 + 1).toFixed(1);
+          description = `Plan to repurchase ${amount} billion in shares`;
+        }
+        
+        await pool.query(`
+          INSERT INTO corporate_actions (
+            action_id, type, security_name, issuer, announcement_date,
+            record_date, effective_date, status, description, priority,
+            requires_election
+          )
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        `, [
+          actionId, type, security, issuer, announcementDate,
+          recordDate, effectiveDate, status, description, priority,
+          requiresElection
+        ]);
+      }
+      
+      console.log('Sample corporate actions data created');
+    }
+    
+    // Fetch corporate actions data
+    const { rows: actions } = await pool.query(`
+      SELECT * FROM corporate_actions 
+      ORDER BY announcement_date DESC
+    `);
+    
+    // Get counts by status
+    const { rows: statusCounts } = await pool.query(`
+      SELECT status, COUNT(*) as count
+      FROM corporate_actions
+      GROUP BY status
+    `);
+    
+    // Get counts by type
+    const { rows: typeCounts } = await pool.query(`
+      SELECT type, COUNT(*) as count
+      FROM corporate_actions
+      GROUP BY type
+    `);
+    
+    // Count mandatory vs. voluntary actions
+    const { rows: mandatoryCount } = await pool.query(`
+      SELECT COUNT(*) as count
+      FROM corporate_actions
+      WHERE requires_election = false
+    `);
+    
+    const { rows: voluntaryCount } = await pool.query(`
+      SELECT COUNT(*) as count
+      FROM corporate_actions
+      WHERE requires_election = true
+    `);
+    
+    // Count high priority actions
+    const { rows: highPriorityCount } = await pool.query(`
+      SELECT COUNT(*) as count
+      FROM corporate_actions
+      WHERE priority = 'High'
+    `);
+    
+    // Count pending elections
+    const { rows: pendingElectionsCount } = await pool.query(`
+      SELECT COUNT(*) as count
+      FROM corporate_actions
+      WHERE requires_election = true AND status = 'Pending'
+    `);
+    
+    // Format response data
+    const responseData = {
+      totalActions: actions.length,
+      mandatoryActions: parseInt(mandatoryCount[0].count),
+      voluntaryActions: parseInt(voluntaryCount[0].count),
+      highPriorityActions: parseInt(highPriorityCount[0].count),
+      pendingElections: parseInt(pendingElectionsCount[0].count),
+      statusBreakdown: statusCounts.map(item => ({
+        status: item.status,
+        count: parseInt(item.count)
+      })),
+      typeBreakdown: typeCounts.map(item => ({
+        type: item.type,
+        count: parseInt(item.count)
+      })),
+      recentActions: actions.slice(0, 10)
+    };
+    
+    res.json({
+      status: 'success',
+      data: responseData
+    });
+  } catch (error) {
+    console.error('Error fetching corporate actions data:', error);
+    res.status(500).json({ error: 'Failed to fetch corporate actions data' });
+  }
+});
+
 // Start the server
 // Fallback route for client-side routing - should be placed after all API routes
 app.get('*', (req, res) => {
