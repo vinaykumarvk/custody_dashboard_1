@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
-import Dashboard from './components/Dashboard';
+import BusinessHeadDashboard from './components/BusinessHeadDashboard';
 import OperationsHeadDashboard from './components/OperationsHeadDashboard';
 import OperationsStatistics from './components/OperationsStatistics';
 import './assets/styles.css';
@@ -51,13 +51,13 @@ const App = () => {
     // Switch between different page components based on activePage
     switch (activePage) {
       case 'dashboard':
-        return <Dashboard />;
+        return <BusinessHeadDashboard />;
       case 'operations-head-dashboard':
         return <OperationsHeadDashboard />;
       case 'operations-statistics':
         return <OperationsStatistics />;
       default:
-        return <Dashboard />;
+        return <BusinessHeadDashboard />;
     }
   };
 
