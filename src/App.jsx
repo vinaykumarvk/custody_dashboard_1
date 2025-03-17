@@ -11,6 +11,7 @@ import Reports from './components/Reports';
 import Settings from './components/Settings';
 import OperationsAlerts from './components/OperationsAlerts';
 import OperationsStatistics from './components/OperationsStatistics';
+import BusinessHeadDashboard from './components/BusinessHeadDashboard';
 import './assets/styles.css';
 
 const App = () => {
@@ -59,6 +60,8 @@ const App = () => {
     switch (activePage) {
       case 'dashboard':
         return <Dashboard />;
+      case 'business-head-dashboard':
+        return <BusinessHeadDashboard />;
       case 'trades':
         return <Trades />;
       case 'settlements':
