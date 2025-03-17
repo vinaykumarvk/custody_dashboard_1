@@ -58,6 +58,9 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
     endDate: new Date(),
     range: '30d'
   });
+  
+  // State for filtered income history data
+  const [filteredIncomeHistory, setFilteredIncomeHistory] = useState([]);
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -877,9 +880,6 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
     ]
   };
 
-  // Filter Income history data based on the selected date range
-  const [filteredIncomeHistory, setFilteredIncomeHistory] = useState(incomeHistory || []);
-  
   // Initialize filtered income history when the income history data is loaded
   useEffect(() => {
     if (incomeHistory && incomeHistory.length > 0) {
