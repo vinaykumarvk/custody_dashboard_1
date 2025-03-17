@@ -33,9 +33,7 @@ const DateRangeFilter = ({ options = [], onFilterChange, onChange }) => {
   // Call filter change on mount to set initial state
   React.useEffect(() => {
     // Trigger the initial filter on component mount
-    if (handleChange) {
-      handleFilterChange('30d');
-    }
+    handleFilterChange('30d');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
@@ -50,8 +48,7 @@ const DateRangeFilter = ({ options = [], onFilterChange, onChange }) => {
     console.log(`Filter change requested: ${rangeId}`);
     
     // Convert to lowercase for case-insensitive comparison
-    // Make sure rangeId is defined before calling toLowerCase
-    const rangeIdLower = rangeId ? rangeId.toLowerCase() : '30d';
+    const rangeIdLower = rangeId.toLowerCase();
     
     switch (rangeIdLower) {
       case '7d':
