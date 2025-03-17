@@ -1654,10 +1654,6 @@ app.get('/api/corporate-actions', async (req, res) => {
 });
 
 // Start the server
-// Fallback route for client-side routing - should be placed after all API routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
