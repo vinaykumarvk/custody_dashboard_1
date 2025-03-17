@@ -937,6 +937,63 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
         </div>
       </div>
 
+      {/* Customer Growth History chart */}
+      <div className="row g-3 mb-4 equal-height">
+        <div className="col-md-12">
+          <div className="card">
+            <div className="card-header">
+              <h2>Customer Growth History</h2>
+            </div>
+            <div className="card-body">
+              <Chart 
+                type="line"
+                data={customerGrowthChartData}
+                height="300px"
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: false,
+                      position: 'left',
+                      title: {
+                        display: true,
+                        text: 'Total Customers'
+                      },
+                      grid: {
+                        drawBorder: false,
+                        borderDash: [2, 2]
+                      }
+                    },
+                    y1: {
+                      beginAtZero: true,
+                      position: 'right',
+                      title: {
+                        display: true,
+                        text: 'New Customers'
+                      },
+                      grid: {
+                        display: false
+                      }
+                    },
+                    x: {
+                      grid: {
+                        display: false
+                      }
+                    }
+                  },
+                  plugins: {
+                    legend: {
+                      position: 'bottom'
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      
       {/* Customer Segments chart */}
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-12">
