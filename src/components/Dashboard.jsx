@@ -423,6 +423,8 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
     const newCustomersMtd = apiData.newCustomersMtd || apiData.new_customers_mtd || 152; // Use default value if not provided
     const monthlyGrowth = parseFloat(apiData.monthlyGrowth || apiData.monthly_growth) || 0;
     const totalIncome = parseFloat(apiData.monthlyIncome || apiData.total_income) || 0;
+    const incomeMtd = parseFloat(apiData.incomeMtd || apiData.income_mtd) || 1842392.25; // Use default value if not provided
+    const outstandingFees = parseFloat(apiData.outstandingFees || apiData.outstanding_fees) || 327650.50; // Use default value if not provided
     
     // Extract Assets Under Custody (AUC) data
     let assetsUnderCustody = apiData.assetsUnderCustody;
@@ -639,6 +641,64 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
     // Get open events count 
     const openEvents = apiData.openEvents || 15;
     
+    // Generate income history by service
+    const incomeHistory = [];
+    const services = ['Custody', 'Settlements', 'Corporate Actions', 'Reporting', 'Other'];
+    
+    // Create income history for the past 12 months
+    for (let i = 0; i < 12; i++) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - (11 - i));
+      
+      const monthData = {
+        date: date.toISOString().split('T')[0],
+        total: 0,
+        services: []
+      };
+      
+      // Create data for each service with realistic growth and seasonal patterns
+      services.forEach((service, index) => {
+        // Base values with different weights for different services
+        const baseValues = [300000, 250000, 200000, 150000, 100000];
+        const baseValue = baseValues[index] * (1 + (i * 0.02)); // 2% growth per month
+        
+        // Add seasonality - some services have different seasonal patterns
+        const month = date.getMonth();
+        let seasonalFactor = 1;
+        
+        if (service === 'Corporate Actions') {
+          // More corporate actions in Q1 and Q4 (dividend seasons)
+          seasonalFactor = (month < 3 || month > 9) ? 1.2 : 0.9;
+        } else if (service === 'Settlements') {
+          // More settlement activity around quarter-ends
+          seasonalFactor = ((month + 1) % 3 === 0) ? 1.15 : 0.95;
+        }
+        
+        // Add some randomness (±5%)
+        const randomFactor = 0.95 + (Math.random() * 0.1);
+        
+        const value = Math.round(baseValue * seasonalFactor * randomFactor);
+        
+        monthData.services.push({
+          name: service,
+          value: value
+        });
+        
+        monthData.total += value;
+      });
+      
+      incomeHistory.push(monthData);
+    }
+    
+    // Generate top customers by revenue
+    const topCustomersByRevenue = [
+      { id: 'C-1001', name: 'BlackRock Asset Management', revenue: 423650.75, change: 5.2, accountManager: 'Sarah Johnson' },
+      { id: 'C-1042', name: 'Vanguard Group', revenue: 386420.50, change: 3.8, accountManager: 'Michael Chen' },
+      { id: 'C-1183', name: 'Fidelity Investments', revenue: 352840.25, change: 4.5, accountManager: 'Emma Rodriguez' },
+      { id: 'C-1276', name: 'State Street Global Advisors', revenue: 312750.80, change: -1.2, accountManager: 'James Wilson' },
+      { id: 'C-1358', name: 'JPMorgan Asset Management', revenue: 287530.40, change: 2.7, accountManager: 'David Thompson' }
+    ];
+    
     // Return processed data
     return {
       totalCustomers: totalCustomers,
@@ -660,6 +720,10 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
       },
       dealProcessing: dealProcessing,
       monthlyIncome: totalIncome,
+      incomeMtd: incomeMtd,
+      outstandingFees: outstandingFees,
+      incomeHistory: incomeHistory,
+      topCustomersByRevenue: topCustomersByRevenue,
       incomeByService: [],
       assetsUnderCustody: assetsUnderCustody,
       customerSegments,
@@ -713,6 +777,10 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
     tradesByAssetClass,
     tradesByAssetClassHistory,
     monthlyIncome,
+    incomeMtd,
+    outstandingFees,
+    incomeHistory,
+    topCustomersByRevenue,
     incomeByService,
     recentTrades,
     assetsUnderCustody
@@ -757,6 +825,35 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
     ]
   };
 
+  // Income History Chart Data
+  const incomeHistoryChartData = {
+    labels: incomeHistory.map(item => {
+      const date = new Date(item.date);
+      return `${date.getMonth() + 1}/${date.getFullYear().toString().substr(2)}`;
+    }),
+    datasets: incomeHistory.length > 0 ? 
+      incomeHistory[0].services.map((service, index) => {
+        const colors = [
+          '#007C75',  // Primary green
+          '#009E94',  // Light green
+          '#006560',  // Dark green
+          '#00AEA4',  // Lighter green
+          '#4d8f89',  // Muted green
+        ];
+        
+        return {
+          label: service.name,
+          data: incomeHistory.map(month => {
+            const serviceData = month.services[index];
+            return serviceData ? serviceData.value : 0;
+          }),
+          backgroundColor: colors[index % colors.length],
+          borderColor: colors[index % colors.length],
+          stack: 'stack1'
+        };
+      }) : []
+  };
+  
   // Prepare chart data
   const customerSegmentChartData = {
     labels: customerSegments.map(item => item.label),
@@ -925,9 +1022,9 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
         </div>
       </div>
 
-      {/* Monthly Income row */}
+      {/* Income metrics row */}
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-12 col-sm-12">
+        <div className="col-md-4 col-sm-4">
           <MetricCard 
             title="Monthly Income" 
             value={formatCurrency(monthlyIncome)} 
@@ -935,8 +1032,119 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
             color="#28A745"
           />
         </div>
+        <div className="col-md-4 col-sm-4">
+          <MetricCard 
+            title="Income (MTD)" 
+            value={formatCurrency(incomeMtd)} 
+            subtitle="Month to date"
+            icon="money-bill-wave"
+            color="#28A745"
+          />
+        </div>
+        <div className="col-md-4 col-sm-4">
+          <MetricCard 
+            title="Outstanding Fees" 
+            value={formatCurrency(outstandingFees)} 
+            subtitle="Pending collection"
+            icon="file-invoice-dollar"
+            color="#FFC107"
+          />
+        </div>
       </div>
 
+      {/* Income History Chart */}
+      <div className="row g-3 mb-4 equal-height">
+        <div className="col-md-8">
+          <div className="card">
+            <div className="card-header d-flex justify-content-between align-items-center">
+              <h2>Income History</h2>
+              <DateRangeFilter onFilterChange={(range) => {
+                console.log('Income history filter changed:', range);
+                // In a real implementation, this would filter the income history data
+              }} />
+            </div>
+            <div className="card-body">
+              <Chart 
+                type="bar"
+                data={incomeHistoryChartData}
+                height="300px"
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: function(context) {
+                          return `${context.dataset.label}: ${formatCurrency(context.raw)}`;
+                        },
+                        footer: function(tooltipItems) {
+                          const index = tooltipItems[0].dataIndex;
+                          if (incomeHistory && incomeHistory[index]) {
+                            const total = incomeHistory[index].total;
+                            return `Total: ${formatCurrency(total)}`;
+                          }
+                          return '';
+                        }
+                      }
+                    },
+                    legend: {
+                      position: 'bottom'
+                    }
+                  },
+                  scales: {
+                    x: {
+                      stacked: true,
+                      grid: {
+                        display: false
+                      }
+                    },
+                    y: {
+                      stacked: true,
+                      ticks: {
+                        callback: function(value) {
+                          return formatCurrency(value, 'USD', 0);
+                        }
+                      }
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="col-md-4">
+          <div className="card h-100">
+            <div className="card-header">
+              <h2>Top Customers by Revenue</h2>
+            </div>
+            <div className="card-body p-0">
+              <div className="table-responsive">
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Customer</th>
+                      <th>Revenue</th>
+                      <th>Change</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topCustomersByRevenue.map((customer, index) => (
+                      <tr key={customer.id}>
+                        <td>{customer.name}</td>
+                        <td>{formatCurrency(customer.revenue)}</td>
+                        <td className={customer.change >= 0 ? "text-success" : "text-danger"}>
+                          {customer.change >= 0 ? "+" : ""}{customer.change}%
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       {/* Customer Growth History chart */}
       <div className="row g-3 mb-4 equal-height">
         <div className="col-md-12">
