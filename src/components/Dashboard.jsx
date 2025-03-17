@@ -877,14 +877,69 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
     ]
   };
 
+  // Filter Income history data based on the selected date range
+  const [filteredIncomeHistory, setFilteredIncomeHistory] = useState(incomeHistory || []);
+  
+  // Initialize filtered income history when the income history data is loaded
+  useEffect(() => {
+    if (incomeHistory && incomeHistory.length > 0) {
+      setFilteredIncomeHistory(incomeHistory);
+    }
+  }, [incomeHistory]);
+  
+  // Function to handle income history filter changes
+  const handleIncomeHistoryFilterChange = (newFilterParams) => {
+    console.log('Income history filter changed:', newFilterParams);
+    
+    if (!incomeHistory || incomeHistory.length === 0) {
+      setFilteredIncomeHistory([]);
+      return;
+    }
+    
+    // Apply filter based on date range
+    let filtered = [...incomeHistory];
+    
+    if (newFilterParams.startDate || newFilterParams.endDate) {
+      const startDate = newFilterParams.startDate ? new Date(newFilterParams.startDate) : null;
+      const endDate = newFilterParams.endDate ? new Date(newFilterParams.endDate) : new Date();
+      
+      filtered = incomeHistory.filter(item => {
+        const itemDate = new Date(item.date);
+        return (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate);
+      });
+    }
+    
+    setFilteredIncomeHistory(filtered);
+  };
+
+  // Calculate cumulative values for each service
+  const calculateCumulativeData = (history) => {
+    if (!history || history.length === 0 || !history[0].services) {
+      return [];
+    }
+    
+    const serviceCount = history[0].services.length;
+    const cumulativeData = Array(serviceCount).fill(0).map(() => []);
+    
+    history.forEach((month, monthIndex) => {
+      month.services.forEach((service, serviceIndex) => {
+        // Get previous cumulative value or start at 0
+        const prevValue = monthIndex > 0 ? cumulativeData[serviceIndex][monthIndex - 1] : 0;
+        cumulativeData[serviceIndex][monthIndex] = prevValue + service.value;
+      });
+    });
+    
+    return cumulativeData;
+  };
+
   // Income History Chart Data
   const incomeHistoryChartData = {
-    labels: incomeHistory.map(item => {
+    labels: filteredIncomeHistory.map(item => {
       const date = new Date(item.date);
       return `${date.getMonth() + 1}/${date.getFullYear().toString().substr(2)}`;
     }),
-    datasets: incomeHistory.length > 0 ? 
-      incomeHistory[0].services.map((service, index) => {
+    datasets: filteredIncomeHistory.length > 0 && filteredIncomeHistory[0].services ? 
+      filteredIncomeHistory[0].services.map((service, index) => {
         const colors = [
           '#007C75',  // Primary green
           '#009E94',  // Light green
@@ -893,15 +948,21 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
           '#4d8f89',  // Muted green
         ];
         
+        // Get cumulative data for this service
+        const cumulativeData = calculateCumulativeData(filteredIncomeHistory);
+        
         return {
           label: service.name,
-          data: incomeHistory.map(month => {
-            const serviceData = month.services[index];
-            return serviceData ? serviceData.value : 0;
-          }),
-          backgroundColor: colors[index % colors.length],
+          data: cumulativeData[index] || [],
+          backgroundColor: 'rgba(' + parseInt(colors[index % colors.length].slice(1, 3), 16) + ',' + 
+                           parseInt(colors[index % colors.length].slice(3, 5), 16) + ',' + 
+                           parseInt(colors[index % colors.length].slice(5, 7), 16) + ',0.2)',
           borderColor: colors[index % colors.length],
-          stack: 'stack1'
+          borderWidth: 2,
+          pointRadius: 1,
+          pointHoverRadius: 5,
+          tension: 0.4,
+          fill: true
         };
       }) : []
   };
@@ -1076,24 +1137,16 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
 
       {/* Income metrics row */}
       <div className="row g-3 mb-4 equal-height">
-        <div className="col-md-4 col-sm-4">
+        <div className="col-md-6 col-sm-6">
           <MetricCard 
-            title="Monthly Income" 
-            value={formatCurrency(monthlyIncome)} 
-            icon="chart-line"
-            color="#28A745"
-          />
-        </div>
-        <div className="col-md-4 col-sm-4">
-          <MetricCard 
-            title="Income (MTD)" 
+            title="Income (YTD)" 
             value={formatCurrency(incomeMtd)} 
-            subtitle="Month to date"
+            subtitle="Year to date"
             icon="money-bill-wave"
             color="#28A745"
           />
         </div>
-        <div className="col-md-4 col-sm-4">
+        <div className="col-md-6 col-sm-6">
           <MetricCard 
             title="Outstanding Fees" 
             value={formatCurrency(outstandingFees)} 
@@ -1110,14 +1163,11 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
           <div className="card">
             <div className="card-header d-flex justify-content-between align-items-center">
               <h2>Income History</h2>
-              <DateRangeFilter onFilterChange={(range) => {
-                console.log('Income history filter changed:', range);
-                // In a real implementation, this would filter the income history data
-              }} />
+              <DateRangeFilter onFilterChange={handleIncomeHistoryFilterChange} />
             </div>
             <div className="card-body">
               <Chart 
-                type="bar"
+                type="line"
                 data={incomeHistoryChartData}
                 height="300px"
                 options={{
@@ -1175,8 +1225,8 @@ const Dashboard = () => { // This component serves as the Business Head Dashboar
                   <thead>
                     <tr>
                       <th>Customer</th>
-                      <th>Revenue</th>
-                      <th>Change</th>
+                      <th>Revenue (12 months)</th>
+                      <th>Change (YoY)</th>
                     </tr>
                   </thead>
                   <tbody>
