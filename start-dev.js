@@ -58,7 +58,19 @@ async function buildApp() {
 
 // Start both the backend API server and frontend server
 async function startServers() {
-  console.log('Starting servers directly...');
+  console.log('Starting servers...');
+  
+  // First set up the database
+  const dbSetupSuccess = await setupDatabase();
+  if (!dbSetupSuccess) {
+    console.warn('Database setup had issues, proceeding with server startup...');
+  }
+  
+  // Build the app before starting servers
+  const buildSuccess = await buildApp(); 
+  if (!buildSuccess) {
+    console.warn('App build had issues, proceeding with server startup...');
+  }
   
   // Start the Express backend API server
   const apiServer = spawn('node', ['server.js'], {
@@ -67,7 +79,8 @@ async function startServers() {
   });
   
   // Wait a bit for the API server to start
-  await wait(2000);
+  console.log('API server starting, waiting for it to initialize...');
+  await wait(3000);
   
   // Start the React frontend with proxy to the API
   const webpackServer = spawn('npx', ['webpack', 'serve', '--mode', 'development', '--host', '0.0.0.0', '--port', '5000', '--hot'], {
@@ -86,20 +99,6 @@ async function startServers() {
   console.log('Development servers started:');
   console.log('- API server running on port 3000');
   console.log('- Frontend running on port 5000 (with API proxy)');
-  
-  // Execute database setup in the background
-  setupDatabase().then(dbSetupSuccess => {
-    if (!dbSetupSuccess) {
-      console.error('Failed to set up database, but servers are already running');
-    }
-    
-    // Build the application in the background
-    buildApp().then(buildSuccess => {
-      if (!buildSuccess) {
-        console.error('Failed to build application, but servers are already running');
-      }
-    });
-  });
 }
 
 // Start the servers
