@@ -30,11 +30,26 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Serve static files from the public directory
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files from the public directory with improved caching
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: process.env.NODE_ENV === 'production' ? '4h' : '0', // Cache in production
+  setHeaders: (res, filePath) => {
+    // Set appropriate headers based on file type
+    if (filePath.endsWith('index.html')) {
+      // Don't cache HTML
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    } else if (path.extname(filePath) === '.js') {
+      // Ensure JavaScript files are served with correct MIME type
+      res.setHeader('Content-Type', 'application/javascript');
+    }
+  }
+}));
 
-// Add specific route for bundle.js
+// Explicitly serve bundle.js with correct content type
 app.get('/bundle.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(path.join(__dirname, 'public', 'bundle.js'));
 });
 
@@ -2063,15 +2078,35 @@ app.get('/api/v2/customers', async (req, res) => {
   }
 });
 
+// Custom middleware to handle API 404s explicitly to avoid conflicts with SPA routing
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ 
+    error: 'API endpoint not found',
+    path: req.originalUrl 
+  });
+});
+
 // Add fallback route for client-side routing (SPA)
-app.get('*', (req, res) => {
-  // Exclude API routes from the fallback
-  if (req.path.startsWith('/api')) {
-    return res.status(404).json({ error: 'API endpoint not found' });
-  }
+// This must be the LAST route handler
+app.get('*', (req, res, next) => {
+  // For all non-API routes that don't match static files, serve the index.html file
+  // This enables client-side routing in the React SPA
   
-  // For all other routes, serve the index.html file
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  // Set proper cache control headers
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  
+  // Log the route being handled by the SPA fallback
+  console.log(`SPA route request: ${req.path} - serving index.html`);
+  
+  // Send the index.html file
+  res.sendFile(path.join(__dirname, 'public', 'index.html'), err => {
+    if (err) {
+      console.error(`Error sending index.html for path ${req.path}:`, err);
+      next(err);
+    }
+  });
 });
 
 // Initialize the database before starting the server

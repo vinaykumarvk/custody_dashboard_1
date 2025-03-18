@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Smart Bank - eMACH Custody Dashboard (React)</title>
+  <!-- Environment and cache management -->
+  <script src="/clear-cache.js?v=1.0.1"></script>
   <!-- Prevent Angular auto-bootstrap -->
   <script>
     // Disable Angular auto-bootstrap if it exists
@@ -19,6 +24,41 @@
 </head>
 <body data-framework="react">
   <div id="root"></div>
+  <!-- App loading fallback -->
+  <div id="app-loading" style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column;">
+    <div style="text-align: center; margin-bottom: 20px;">
+      <h2>Loading eMACH Custody Dashboard...</h2>
+      <p>If the dashboard doesn't load within a few seconds, try <a href="#" onclick="clearAppCache(); return false;">clearing the cache</a>.</p>
+    </div>
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  
+  <script>
+    // Hide loading screen when app loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const rootEl = document.getElementById('root');
+      const loadingEl = document.getElementById('app-loading');
+      
+      // Check if app renders within 3 seconds
+      setTimeout(function() {
+        if (rootEl.children.length > 0) {
+          loadingEl.style.display = 'none';
+        }
+      }, 3000);
+      
+      // Create an observer to watch for child additions to root element
+      const observer = new MutationObserver(function(mutations) {
+        if (rootEl.children.length > 0) {
+          loadingEl.style.display = 'none';
+          observer.disconnect();
+        }
+      });
+      
+      observer.observe(rootEl, { childList: true });
+    });
+  </script>
   <!-- Bundle will be injected by HtmlWebpackPlugin -->
 </body>
 </html>
