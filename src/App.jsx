@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
@@ -8,15 +9,17 @@ import './assets/styles.css';
 
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  // Initialize activePage based on URL path or default to 'dashboard'
-  const getInitialPage = () => {
-    const path = window.location.pathname;
-    if (path.includes('operations-head')) return 'operations-head-dashboard';
-    if (path.includes('operations-stats')) return 'operations-statistics';
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Helper function to convert URL path to page ID
+  const getPageIdFromPath = (path) => {
+    if (path.includes('/operations-head')) return 'operations-head-dashboard';
+    if (path.includes('/operations-stats')) return 'operations-statistics';
     return 'dashboard';
   };
   
-  const [activePage, setActivePage] = useState(getInitialPage);
+  const [activePage, setActivePage] = useState(() => getPageIdFromPath(location.pathname));
   
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -26,18 +29,22 @@ const App = () => {
     setActivePage(pageId);
     console.log(`Navigating to page: ${pageId}`);
     
-    // Update browser URL for deep linking/bookmarking support
+    // Convert page ID to URL path
     let newPath = '/';
     if (pageId === 'operations-head-dashboard') newPath = '/operations-head';
     if (pageId === 'operations-statistics') newPath = '/operations-stats';
     
-    // Use history API to update URL without full page reload
-    window.history.pushState(
-      { pageId },
-      document.title,
-      newPath
-    );
+    // Use React Router to navigate
+    navigate(newPath);
   };
+
+  // Update active page when route changes
+  useEffect(() => {
+    const newPageId = getPageIdFromPath(location.pathname);
+    if (newPageId !== activePage) {
+      setActivePage(newPageId);
+    }
+  }, [location.pathname, activePage]);
 
   useEffect(() => {
     console.log('React App component mounted');
@@ -60,35 +67,12 @@ const App = () => {
     // Add resize listener
     window.addEventListener('resize', handleResize);
     
-    // Handle browser back/forward navigation
-    const handlePopState = (event) => {
-      const pageId = event.state?.pageId || getInitialPage();
-      setActivePage(pageId);
-    };
-    
-    window.addEventListener('popstate', handlePopState);
-    
     return () => {
       console.log('React App component unmounted');
       document.body.removeAttribute('data-react-app');
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('popstate', handlePopState);
     };
   }, []);
-
-  const renderPage = () => {
-    // Switch between different page components based on activePage
-    switch (activePage) {
-      case 'dashboard':
-        return <Dashboard />;
-      case 'operations-head-dashboard':
-        return <OperationsHeadDashboard />;
-      case 'operations-statistics':
-        return <OperationsStatistics />;
-      default:
-        return <Dashboard />;
-    }
-  };
 
   return (
     <div className={`app-container ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`} data-react-root="true">
@@ -107,7 +91,12 @@ const App = () => {
         />
         
         <main className="main-content">
-          {renderPage()}
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/operations-head" element={<OperationsHeadDashboard />} />
+            <Route path="/operations-stats" element={<OperationsStatistics />} />
+            <Route path="*" element={<Dashboard />} />
+          </Routes>
         </main>
       </div>
     </div>
