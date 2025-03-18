@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
-import Dashboard from './components/Dashboard';
-import OperationsHeadDashboard from './components/OperationsHeadDashboard';
-import OperationsStatistics from './components/OperationsStatistics';
 import './assets/styles.css';
 
 const App = () => {
@@ -91,12 +88,7 @@ const App = () => {
         />
         
         <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/operations-head" element={<OperationsHeadDashboard />} />
-            <Route path="/operations-stats" element={<OperationsStatistics />} />
-            <Route path="*" element={<Dashboard />} />
-          </Routes>
+          <Outlet />
         </main>
       </div>
     </div>

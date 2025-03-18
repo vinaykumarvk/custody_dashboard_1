@@ -1,6 +1,10 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
+import Dashboard from './components/Dashboard';
+import OperationsHeadDashboard from './components/OperationsHeadDashboard';
+import OperationsStatistics from './components/OperationsStatistics';
 import './assets/styles.css';
 
 // Log that React is initializing
@@ -11,6 +15,28 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM loaded, initializing React app');
 });
 
+// Create router with our routes
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      {
+        path: '/',
+        element: <Dashboard />
+      },
+      {
+        path: '/operations-head',
+        element: <OperationsHeadDashboard />
+      },
+      {
+        path: '/operations-stats',
+        element: <OperationsStatistics />
+      }
+    ]
+  }
+]);
+
 // Initialize React
 const container = document.getElementById('root');
 if (!container) {
@@ -20,7 +46,7 @@ if (!container) {
   
   root.render(
     <React.StrictMode>
-      <App />
+      <RouterProvider router={router} />
     </React.StrictMode>
   );
 }
