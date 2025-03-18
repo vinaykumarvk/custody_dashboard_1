@@ -2087,6 +2087,23 @@ app.use('/api/*', (req, res) => {
 });
 
 // Add fallback route for client-side routing (SPA)
+// Add explicit routes for our SPA pages
+app.get('/operations-head', (req, res) => {
+  console.log('Operations Head Dashboard route accessed');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/operations-stats', (req, res) => {
+  console.log('Operations Statistics Dashboard route accessed');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // This must be the LAST route handler
 app.get('*', (req, res, next) => {
   // For all non-API routes that don't match static files, serve the index.html file
